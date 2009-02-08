@@ -30,21 +30,23 @@ window.$a = Arrayzing;
 Arrayzing.fn = Arrayzing.prototype =
 {
 	init: function( arguments )
-	{      
-		if (arguments.length == 1 && arguments[0].constructor == Array)
+	{
+		if (arguments.length == 1)
 		{
-			return this.setArray( arguments[0] );
+            if (arguments[0].constructor == Array)
+    			return this.setArray( arguments[0] );
+            else if (arguments[0] instanceof Arrayzing)
+            {                
+                return this.setArray( arguments[0].get() );
+            }
+            else
+                return this.setArray( arguments );
 		}
         else
 		{           
             return this.setArray( arguments );
 		}
-	},
-
-	// Patterns used within the Arrayzing object.
-	__uppercased:  /^[A-Z\s]*$/,      // all uppercase
-	__lowercased:  /^[a-z\s]*$/,      // all lowercase
-	__capitalized: /^[A-Z][a-z\s]*$/, // first letter uppercase, the rest lowercase
+	},    
 
 	// The current version of Arrayzing being used.
 	version: "0.1.0",
@@ -57,6 +59,25 @@ Arrayzing.fn = Arrayzing.prototype =
 	{
 		return this.length;
 	},
+
+    get: function( index )
+    {
+        // If there is no index, return the whole array.
+        if ( index == undefined )
+        {
+            return this.toArray();
+        }
+        // If it is >= 0, pass through to the normal way.
+        else if ( index >= 0 )
+        {
+            return this[index];
+        }
+        // If it's negative, return from the right.
+        else
+        {
+            return this[this.length + index];
+        }
+    },
 
     /**
      * The number of elements contained in the matched element set.
@@ -75,12 +96,20 @@ Arrayzing.fn = Arrayzing.prototype =
 
     pop: function()
     {
-        return this.pushStack( [Array.prototype.join.apply(this, arguments)] );
+        // Run Array's pop function.
+        var ret = Array.prototype.pop.apply(this, arguments);
+
+        // If the result is defined (i.e. there are no elements) then
+        // return an element array instead of that.
+        if (ret == undefined) ret = [];
+
+        // Return the new array.
+        return this.pushStack( ret );
     },
 
     push: function()
-    {
-        var ret = this.pushStack( this );
+    {     
+        var ret = this.pushStack( this );     
         Array.prototype.push.apply( ret, arguments );
         return ret;
     },
@@ -94,8 +123,15 @@ Arrayzing.fn = Arrayzing.prototype =
 
     shift: function()
     {
-        this.pushStack( this );
-        return Array.prototype.shift.apply( this, arguments );
+        // Run Array's shift function.
+        var ret = Array.prototype.shift.apply(this, arguments);
+
+        // If the result is defined (i.e. there are no elements) then
+        // return an element array instead of that.
+        if (ret == undefined) ret = [];
+
+        // Return the new array.
+        return this.pushStack( ret );
     },
 
     slice: function()
@@ -224,16 +260,28 @@ Arrayzing.fn = Arrayzing.prototype =
 
 		return this.pushStack( ret );
     },
-    
+
+    /** Pattern that matches a string that is entirely uppercase. */
+	__uppercased: /^[A-Z\s]*$/,
+
 	uppercased: function()
 	{
 		return this.filter( this.__uppercased );
 	},
 
+    /** Pattern that matches a string that is entirely lowercase. */
+	__lowercased: /^[a-z\s]*$/,
+
 	lowercased: function()
 	{
 		return this.filter( this.__lowercased );
 	},
+
+    /**
+     * Pattern that matches a string that has it's first level uppercase,
+     * and the rest lower case.
+     */
+	__capitalized: /^[A-Z][a-z\s]*$/,
 
     capitalized: function()
     {
