@@ -6,16 +6,16 @@
  * and GPL (GPL-LICENSE.txt) licenses.
  */
 
-// Map over arrayzing in case of overwrite.
-if ( window.arrayzing )
+// Map over Arrayzing in case of overwrite.
+if ( window.Arrayzing )
 {
-	var _arrayzing = window.arrayzing;
+	var _Arrayzing = window.Arrayzing;
 }
 
-var arrayzing = window.arrayzing = function( object ) 
+var Arrayzing = window.Arrayzing = function( object )
 {
-	// The arrayzing object is actually just the init constructor 'enhanced'.
-	return new arrayzing.prototype.init( object );
+	// The Arrayzing object is actually just the init constructor 'enhanced'.
+	return new Arrayzing.prototype.init( object );
 };
 
 // Map over the $ in case of overwrite
@@ -24,10 +24,10 @@ if ( window.$a )
 	var _$a = window.$a;
 }
 
-// Map the arrayzing namespace to the '$a' one
-window.$a = arrayzing;
+// Map the Arrayzing namespace to the '$a' one
+window.$a = Arrayzing;
 
-arrayzing.fn = arrayzing.prototype =
+Arrayzing.fn = Arrayzing.prototype =
 {
 	init: function(object)
 	{	
@@ -43,12 +43,12 @@ arrayzing.fn = arrayzing.prototype =
 		}
 	},
 
-	// Patterns used within the arrayzing object.
-	upperPattern: /^[A-Z\s]*$/,      // all uppercase
-	lowerPattern: /^[a-z\s]*$/,      // all lowercase
-	capPattern:   /^[A-Z][a-z\s]*$/, // first letter uppercase, the rest lowercase
+	// Patterns used within the Arrayzing object.
+	__uppercased:  /^[A-Z\s]*$/,      // all uppercase
+	__lowercased:  /^[a-z\s]*$/,      // all lowercase
+	__capitalized: /^[A-Z][a-z\s]*$/, // first letter uppercase, the rest lowercase
 
-	// The current version of arrayzing being used.
+	// The current version of Arrayzing being used.
 	version: "0.1.0",
 
 	/**
@@ -102,7 +102,7 @@ arrayzing.fn = arrayzing.prototype =
 
     slice: function()
     {
-		return arrayzing( Array.prototype.slice.apply(this, arguments) );
+		return this.pushStack( Array.prototype.slice.apply(this, arguments) );
 	},
 
     sort: function()
@@ -129,13 +129,13 @@ arrayzing.fn = arrayzing.prototype =
     /**
      * Take an array of elements and push it onto the stack returning the
      * new matched element set.
-     * @param Array elems
+     * @param elems
      * @return Arrayzing
      */	
 	pushStack: function( elems )
     {
 		// Build a new jQuery matched element set
-		var ret = arrayzing( elems );
+		var ret = Arrayzing( elems );
 
 		// Add the old object onto the stack (as a reference)
 		ret.prevObject = this;
@@ -159,13 +159,18 @@ arrayzing.fn = arrayzing.prototype =
 		return this;
 	},
 
+    end: function()
+    {
+		return this.prevObject || Arrayzing( [] );
+	},
+
 	// Execute a callback for every element in the matched set.
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)	
 	// (Adapted from jQuery).
 	each: function( callback, args )
 	{
-		return arrayzing.each( this, callback, args );
+		return Arrayzing.each( this, callback, args );
 	},
 
 	compare: function( num, closure )
@@ -222,15 +227,20 @@ arrayzing.fn = arrayzing.prototype =
 		return this.pushStack( ret );
     },
     
-	uppers: function()
+	uppercased: function()
 	{
-		return this.filter( this.upperPattern );
+		return this.filter( this.__uppercased );
 	},
 
-	lowers: function()
+	lowercased: function()
 	{
-		return this.filter( this.lowerPattern );
+		return this.filter( this.__lowercased );
 	},
+
+    capitalized: function()
+    {
+        return this.filter( this.__capitalized );
+    },
 	
 	inject: function( initial, closure )
 	{
@@ -339,7 +349,7 @@ arrayzing.fn = arrayzing.prototype =
 };
 	
 // (Adapted from jQuery).
-arrayzing.extend = arrayzing.fn.extend = function() 
+Arrayzing.extend = Arrayzing.fn.extend = function()
 {
 	// Copy reference to target object.
 	var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
@@ -373,7 +383,7 @@ arrayzing.extend = arrayzing.fn.extend = function()
 
 				// Recurse if we're merging object values
 				if ( deep && options[ name ] && typeof options[ name ] == "object" && target[ name ] && !options[ name ].nodeType )
-					target[ name ] = arrayzing.extend( target[ name ], options[ name ] );
+					target[ name ] = Arrayzing.extend( target[ name ], options[ name ] );
 
 				// Don't bring in undefined values
 				else if ( options[ name ] != undefined )
@@ -385,11 +395,11 @@ arrayzing.extend = arrayzing.fn.extend = function()
 	return target;
 };
 
-// Give the init function the arrayzing prototype for later instantiation.
-arrayzing.prototype.init.prototype = arrayzing.prototype;
+// Give the init function the Arrayzing prototype for later instantiation.
+Arrayzing.prototype.init.prototype = Arrayzing.prototype;
 
 // (Adapted from jQuery).
-arrayzing.extend(
+Arrayzing.extend(
 {
 	// args is for internal usage only
 	each: function( object, callback, args ) {
