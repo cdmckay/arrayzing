@@ -18,14 +18,23 @@ $exp.int({ strict: true })		// [1, 2, 3]
 .lt()
 .lteq()
 .eq()	// filter only stings with length exactly equal to
-.uppers()
-.lowers()
-.noEmpties()
-.tagged()
+
+.just(index) // equivalent to jQuery's eq()... reduce the array to this element
+
+.uppercased() // keep only elements that are uppercased
+.lowercased() // keep only elements that are lowercased
+.noEmpties() // remove all empty strings or arrays or NaNs
+.tagged() // has <html>-style tags
+
 .filter(pattern)
+
 .filter(string)
-.not(pattern)
+.filter(object) // object must implement toString()
+
+.not(pattern) // complement of filter
+
 .not(string)
+.not(object)
 
 .andSelf()
 .end()
@@ -85,6 +94,9 @@ $exp.int({ strict: true })		// [1, 2, 3]
 .str(index)
 .as(type)
 .as(type, index)
+
+.get()
+.get(index)
 
 .toArray
 .toString

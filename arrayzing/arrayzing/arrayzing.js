@@ -44,32 +44,85 @@ arrayzing.fn = arrayzing.prototype =
 	},
 
 	// Patterns used within the arrayzing object.
-	upperPattern: /^[A-Z\s]*$/, // all uppercase
-	lowerPattern: /^[a-z\s]*$/, // all lowercase
-	capPattern: /^[A-Z][a-z\s]*$/, // first letter uppercase, the rest lowercase
+	upperPattern: /^[A-Z\s]*$/,      // all uppercase
+	lowerPattern: /^[a-z\s]*$/,      // all lowercase
+	capPattern:   /^[A-Z][a-z\s]*$/, // first letter uppercase, the rest lowercase
 
 	// The current version of arrayzing being used.
 	version: "0.1.0",
 
-	// The number of elements contained in the matched element set.
+	/**
+     * The number of elements contained in the matched element set.
+     * @return Number
+     */
 	size: function() 
 	{
 		return this.length;
 	},
-	
-	// The number of elements contained in the matched element set.
-	length: 0,
 
-	// Get a slice of the array.
-	// (Adapted from jQuery.)
-	slice: function() {
-		return this.pushStack( Array.prototype.slice.apply( this, arguments ) );
+    /**
+     * The number of elements contained in the matched element set.
+     */
+	length: 0,    	
+
+    concat: function()
+    {
+        return this.pushStack( Array.prototype.concat.apply(this, arguments) );
+    },
+
+    join: function()
+    {
+        return this.pushStack( [Array.prototype.join.apply(this, arguments)] );
+    },
+
+    pop: function()
+    {
+        return this.pushStack( Array.prototype.pop.apply(this, arguments) );
+    },
+
+    push: function()
+    {
+        return this.pushStack( Array.prototype.push.apply( this, arguments ) );
+    },
+
+    reverse: function()
+    {
+        return this.pushStack( Array.prototype.reverse.apply( this, arguments ) );
+    },
+
+    shift: function()
+    {
+        return this.pushStack( Array.prototype.shift.apply( this, arguments ) );
+    },
+
+    slice: function()
+    {
+		return this.pushStack( Array.prototype.slice.apply(this, arguments) );
 	},
 
-	// Take an array of elements and push it onto the stack
-	// (returning the new matched element set)
-	// (Adapted from jQuery).
-	pushStack: function( elems ) {
+    sort: function()
+    {
+		return this.pushStack( Array.prototype.sort.apply(this, arguments) );
+	},
+
+    splice: function()
+    {
+		return this.pushStack( Array.prototype.splice.apply(this, arguments) );
+	},
+
+    unshift: function()
+    {
+		return this.pushStack( Array.prototype.unshift.apply(this, arguments) );
+	},
+
+    /**
+     * Take an array of elements and push it onto the stack returning the
+     * new matched element set.
+     * @param Array elems
+     * @return Arrayzing
+     */	
+	pushStack: function( elems )
+    {
 		// Build a new jQuery matched element set
 		var ret = arrayzing( elems );
 
@@ -140,37 +193,16 @@ arrayzing.fn = arrayzing.prototype =
 	gt: function( num )
 	{		
 		return this.compare( num, this.__gt );
-	},
-
-	// Internal pattern tester.  Can accept
-	// a String or a RegExp.
-	__testPattern: function( pattern, val )
-	{
-		return (pattern.constructor == RegExp && pattern.test(val))
-            || (pattern.constructor == String && pattern == val);
-	},
+	},	
 
 	filter: function( pattern )
 	{		
-		var ret = [];
-
-		// If the pattern is not a string or regexp, convert
-		// it to a string.
-		if ( !(pattern.constructor == RegExp) )
-		{
-			pattern = arrayzing.stringize(pattern);
-		}
-		
-        // Keep a reference to the test pattern function
-        // so it can be used in each.
-        var testPattern = this.__testPattern;      
-
+		var ret = [];		
+		       
 		this.each(function()
-		{            
-			// Make sure we're comparing to a string.
-			var val = arrayzing.stringize(this);			            
-            
-			if ( testPattern(pattern, val) )
+		{            			
+			if ( (pattern != null && pattern.constructor == RegExp && pattern.test(this))
+                || (pattern == this) )
 			{                
 				ret.push( this );
 			}			

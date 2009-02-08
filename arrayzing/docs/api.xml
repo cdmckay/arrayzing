@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<api version="1.0">
+    <section name="Core">
+        <section name="$a(...) The Arrayzing Function">
+            <function name="Arrayzing" returns="Arrayzing">
+                <argument required="true">Array&lt;Mixed&gt;</argument>
+                <description>This function takes an array as it's argument</description>
+            </function>
+            <function name="Arrayzing">
+                <argument required="true">Object</argument>
+                <argument>Object</argument>
+                <argument>...</argument>
+                <description></description>
+            </function>
+        </section>
+    </section>
+</api>
