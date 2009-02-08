@@ -12,10 +12,10 @@ if ( window.Arrayzing )
 	var _Arrayzing = window.Arrayzing;
 }
 
-var Arrayzing = window.Arrayzing = function( object )
+var Arrayzing = window.Arrayzing = function()
 {
 	// The Arrayzing object is actually just the init constructor 'enhanced'.
-	return new Arrayzing.prototype.init( object );
+	return new Arrayzing.prototype.init( arguments );
 };
 
 // Map over the $ in case of overwrite
@@ -24,22 +24,20 @@ if ( window.$a )
 	var _$a = window.$a;
 }
 
-// Map the Arrayzing namespace to the '$a' one
+// Map the Arrayzing namespace to the '$a' one.
 window.$a = Arrayzing;
 
 Arrayzing.fn = Arrayzing.prototype =
 {
-	init: function(object)
-	{	
-		if (object.constructor == Array)
+	init: function( arguments )
+	{      
+		if (arguments.length == 1 && arguments[0].constructor == Array)
 		{
-			return this.setArray(object);
+			return this.setArray( arguments[0] );
 		}
-		else
-		{
-			this[0] = object;
-			this.length = 1;
-			return this;
+        else
+		{           
+            return this.setArray( arguments );
 		}
 	},
 
