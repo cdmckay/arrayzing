@@ -77,42 +77,53 @@ arrayzing.fn = arrayzing.prototype =
 
     pop: function()
     {
-        return this.pushStack( Array.prototype.pop.apply(this, arguments) );
+        return this.pushStack( [Array.prototype.join.apply(this, arguments)] );
     },
 
     push: function()
     {
-        return this.pushStack( Array.prototype.push.apply( this, arguments ) );
+        var ret = this.pushStack( this );
+        Array.prototype.push.apply( ret, arguments );
+        return ret;
     },
 
     reverse: function()
     {
-        return this.pushStack( Array.prototype.reverse.apply( this, arguments ) );
+        var ret = this.pushStack( this );
+        Array.prototype.reverse.apply( ret, arguments );
+        return ret;
     },
 
     shift: function()
     {
-        return this.pushStack( Array.prototype.shift.apply( this, arguments ) );
+        this.pushStack( this );
+        return Array.prototype.shift.apply( this, arguments );
     },
 
     slice: function()
     {
-		return this.pushStack( Array.prototype.slice.apply(this, arguments) );
+		return arrayzing( Array.prototype.slice.apply(this, arguments) );
 	},
 
     sort: function()
     {
-		return this.pushStack( Array.prototype.sort.apply(this, arguments) );
+        var ret = this.pushStack( this );
+		Array.prototype.sort.apply( ret, arguments );
+        return ret;
 	},
 
     splice: function()
     {
-		return this.pushStack( Array.prototype.splice.apply(this, arguments) );
+        var ret = this.pushStack( this );
+		Array.prototype.splice.apply( ret, arguments );
+        return ret;
 	},
 
     unshift: function()
     {
-		return this.pushStack( Array.prototype.unshift.apply(this, arguments) );
+        var ret = this.pushStack( this );
+		Array.prototype.unshift.apply(ret, arguments);
+        return ret;
 	},
 
     /**
