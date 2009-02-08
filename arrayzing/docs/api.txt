@@ -1,0 +1,90 @@
+// This is just an ad-hoc API reference for me.
+// A much cleaner, better documented one is in the works.
+
+$s(["x", 2, "hoox", "HOO"]) // s["x", 2, "hoox", "HOO"]
+	.filter(/x/)        // s["x", "hoox"]
+	.gt(1)              // s["x"]
+	.add("BLAH")        // s["x", "BLAH"]
+	.isUpper();         // s["BLAH"]
+
+$exp = $s([1, 2, 3, "3foo", "bar")	// s[1, 2, 3, "3foo"]
+$exp.int() 				// [1, 2, 3, 3, NaN]
+$exp.int({ allowNaN: false })		// [1, 2, 3, 3]
+$exp.int({ strict: true })		// [1, 2, 3]
+
+// Filters
+.gt()	// filter only strings with a length gt
+.gteq()
+.lt()
+.lteq()
+.eq()	// filter only stings with length exactly equal to
+.uppers()
+.lowers()
+.noEmpties()
+.tagged()
+.filter(pattern)
+.filter(string)
+.not(pattern)
+.not(string)
+
+.andSelf()
+.end()
+
+
+// Manipulation
+.add(object)
+.remove(object)
+.swap(index1, index2)
+
+// General
+.min
+.max
+
+// String
+.add(pattern)	// applies the pattern to all strings in the set
+		// and adds their matches to the array
+.remove(pattern)// applies the pattern to all strings in the set
+		// and removes any strings that are the same as the matches
+.enclose(left [, right])	== .prepend(left).append(right)
+.flatten	// concatenations them all
+.prepend(str)	// prefix all strings
+.append(str)  // suffix all strings
+.upper
+.lower
+.reverse
+.reverseCase
+.reverseWords
+.cap
+.capWords
+.stripTags
+.stripSpaces
+.replace
+.dasherize
+.underscore
+.split
+.join(index1, index2)
+
+// Numeric
+.sum()
+.sum(2)
+.sum(2n+1)
+
+// Boolean
+.or()
+.and()
+
+// Inspection & Output
+.length		// number of items in the array
+.wordCount()	// number of words in the concatenation of the array
+.wordCount(index) // number of words in a given array string
+.bool
+.bool(index)
+.int
+.int(index)
+.str()
+.str(index)
+.as(type)
+.as(type, index)
+
+.toArray
+.toString
