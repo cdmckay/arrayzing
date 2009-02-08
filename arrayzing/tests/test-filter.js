@@ -2,59 +2,38 @@
 
 module("filter");
 
-// An array of numbers.
-var numArray = [1, 2, 3, 4, 5];
-
-test("Should reduce the array to 1 using a RegExp.", function()
+test("Test filter", function()
 {
-    var result = $a(numArray).filter(/1/);
-    equals(result.toString(), "1", "Should equal 1");
-});
+    var numArray = [1, 2, 3, 4, 5];
+    var result;
 
-test("Should reduce the array to 1 using a String.", function()
-{
-    var result = $a(numArray).filter("1");
-    equals(result.toString(), "1", "Should equal 1");
-});
+    result = $a(numArray).filter(/1/);
+    equals(result.toString(), "1", "Try filtering using a simple RegExp");
 
-test("Should reduce the array to to 1 using a Number.", function()
-{
-    var result = $a(numArray).filter(1);
-    equals(result.toString(), "1", "Should equal 1");
-});
+    result = $a(numArray).filter("1");
+    equals(result.toString(), "1", "Try filtering usign a string");
 
-// An array of mixed values.
-var object = new Object();
-object.name = "unique";
-var mixedArray = [12, "foo", object, /regexp/, function() { return 2 }, NaN, [3, "baz"], null, undefined];
+    result = $a(numArray).filter(1);
+    equals(result.toString(), "1", "Try filtering using a number");
 
-test("Should reduce the array to only strings and numbers.", function()
-{
-    var result = $a(mixedArray).filter(/^\w+$/);
-    equals(result.toString(), "12,foo,NaN", "Should contain only strings and numbers");
-});
+    // An array of mixed values.
+    var object = new Object();
+    object.name = "unique";
+    var mixedArray = [12, "foo", object, /regexp/, function() { return 2 }, Number.NaN, [3, "baz"], null, undefined];
 
-test("Should filter out everything except a particular object.", function()
-{
-    var result = $a(mixedArray).filter(object);
-    equals(result[0].name, object.name, "Should be the same object");
-});
+    result = $a(mixedArray).filter(/^\w+$/);
+    equals(result.toString(), "12,foo,NaN", "Try filtering using a more complex RegExp");
 
-test("Should return null when passed null if a null is in the array.", function()
-{
-    var result = $a(mixedArray).filter(null);
-    equals(result[0], null, "Should be null");
-});
+    result = $a(mixedArray).filter(object);
+    equals(result[0].name, object.name, "Filter using a random object");
 
-test("Should return any undefineds it finds in the array.", function()
-{
-    var result = $a(mixedArray).filter(undefined);
-    equals(result[0], undefined, "Should return undefined");
-});
+    result = $a(mixedArray).filter(null);
+    equals(result[0], null, "Filter using null");
 
-test("Should return any NaNs it finds in the array.", function()
-{
-    var result = $a(mixedArray).filter(NaN);
-    ok(isNaN(result[0]), "Should return true");
+    result = $a(mixedArray).filter(undefined);
+    equals(result[0], undefined, "Filter using undefined");
+
+    result = $a(mixedArray).filter(Number.NaN);
+    ok(isNaN(result[0]), "Filter using NaN");
 });
 

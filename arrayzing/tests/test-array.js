@@ -8,8 +8,8 @@ test("Test concat.", function()
     var array2 = [4, 5, 6];
     var result1 = $a(array1).concat(array2); // Try concatting a normal array.
     var result2 = $a(array1).concat($a(array2)); // ...and an Arrayzing.
-    equals(result1.toString(), "1,2,3,4,5,6", "Should equal the two arrays concatted");
-    equals(result2.toString(), "1,2,3,4,5,6", "Should equal the two arrays concatted");
+    equals(result1.toString(), "1,2,3,4,5,6", "Try concat on an array");
+    equals(result2.toString(), "1,2,3,4,5,6", "Try concat on an Arrayzing");
 });
 
 test("Test join.", function()
@@ -17,16 +17,19 @@ test("Test join.", function()
     var array = [1, 2, "bloo"];
     var result1 = $a(array).join();
     var result2 = $a(array).join(";");
-    equals(result1.toString(), "1,2,bloo", "Should equal the contents of the array joined with a comma");
-    equals(result2.toString(), "1;2;bloo", "Should equal the contents of the array joined with a semi-colon");       
+    equals(result1.toString(), "1,2,bloo", "Try joining with default argument");
+    equals(result2.toString(), "1;2;bloo", "Try joining with semi-colon argument");
+    equals(result2.length, 1, "Make sure only one element remains");
+    equals(result2[0].constructor == String, true, "Make sure it's a string");
 });
 
 test("Test pop.", function()
 {    
     var array = [1, 2, "bloo"];
 
-    equals($a(array).pop()[0], "bloo", "Should equal the last element (bloo)");
-    equals($a().pop().length, 0, "Should equal 0");
+    equals($a().pop().length, 0, "Try popping off an empty array");
+    equals($a(array).pop()[0], "bloo", "Try popping off a mixed array");
+    
 });
 
 test("Test push.", function()
@@ -35,23 +38,20 @@ test("Test push.", function()
     var empty = [];
     var array = ["a", "b", 3];
 
-    equals($a(empty).push(4).get(-1), 4, "Should equal 4");
-    equals($a(array).push(4).join(), "a,b,3,4", "Should equal 4");
+    equals($a(empty).push(4).get(0), 4, "Try pushing into an empty array");
+    equals($a(array).push(4).join(), "a,b,3,4", "Try pushing into a mixed array");
     var $array = $a(empty).push("x");
-    equals($array.length, 1, "Should be 1");
-    equals($array.get().join(), "x", "Should be x");
+    equals($array.length, 1, "Make sure the length is right");
 });
 
 test("Test reverse.", function()
 {
-    var empty = [];
     var array = [1, 2, 3];
-    var $empty = $a(empty);
     var $array = $a(array);
 
-    equals($empty.reverse().length, $empty.length, "Should have the same length");
-    equals($array.reverse().length, $array.length, "Should have the same length");
-    equals($array.reverse().get(0), $array.get(-1), "Should be the same");
+    equals($a().reverse().length, $a().length, "Try reversing an empty array");
+    equals($array.reverse().length, $array.length, "Make sure the length doesn't change");
+    equals($array.reverse().get(0), $array.get(-1), "Make sure it works right on a normal array");
 });
 
 test("Test shift.", function()
@@ -59,9 +59,9 @@ test("Test shift.", function()
     var array = ["a", "b", 3];
     var $array = $a(array);
 
-    equals($array.shift().get(0), "a", "Should equal the first element (3)");
-    equals($array.shift().length, 1, "Should be 1");
-    equals($a().shift().length, 0, "Should equal 0");
+    equals($array.shift().get(0), "a", "Try shifting a normal array");
+    equals($array.shift().length, 1, "Make sure length is right");
+    equals($a().shift().length, 0, "Try shifting an empty array");
 });
 
 test("Test sort.", function()
@@ -89,10 +89,20 @@ test("Test sort.", function()
 
 test("Test splice.", function()
 {
-
+    var $array = $a(1, 2, 3);
+    equals($array.splice(0, 1, 4, 5, 6).get().join(), "4,5,6,2,3", "Try splicing in some numbers");
+    equals($array.splice(0, 1, [4, 5, 6]).get().join(), "4,5,6,2,3", "Try splicing in some numbers using an array");
+    equals($array.splice(0, 1, $a(4, 5, 6)).get().join(), "4,5,6,2,3", "Try splicing in some numbers using an Arrayzing");
+    equals($array.splice(0, 4, 4, 5, 6).get().join(), "4,5,6", "Try splicing the whole array");
+    equals($array.splice(0, 0, 4, 5, 6).get().join(), "4,5,6,1,2,3", "Try using splice to unshift");
 });
 
 test("Test unshift.", function()
 {
+    // Test push.
+    var array = ["a", "b", 3];
 
+    equals($a().unshift(4).get(-1), 4, "Test unshifting a blank array");
+    equals($a(array).unshift(4).join(), "4,a,b,3", "Test unshifting a non-blank array");
+    equals($a().push("x").length, 1, "Make sure unshift sets the right length");
 });
