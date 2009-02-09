@@ -116,7 +116,6 @@ Arrayzing.fn = Arrayzing.prototype =
         return ret;
     },
 
-
     /**
      * A function to filter based on instanceof instead of ==.
      * @param fn function type to check for.
@@ -128,9 +127,10 @@ Arrayzing.fn = Arrayzing.prototype =
 
         this.each(function()
         {
-            if(this instanceof fn)
+            if (this instanceof fn)
+            {
                 ret.push(this);
-
+            }
         });
 
         return this.pushStack( ret );
@@ -138,23 +138,21 @@ Arrayzing.fn = Arrayzing.prototype =
 
     /**
      * An alias for only to return elements that are numbers.
+     * @return Arrayzing set
      */
-
-    numbers: function( )
+    numbers: function()
     {
         return this.only(Number);
     },
 
-
     /**
      * An alias for only to return elements that are strings.
+     * @return Arrayzing set
      */
-
-    strings: function( )
+    strings: function()
     {
         return this.only(String);
     },
-
 
     /**
      * Reduces the array to the value at the given index,
@@ -381,7 +379,7 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.filter( this.__capitalized );
     },
 	
-    inject: function( initial, closure )
+    reduce: function( initial, closure )
     {
         var total = initial;
 
@@ -393,14 +391,28 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.pushStack( [ total ] );
     },
 
+    rreduce: function()
+    {
+    },
+
     sum: function()
     {
-        return this.inject(0, Arrayzing.__add);
+        return this.reduce(0, Arrayzing.__add);
     },
 
     product: function()
     {
-        return this.inject(1, Arrayzing.__multiply);
+        return this.reduce(1, Arrayzing.__multiply);
+    },
+
+    index: function()
+    {
+
+    },    
+
+    every: function()
+    {
+
     },
 
     and: function()
@@ -419,7 +431,12 @@ Arrayzing.fn = Arrayzing.prototype =
             }
         });
 
-        return this.pushStack( [ bool ] );
+        return bool;
+    },
+
+    some: function()
+    {
+
     },
 
     or: function()
@@ -438,7 +455,34 @@ Arrayzing.fn = Arrayzing.prototype =
             }
         });
 
-        return this.pushStack( [ bool ] );
+        return bool;
+    },
+
+    flatten: function()
+    {
+
+    },
+
+    // Methods that modify the elements directly.
+
+    map: function()
+    {
+
+    },
+
+    enclose: function()
+    {
+
+    },
+
+    prechop: function( n )
+    {
+
+    },
+
+    chop: function( n )
+    {
+
     },
 
     toString: function()

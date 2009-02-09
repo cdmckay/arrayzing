@@ -2,7 +2,7 @@
 
 module("filter");
 
-test("Test filter", function()
+test("Test filter()", function()
 {
     var numArray = [1, 2, 3, 4, 5];
     var result;
@@ -35,13 +35,16 @@ test("Test filter", function()
 
     result = $a(mixedArray).filter(Number.NaN);
     ok(isNaN(result[0]), "Filter using NaN");
+});
 
+test("Test only()", function()
+{
     // Testing the only method, as well as numbers and strings aliases.
-    var fn = function(){return 2};
+    var fn  = function(){return 2};
     var fn2 = function(){return 3};
-    var testArray = [12, "hi", fn, object, null, undefined, "foo", 99, 5, "bar", true, false];
+    var testArray = [12, "hi", fn, new Object(), null, undefined, "foo", 99, 5, "bar", true, false];
 
-    result = $a(testArray).numbers();
+    var result = $a(testArray).numbers();
     equals(result.toString(), "12,99,5", "Filter out by Number")
 
     result = $a(testArray).strings();
@@ -51,10 +54,9 @@ test("Test filter", function()
     equals(result[0], fn, "Filter by Function");
 
     result = $a(testArray).only(Boolean);
-    equals(result.toString(), "true,false", "Filter by boolean");
+    equals(result.toString(), "true,false", "Filter by Boolean");
 
     result = $a(testArray).only(fn2);
     equals(result.toString(), "", "Filter by function that doesn't exist");
-
 });
 
