@@ -2,7 +2,7 @@
 
 module("filter");
 
-test("Test filter()", function()
+test("Test filter().", function()
 {
     var numArray = [1, 2, 3, 4, 5];
     var result;
@@ -37,7 +37,7 @@ test("Test filter()", function()
     ok(isNaN(result[0]), "Filter using NaN");
 });
 
-test("Test only()", function()
+test("Test only().", function()
 {
     // Testing the only method, as well as numbers and strings aliases.
     var fn  = function(){return 2};

@@ -17,13 +17,13 @@ var Arrayzing = window.Arrayzing = function()
     return new Arrayzing.prototype.init( arguments );
 };
 
-// Map over the $ in case of overwrite
+// Map over the $a in case of overwrite.
 if ( window.$a )
 {
     var _$a = window.$a;
 }
 
-// Map the Arrayzing namespace to the '$a' one.
+// Map the Arrayzing namespace to the $a one.
 window.$a = Arrayzing;
 
 Arrayzing.fn = Arrayzing.prototype =
@@ -188,14 +188,7 @@ Arrayzing.fn = Arrayzing.prototype =
     pop: function()
     {
         // Run Array's pop function.
-        var ret = Array.prototype.pop.apply(this, arguments);
-
-        // If the result is defined (i.e. there are no elements) then
-        // return an element array instead of that.
-        if (ret == undefined) ret = [];
-
-        // Return the new array.
-        return this.pushStack( ret );
+        return Array.prototype.pop.apply(this, arguments);
     },
 
     push: function()
@@ -215,14 +208,7 @@ Arrayzing.fn = Arrayzing.prototype =
     shift: function()
     {
         // Run Array's shift function.
-        var ret = Array.prototype.shift.apply(this, arguments);
-
-        // If the result is defined (i.e. there are no elements) then
-        // return an element array instead of that.
-        if (ret == undefined) ret = [];
-
-        // Return the new array.
-        return this.pushStack( ret );
+        return Array.prototype.shift.apply(this, arguments);
     },
 
     slice: function()

@@ -27,8 +27,8 @@ test("Test pop.", function()
 {    
     var array = [1, 2, "bloo"];
 
-    equals($a().pop().length, 0, "Try popping off an empty array");
-    equals($a(array).pop()[0], "bloo", "Try popping off a mixed array");
+    equals($a().pop(), undefined, "Try popping off an empty array");
+    equals($a(array).pop(), "bloo", "Try popping off a mixed array");
     
 });
 
@@ -65,9 +65,9 @@ test("Test shift.", function()
     var array = ["a", "b", 3];
     var $array = $a(array);
 
-    equals($array.shift().get(0), "a", "Try shifting a normal array");
+    equals($array.shift(), "a", "Try shifting a normal array");
     equals($array.shift().length, 1, "Make sure length is right");
-    equals($a().shift().length, 0, "Try shifting an empty array");
+    equals($a().shift(), undefined, "Try shifting an empty array");
 });
 
 test("Test sort.", function()
