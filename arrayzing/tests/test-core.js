@@ -33,3 +33,9 @@ test("Test length and size().", function()
    equals($a(array).size(), 3, "Should be 3");
    equals($a(array).length, $a(array).size(), "Should be equal");
 });
+
+test("Test remove function.", function()
+{
+   var $array = $a(1, 2, 3, 4, 5);
+   equals($array.removeAt(2).get(2), 4, "Try removing an element from the middle");
+});

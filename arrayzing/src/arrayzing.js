@@ -51,8 +51,13 @@ Arrayzing.fn = Arrayzing.prototype =
 	// The current version of Arrayzing being used.
 	version: "0.1.0",
 
+    /**
+     * The number of elements contained in the set.
+     */
+	length: 0,
+
 	/**
-     * The number of elements contained in the matched element set.
+     * The number of elements contained in the set.
      * @return Number
      */
 	size: function() 
@@ -79,11 +84,35 @@ Arrayzing.fn = Arrayzing.prototype =
         }
     },
 
-    /**
-     * The number of elements contained in the matched element set.
-     */
-	length: 0,    	
+    add: function()
+    {
+        // Just alias push.
+        return this.push.apply(this, arguments);
+    },
 
+    /**
+     * Removes the element at the given index, and shifts all the
+     * elements over by one to close the gap.
+     * @param index The index of the element to remove.
+     * @return Arrayzing
+     */
+    removeAt: function( index )
+    {
+        // Push the old array onto the stack.
+        var ret = this.pushStack( this );
+
+        // Get a slice from just after the index to the end.
+        var elems = ret.slice(index + 1, ret.length).get();
+
+        // Set the length to the index, so when we push, the elements
+        // will be pushed on top of the old ones.
+        ret.length = index;
+        Array.prototype.push.apply( ret, elems );
+
+        // Return the new array.
+        return ret;
+    },
+   
     concat: function()
     {
         return this.pushStack( Array.prototype.concat.apply(this, arguments) );

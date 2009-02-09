@@ -32,15 +32,21 @@ test("Test pop.", function()
     
 });
 
-test("Test push.", function()
+test("Test push & add.", function()
 {
-    // Test push.
-    var empty = [];
+    // Test push. 
     var array = ["a", "b", 3];
 
-    equals($a(empty).push(4).get(0), 4, "Try pushing into an empty array");
+    equals($a().push(4).get(0), 4, "Try pushing into an empty array");
     equals($a(array).push(4).join(), "a,b,3,4", "Try pushing into a mixed array");
-    var $array = $a(empty).push("x");
+    equals($a(array).push(4, 5).slice(3, 5).get().join(), "4,5", "Try pushing multiple values");
+    equals($a(array).push([4, 5]).get(3).join(), "4,5", "Try pushing an array on");
+    equals($a(array).push($a(4, 5)).get(3).pop().toString(), "5", "Try pushing an Arrayzing on");
+
+    equals($a().push("hi").add("ho").toString(), $a().add("hi").push("ho").toString(),
+            "See if add gives the same answer as push");
+
+    var $array = $a().push("x");
     equals($array.length, 1, "Make sure the length is right");
 });
 
