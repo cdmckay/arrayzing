@@ -39,16 +39,10 @@ Arrayzing.fn = Arrayzing.prototype =
             else if (arguments[0] instanceof Arrayzing)
             {                
                 return this.setArray( arguments[0].get() );
-            }
-            else
-            {
-                return this.setArray( arguments );
-            }
+            }            
 		}
-        else
-		{           
-            return this.setArray( arguments );
-		}
+        
+        return this.setArray( arguments );		
 	},    
 
 	// The current version of Arrayzing being used.
@@ -101,6 +95,12 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     remove: function( index )
     {
+        // If index is greater than the length, just return this object.
+        if (index < -this.length || index >= this.length) return this;
+
+        // If the index is negative, convert it to it's positive equivalent.
+        if (index < 0) index += this.length;
+
         // Push the old array onto the stack.
         var ret = this.pushStack( this );
 

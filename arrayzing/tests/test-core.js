@@ -29,13 +29,22 @@ test("Test get function.", function()
 test("Test length and size().", function()
 {
    var array = ["a", 2, /3/];
-   equals($a(array).length, 3, "Should be 3");
-   equals($a(array).size(), 3, "Should be 3");
-   equals($a(array).length, $a(array).size(), "Should be equal");
+   equals($a().length, 0, "Test length of empty 'zing");
+   equals($a(array).length, 3, "Test length of full 'zing");
+   equals($a(array).length, $a(array).size(), "Make sure length and size() are the same");
 });
 
-test("Test remove function.", function()
+test("Test remove() function.", function()
 {
    var $array = $a(1, 2, 3, 4, 5);
-   equals($array.removeAt(2).get(2), 4, "Try removing an element from the middle");
+   equals($array.remove(2).get(2), 4, "Try removing an element from the middle (positive)");
+   equals($array.remove(-3).get(2), 4, "Try removing an element from the middle (negative)");
+   equals($array.remove(1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (positive)");
+   equals($array.remove(-1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (negative)");
+   equals($a().remove(0).length, 0, "Try removing index 0 when there are no elements")
+});
+
+test("Test just() function.", function()
+{
+
 });
