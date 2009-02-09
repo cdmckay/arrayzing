@@ -2,8 +2,7 @@
  * Arrayzing 0.1.0 - jQuery-like Array manipulation
  *
  * Copyright (c) 2009 Cameron McKay (couchware.ca/blogs/cam)
- * Dual licensed under the MIT (MIT-LICENSE.txt)
- * and GPL (GPL-LICENSE.txt) licenses.
+ * Licensed under the MIT (MIT-LICENSE.txt) license.
  */
 
 // Map over Arrayzing in case of overwrite.
@@ -34,13 +33,17 @@ Arrayzing.fn = Arrayzing.prototype =
 		if (arguments.length == 1)
 		{
             if (arguments[0].constructor == Array)
+            {
     			return this.setArray( arguments[0] );
+            }
             else if (arguments[0] instanceof Arrayzing)
             {                
                 return this.setArray( arguments[0].get() );
             }
             else
+            {
                 return this.setArray( arguments );
+            }
 		}
         else
 		{           
