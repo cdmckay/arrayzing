@@ -116,6 +116,46 @@ Arrayzing.fn = Arrayzing.prototype =
         return ret;
     },
 
+
+    /**
+     * A function to filter based on instanceof instead of ==.
+     * @param fn function type to check for.
+     * @return an Arrayzing set.
+     */
+    only: function( fn )
+    {
+        var ret = [];
+
+        this.each(function()
+        {
+            if(this instanceof fn)
+                ret.push(this);
+
+        });
+
+        return this.pushStack( ret );
+    },
+
+    /**
+     * An alias for only to return elements that are numbers.
+     */
+
+    numbers: function( )
+    {
+        return this.only(Number);
+    },
+
+
+    /**
+     * An alias for only to return elements that are strings.
+     */
+
+    strings: function( )
+    {
+        return this.only(String);
+    },
+
+
     /**
      * Reduces the array to the value at the given index,
      * reducing the array to 1 element.

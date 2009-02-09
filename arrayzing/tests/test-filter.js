@@ -11,7 +11,7 @@ test("Test filter", function()
     equals(result.toString(), "1", "Try filtering using a simple RegExp");
 
     result = $a(numArray).filter("1");
-    equals(result.toString(), "1", "Try filtering usign a string");
+    equals(result.toString(), "1", "Try filtering using a string");
 
     result = $a(numArray).filter(1);
     equals(result.toString(), "1", "Try filtering using a number");
@@ -35,5 +35,26 @@ test("Test filter", function()
 
     result = $a(mixedArray).filter(Number.NaN);
     ok(isNaN(result[0]), "Filter using NaN");
+
+    // Testing the only method, as well as numbers and strings aliases.
+    var fn = function(){return 2};
+    var fn2 = function(){return 3};
+    var testArray = [12, "hi", fn, object, null, undefined, "foo", 99, 5, "bar", true, false];
+
+    result = $a(testArray).numbers();
+    equals(result.toString(), "12,99,5", "Filter out by Number")
+
+    result = $a(testArray).strings();
+    equals(result.toString(), "hi,foo,bar", "Filter out by String");
+
+    result = $a(testArray).only(Function)
+    equals(result[0], fn, "Filter by Function");
+
+    result = $a(testArray).only(Boolean);
+    equals(result.toString(), "true,false", "Filter by boolean");
+
+    result = $a(testArray).only(fn2);
+    equals(result.toString(), "", "Filter by function that doesn't exist");
+
 });
 
