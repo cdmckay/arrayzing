@@ -97,9 +97,9 @@ Arrayzing.fn = Arrayzing.prototype =
      * Removes the element at the given index, and shifts all the
      * elements over by one to close the gap.
      * @param index The index of the element to remove.
-     * @return Arrayzing
+     * @return Arrayzing set
      */
-    removeAt: function( index )
+    remove: function( index )
     {
         // Push the old array onto the stack.
         var ret = this.pushStack( this );
@@ -111,6 +111,27 @@ Arrayzing.fn = Arrayzing.prototype =
         // will be pushed on top of the old ones.
         ret.length = index;
         Array.prototype.push.apply( ret, elems );
+
+        // Return the new array.
+        return ret;
+    },
+
+    /**
+     * Reduces the array to the value at the given index,
+     * reducing the array to 1 element.
+     * @param index The index that will become sole element in the array.
+     * @return Arrayzing set
+     */
+    just: function( index )
+    {
+        // Push the current array onto the stack.
+        var ret = this.pushStack( this );
+
+        // Get the just element.
+        var element = ret[index];
+
+        // Splice it in.
+        ret.splice(0, ret.length, element);
 
         // Return the new array.
         return ret;
@@ -332,49 +353,14 @@ Arrayzing.fn = Arrayzing.prototype =
 		return this.pushStack( [ total ] );
 	},
 
-	// Internal sum function.
-	__sumfunc: function(total, item)
-	{
-		if ( item.constructor == Number )
-		{
-			total += item;
-		}
-		else
-		{
-			var val = parseFloat(item);
-			if ( !isNaN(val) )
-			{
-				total += val;
-			}
-		}
-
-		return total;
-	},
-
 	sum: function()
 	{
-		return this.inject(0, this.__sumfunc); 
+		return this.inject(0, Arrayzing.__add);
 	},
 
 	product: function()
 	{
-		return this.inject(1, function(total, item)
-		{
-			if ( item.constructor == Number )
-			{
-				total *= item;
-			}
-			else
-			{
-				var val = parseFloat(item);
-				if ( !isNaN(val) )
-				{
-					total *= val;
-				}
-			}
-
-			return total;
-		});
+		return this.inject(1, Arrayzing.__multiply);
 	},
 
 	and: function()
@@ -479,6 +465,43 @@ Arrayzing.prototype.init.prototype = Arrayzing.prototype;
 // (Adapted from jQuery).
 Arrayzing.extend(
 {
+    // Internal sum function.
+	__add: function(total, item)
+	{
+		if ( item.constructor == Number )
+		{
+			total += item;
+		}
+		else
+		{
+			var val = parseFloat(item);
+			if ( !isNaN(val) )
+			{
+				total += val;
+			}
+		}
+
+		return total;
+	},
+
+    __multiply: function(total, item)
+    {
+        if ( item.constructor == Number )
+        {
+            total *= item;
+        }
+        else
+        {
+            var val = parseFloat(item);
+            if ( !isNaN(val) )
+            {
+                total *= val;
+            }
+        }
+
+        return total;
+    },
+
 	// args is for internal usage only
 	each: function( object, callback, args ) {
 		if ( args ) {
