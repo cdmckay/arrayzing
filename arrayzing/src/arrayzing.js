@@ -62,6 +62,33 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.length;
     },
 
+    has: function( object )
+    {
+        var ret = false;
+        this.each(function()
+        {
+            if (this == object)
+            {
+                ret = true;
+                return false;
+            }
+
+            return true;
+        });
+
+        return ret;
+    },
+
+    hasKey: function( key )
+    {
+        if (key.constructor != Number)
+        {
+            throw TypeError();
+        }
+
+        return (typeof(this[key]) != "undefined");
+    },
+
     get: function( index )
     {
         // If there is no index, return the whole array.
@@ -123,6 +150,12 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     only: function( fn )
     {
+        // Check type.
+        if (typeof fn != "function")
+        {
+            throw new TypeError();
+        }
+
         var ret = [];
 
         this.each(function()
@@ -162,17 +195,15 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     just: function( index )
     {
-        // Push the current array onto the stack.
-        var ret = this.pushStack( this );
-
-        // Get the just element.
-        var element = ret[index];
-
-        // Splice it in.
-        ret.splice(0, ret.length, element);
-
-        // Return the new array.
-        return ret;
+        // Slice it out.
+        if (index == -1)
+        {
+            return this.slice(index);
+        }
+        else
+        {
+            return this.slice(index, index + 1);
+        }
     },
    
     concat: function()
@@ -451,10 +482,26 @@ Arrayzing.fn = Arrayzing.prototype =
 
     // Methods that modify the elements directly.
 
-    map: function()
+    map: function( fn /*, context */ )
     {
+        var len = this.length;
+        
+        if (typeof fn != "function")
+            throw new TypeError();
 
+        var ret = new Array(len);
+        var context = arguments[1];
+        for (var i = 0; i < len; i++)
+        {
+            if (this.hasKey(i))
+            {
+                ret[i] = fn.call(context, this[i], i, this);
+            }
+        }
+
+        return this.pushStack( ret );
     },
+
 
     enclose: function()
     {

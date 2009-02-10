@@ -37,6 +37,16 @@ test("Test filter().", function()
     ok(isNaN(result[0]), "Filter using NaN");
 });
 
+test("Test just() function.", function()
+{
+    var $zing = $a(1, 2, 3);
+
+    equals($zing.just(0), 1, "Try reducing to an element (positive)");
+    equals($zing.just(-1), 3, "Try reducing to an element (negative)");
+    equals($zing.just(0).length, 1, "Make sure length is right");
+    equals($zing.just(1000).length, 0, "Try reducing to an non-existant element");
+});
+
 test("Test only().", function()
 {
     // Testing the only method, as well as numbers and strings aliases.

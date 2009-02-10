@@ -16,6 +16,29 @@ test("Test Arrayzing constructor.", function()
     equals($array.length, $$array.length, "Should be the same size");
 });
 
+test("Test the has() function.", function()
+{
+    var object = new Object();
+    var $arr = $a(1, 2, 3, object, "string");
+
+    equals($arr.has(1), true, "See if it contains a number it should");
+    equals($arr.has("string"), true, "See if it contains a string it should");
+    equals($arr.has(object), true, "See if it contains an object it should")
+    equals($arr.has("anything"), false, "See if it contains something it shouldn't");
+    equals($a().has("anything"), false, "See if an empty array contains something it shouldn't");
+});
+
+test("Test the hasKey() function.", function()
+{
+    var object = new Object();
+    var $arr = $a(1, 2, 3, object, "string");
+
+    equals($arr.hasKey(1), true, "See if it has a key it should");
+    equals($arr.hasKey(200), false, "See if it has a key it shouldn't");
+    equals((function() { var x = false; try { $arr.hasKey("foo"); } catch (error) { return true; }}).call(),
+        true, "See if an exception is thrown for invalid input");
+});
+
 test("Test get function.", function()
 {
     var array = [1, 2, 3];
@@ -42,9 +65,4 @@ test("Test remove() function.", function()
    equals($array.remove(1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (positive)");
    equals($array.remove(-1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (negative)");
    equals($a().remove(0).length, 0, "Try removing index 0 when there are no elements")
-});
-
-test("Test just() function.", function()
-{
-
 });

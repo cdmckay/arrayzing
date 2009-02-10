@@ -2,7 +2,7 @@
 
 module("array");
 
-test("Test concat.", function()
+test("Test concat().", function()
 {
     var array1 = [1, 2, 3];
     var array2 = [4, 5, 6];
@@ -12,7 +12,7 @@ test("Test concat.", function()
     equals(result2.toString(), "1,2,3,4,5,6", "Try concat on an Arrayzing");
 });
 
-test("Test join.", function()
+test("Test join().", function()
 {
     var array = [1, 2, "bloo"];
     var result1 = $a(array).join();
@@ -23,7 +23,7 @@ test("Test join.", function()
     equals(result2[0].constructor == String, true, "Make sure it's a string");
 });
 
-test("Test pop.", function()
+test("Test pop().", function()
 {    
     var array = [1, 2, "bloo"];
 
@@ -32,7 +32,7 @@ test("Test pop.", function()
     
 });
 
-test("Test push & add.", function()
+test("Test push() & add().", function()
 {
     // Test push. 
     var array = ["a", "b", 3];
@@ -60,7 +60,7 @@ test("Test reverse.", function()
     equals($array.reverse().get(0), $array.get(-1), "Make sure it works right on a normal array");
 });
 
-test("Test shift.", function()
+test("Test shift().", function()
 {
     var array = ["a", "b", 3];
     var $array = $a(array);
@@ -70,7 +70,19 @@ test("Test shift.", function()
     equals($a().shift(), undefined, "Try shifting an empty array");
 });
 
-test("Test sort.", function()
+test("Test slice().", function()
+{
+    var $zing = $a(1, 2, 3);
+    var $ex1 = $zing.slice(0, 1);
+    equals($ex1[0], 1, "Try getting a slice (positive)");
+    equals($ex1.length, 1, "Make sure the length is right");
+
+    var $ex2 = $zing.slice(0, -1);
+    equals($ex2.toString(), "1,2", "Try getting a slice (negative)");
+    equals($ex2.length, 2, "Make sure the length is right");
+});
+
+test("Test sort().", function()
 {
     var $num = $a(3, 20, 1);
     var $alpha = $a("abc", "abb", "aba");
@@ -93,7 +105,7 @@ test("Test sort.", function()
             "2,3,512,x,aa", "Sort with custom function on a mixed array");
 });
 
-test("Test splice.", function()
+test("Test splice().", function()
 {
     var $array = $a(1, 2, 3);
     equals($array.splice(0, 1, 4, 5, 6).get().join(), "4,5,6,2,3", "Try splicing in some numbers");
@@ -103,12 +115,25 @@ test("Test splice.", function()
     equals($array.splice(0, 0, 4, 5, 6).get().join(), "4,5,6,1,2,3", "Try using splice to unshift");
 });
 
-test("Test unshift.", function()
-{
-    // Test push.
+test("Test unshift().", function()
+{   
     var array = ["a", "b", 3];
 
     equals($a().unshift(4).get(-1), 4, "Test unshifting a blank array");
     equals($a(array).unshift(4).join(), "4,a,b,3", "Test unshifting a non-blank array");
     equals($a().push("x").length, 1, "Make sure unshift sets the right length");
+});
+
+test("Test map().", function()
+{
+    var $num = $a(1, 4, 9);
+    var $str = $a("cantelope", "octopus", "october", "lopsided");
+
+    var letter1 = function(word) { return word[0]; }
+
+    equals($num.map( Math.sqrt ).toString(), "1,2,3", "Test with sqrt function");
+    equals($str.map( letter1 ).join("").toString(), "cool", "Test with string function");
+    equals($a().map( letter1 ).length, 0, "Test on an empty zinger");
+    equals((function() { var x = false; try { $num.map("foo"); } catch (error) { return true; }}).call(),
+        true, "See if an exception is thrown for invalid input");
 });
