@@ -13,6 +13,7 @@ $exp.int({ allowNaN: false })		// [1, 2, 3, 3]
 $exp.int({ strict: true })		// [1, 2, 3]
 
 // Filters
+
 .gt()	// filter only strings with a length gt
 .gteq()
 .lt()
@@ -23,18 +24,18 @@ $exp.int({ strict: true })		// [1, 2, 3]
 
 .uppercased() // keep only elements that are uppercased
 .lowercased() // keep only elements that are lowercased
-.noEmpties() // remove all empty strings or arrays or NaNs
-.tagged() // has <html>-style tags
 
 .filter(pattern)
-
 .filter(string)
 .filter(object) // object must implement toString()
 
-.not(pattern) // complement of filter
+.tagged() // has <html>-style tags
 
+.not(pattern) // complement of filter
 .not(string)
 .not(object)
+
+.tighten() // remove all empty strings or arrays or NaNs
 
 .andSelf()
 .end()
@@ -44,59 +45,69 @@ $exp.int({ strict: true })		// [1, 2, 3]
 .add(object)
 .remove(object)
 .swap(index1, index2)
+.flatten	// removes all sub-arrays/zings and adds them to the main zing
+
+.addAll
+.removeAll
+.retainAll
 
 // General
-.min
+.min // still needs behaviour for a mixed array
 .max
+.enclose(left [, right])	== .prepend(left).append(right)
+.prepend(str)	// prefix all strings/arrays/numbers
+.append(str)  // suffix all strings/arrays/numbers
+.prechop
+.chop
 
 // String
-.add(pattern)	// applies the pattern to all strings in the set
-		// and adds their matches to the array
-.remove(pattern)// applies the pattern to all strings in the set
-		// and removes any strings that are the same as the matches
-.enclose(left [, right])	== .prepend(left).append(right)
-.flatten	// concatenations them all
-.prepend(str)	// prefix all strings
-.append(str)  // suffix all strings
+
 .upper
 .lower
-.reverse
-.reverseCase
-.reverseWords
-.cap
-.capWords
-.stripTags
-.stripSpaces
+.capitalize
+
 .replace
-.dasherize
-.underscore
+
 .split
-.join(index1, index2)
 
 // Numeric
 .sum()
-.sum(2)
+.sum(2) // maybe, probably in a future version
 .sum(2n+1)
+.product
 
 // Boolean
-.or()
-.and()
+.or()  // applies boolize and returns the result of all elements or'd
+.and() // applies boolize and returns the result of all elements and'd
+.or(boolean) // or each element with the argument
+.and(boolean) // and each element with the argument
+.negate() // negate each element
 
 // Inspection & Output
 .length		// number of items in the array
-.wordCount()	// number of words in the concatenation of the array
-.wordCount(index) // number of words in a given array string
-.bool
-.bool(index)
-.int
-.int(index)
-.str()
-.str(index)
-.as(type)
-.as(type, index)
+.boolize
+.boolize(index)
+.intize
+.intize(index)
+.strize()
+.strize(index)
+
+.as(typefn) // attempts to convert all elements to the passed type by running typefn(element)
+.as(typefn, index)
 
 .get()
 .get(index)
 
 .toArray
 .toString
+
+// String plugin
+.wordCount()	// number of words in the concatenation of the array
+.wordCount(index) // number of words in a given array string
+.dasherize
+.underscore
+.capWords
+.reverseWords
+.reverseCase
+.stripSpaces
+.stripTags

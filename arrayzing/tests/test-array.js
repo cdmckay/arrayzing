@@ -17,10 +17,8 @@ test("Test join().", function()
     var array = [1, 2, "bloo"];
     var result1 = $a(array).join();
     var result2 = $a(array).join(";");
-    equals(result1.toString(), "1,2,bloo", "Try joining with default argument");
-    equals(result2.toString(), "1;2;bloo", "Try joining with semi-colon argument");
-    equals(result2.length, 1, "Make sure only one element remains");
-    equals(result2[0].constructor == String, true, "Make sure it's a string");
+    equals(result1, "1,2,bloo", "Try joining with default argument");
+    equals(result2, "1;2;bloo", "Try joining with semi-colon argument");   
 });
 
 test("Test pop().", function()
@@ -32,7 +30,7 @@ test("Test pop().", function()
     
 });
 
-test("Test push() & add().", function()
+test("Test push() and add().", function()
 {
     // Test push. 
     var array = ["a", "b", 3];

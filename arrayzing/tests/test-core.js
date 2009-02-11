@@ -7,6 +7,7 @@ test("Test Arrayzing constructor.", function()
     var array = [1, 2, 3];
     equals($a(1, 2, 3).toString(), array.join(), "The arrays should be equal");
     equals($a(array).toString(), array.join(), "The arrays should be equal");
+    equals($a(array, "str").length, 2, "Test array as first argument and then something else");
     equals($a(1).toString(), "1", "Should be 1");
     equals($a(array, 4, 5)[0], array, "Should be the sub-array");
     equals($a().length, 0, "Should equal 0")

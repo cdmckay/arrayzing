@@ -1,3 +1,4 @@
+(function(){
 /*
  * Arrayzing 0.1.0 - jQuery-like Array manipulation
  *
@@ -213,7 +214,7 @@ Arrayzing.fn = Arrayzing.prototype =
 
     join: function()
     {
-        return this.pushStack( [Array.prototype.join.apply(this, arguments)] );
+        return Array.prototype.join.apply(this, arguments);
     },
 
     pop: function()
@@ -342,15 +343,54 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.pushStack( ret );
     },
 
-    // Internal gt function.
-    __gt: function( num, size )
+    moreThan: function( num )
     {
-        return size > num;
+        return this.compare( num,
+            function( num, size )
+            {
+                return size > num;
+            }
+        );
     },
 
-    gt: function( num )
+    moreThanEq: function( num )
     {
-        return this.compare( num, this.__gt );
+        return this.compare( num,
+            function( num, size )
+            {
+                return size >= num;
+            }
+        );
+    },
+
+    lessThan: function( num )
+    {
+        return this.compare( num,
+            function( num, size )
+            {
+                return size < num;
+            }
+        );
+    },
+
+    lessThanEq: function( num )
+    {
+        return this.compare( num,
+            function( num, size )
+            {
+                return size <= num;
+            }
+        );
+    },
+
+    eq: function( num )
+    {
+        return this.compare( num,
+            function( num, size )
+            {
+                return size == num;
+            }
+        );
     },
 
     filter: function( pattern )
@@ -361,7 +401,7 @@ Arrayzing.fn = Arrayzing.prototype =
         {
             if ( (pattern != null && pattern.constructor == RegExp && pattern.test(this))
                 || (pattern == this) )
-                {
+            {
                 ret.push( this );
             }
         });
@@ -510,7 +550,10 @@ Arrayzing.fn = Arrayzing.prototype =
 
     prechop: function( n )
     {
+        this.map(function()
+        {
 
+        });
     },
 
     chop: function( n )
@@ -667,3 +710,5 @@ Arrayzing.extend(
         }
     }
 });
+
+})();
