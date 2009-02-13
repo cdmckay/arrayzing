@@ -314,6 +314,11 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.prevObject || Arrayzing( [] );
     },
 
+    andSelf: function()
+    {
+
+    },
+
     // Execute a callback for every element in the matched set.
     // (You can seed the arguments with an array of args, but this is
     // only used internally.)
@@ -484,6 +489,16 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.reduce(1, Arrayzing.__multiply);
     },
 
+    min: function()
+    {
+
+    },
+
+    max: function()
+    {
+
+    },
+
     index: function()
     {
 
@@ -537,6 +552,11 @@ Arrayzing.fn = Arrayzing.prototype =
         return bool;
     },
 
+    negate: function()
+    {
+
+    },
+
     flatten: function()
     {
 
@@ -565,7 +585,7 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
 
-    enclose: function()
+    enclose: function( left, right )
     {
 
     },
@@ -581,6 +601,51 @@ Arrayzing.fn = Arrayzing.prototype =
     chop: function( n )
     {
 
+    },
+
+    upper: function()
+    {
+
+    },
+
+    lower: function()
+    {
+
+    },
+
+    capitalize: function()
+    {
+
+    },
+
+    replace: function()
+    {
+
+    },
+
+    boolize: function( index )
+    {
+
+    },
+
+    intize: function( index )
+    {
+
+    },
+
+    strize: function( index )
+    {
+
+    },
+
+    as: function( type )
+    {
+        
+    },
+
+    str: function()
+    {
+        return this.toString.apply(this, arguments);
     },
 
     toString: function()
