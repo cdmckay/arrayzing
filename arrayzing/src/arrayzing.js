@@ -490,11 +490,14 @@ Arrayzing.fn = Arrayzing.prototype =
             total = closure(total, this);
         });
 
-        return this.pushStack( [ total ] );
+        return total;
     },
 
     rreduce: function()
     {
+        // Reverse and reduce.
+        var reversed = this.reverse();
+        return this.reduce.apply(reversed, arguments);
     },
 
     sum: function()

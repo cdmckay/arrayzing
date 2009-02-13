@@ -138,6 +138,18 @@ test("Test map().", function()
         true, "See if an exception is thrown for invalid input");
 });
 
+test("Test reduce() family of functions.", function()
+{
+    var $num = $a(1, 2, 3);
+    var $str = $a("a", "b", "c");
+    var fn = function(total, element) { return total + element };
+
+    equals($num.reduce(0, fn), 6, "Try some normal operation stuff");
+    equals($num.rreduce(0, fn), 6, "Try some normal operation stuff (rreduce)");
+    equals($str.reduce("", fn), "abc", "Try some normal operation stuff");
+    equals($str.rreduce("", fn), "cba", "Try some normal operation stuff (rreduce)");
+});
+
 test("Test clear().", function()
 {
    var $arr = $a("x", "y", "z");
