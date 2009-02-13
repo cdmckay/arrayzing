@@ -321,17 +321,23 @@ Arrayzing.fn = Arrayzing.prototype =
         var ret = [];
 
         this.each(function()
-        {
-            if ( this.constructor == Number && closure( num, this ) )
+        {            
+            if ( this.constructor == Number)
             {
-                ret.push( this );
+                if (closure( num, this ))
+                {
+                    ret.push( this );
+                }
             }
-            else if ( this.length != undefined && closure( num, this.length ) )
+            else if ( typeof this.length != "undefined" )
             {
-                ret.push( this );
+                if (closure( num, this.length ))
+                {
+                    ret.push( this );
+                }
             }
             else
-            {
+            {                
                 var val = parseFloat(this);
                 if ( !isNaN(val) && closure( num, val ) )
                 {
@@ -383,7 +389,7 @@ Arrayzing.fn = Arrayzing.prototype =
         );
     },
 
-    eq: function( num )
+    lengthOf: function( num )
     {
         return this.compare( num,
             function( num, size )

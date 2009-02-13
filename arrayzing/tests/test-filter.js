@@ -41,20 +41,26 @@ test("Test compare(), moreThan(), lessThan(), etc. functions.", function()
 {
     var $num = $a(214, 12, 12311, 0);
     var $str = $a("a", "b", "ccc", "cookie", "");
-    var $arr = $a([1, 2, 3], [3], []);
+    var $arr = $a([1, 2, 3], [3], [], [4]);
     var $mixed = $num.concat($str).concat($arr);
 
-    equals($num.eq(12)[0], 12, "Test equals on a number zing");
+    equals($num.lengthOf(12)[0], 12, "Test lengthOf on a number zing");
     equals($num.moreThan(12).join(), "214,12311", "Test moreThan on a number zing");
     equals($num.moreThanEq(12).join(), "214,12,12311", "Test moreThanEq on a number zing");
     equals($num.lessThan(14).join(), "12,0", "Test lessThan on a number zing");
     equals($num.lessThanEq(12).join(), "12,0", "Test lessThanEq on a number zing");
 
-    equals($str.eq(3)[0], "ccc", "Test equals on a string zing");
+    equals($str.lengthOf(3)[0], "ccc", "Test lengthOf on a string zing");
     equals($str.moreThan(1).join(), "ccc,cookie", "Test moreThan on a string zing");
     equals($str.moreThanEq(1).join(), "a,b,ccc,cookie", "Test moreThanEq on a string zing");
     equals($str.lessThan(3).join(), "a,b,", "Test lessThan on a string zing");
     equals($str.lessThanEq(3).join(), "a,b,ccc,", "Test lessThanEq on a string zing");
+
+    equals($arr.lengthOf(3)[0].join(), "1,2,3", "Test lengthOf on an array zing");
+    equals($arr.moreThan(1)[0].join(), "1,2,3", "Test moreThan on an array zing");
+    equals($arr.moreThanEq(1).length, 3, "Test moreThanEq on an array zing");
+    equals($arr.lessThan(3).length, 3, "Test lessThan on an array zing");
+    equals($arr.lessThanEq(3).length, 4, "Test lessThanEq on an array zing");
 });
 
 test("Test just() function.", function()
