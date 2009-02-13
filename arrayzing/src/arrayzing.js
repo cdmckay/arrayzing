@@ -773,29 +773,8 @@ Arrayzing.extend(
         }
 
         return object;
-    },
-
-    /**
-	 * Attempts to convert an object to a string.
-	 * @param object The object we are converting.
-	 */
-    stringize: function( object )
-    {
-        // Check if it's already a string, if it is return.
-        if ( object.constructor == String ) return object;
-
-        if ( typeof object == "object" && !!object.toString != false )
-        {
-            // If it's an object and has a toString method, call that.
-            return object.toString();
-        }
-        else
-        {
-            // Otherwise, try to make a new string out of it
-            // using the string construtor.
-            return new String(object);
-        }
     }
+    
 });
 
 })();
