@@ -145,26 +145,39 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * A function to filter based on instanceof instead of ==.
+     * A function to filter out all objects of a certain type or types.
      * @param fn function type to check for.
      * @return an Arrayzing set.
      */
-    only: function( fn )
+    only: function()
     {
-        // Check type.
-        if (typeof fn != "function")
-        {
-            throw new TypeError();
-        }
+        // Keep a reference to the types.
+        var types = arguments;
 
+        // Check type.
+        Arrayzing.each(types, function(i, fn)
+        {
+            if (typeof fn != "function")
+                throw new TypeError();            
+        });  
+        
         var ret = [];
 
         this.each(function()
         {
-            if (this instanceof fn)
+            var test = false;
+            
+            for (var i = 0; i < types.length; i++)
             {
-                ret.push(this);
+                var fn = types[i];                
+                if (this instanceof fn) 
+                {
+                    test = true;
+                    break;
+                }
             }
+
+            if (test == true) ret.push(this);
         });
 
         return this.pushStack( ret );
@@ -276,6 +289,11 @@ Arrayzing.fn = Arrayzing.prototype =
         return ret;
     },
 
+    clear: function()
+    {
+        return this.pushStack( [] );
+    },
+
     /**
      * Take an array of elements and push it onto the stack returning the
      * new matched element set.
@@ -316,7 +334,7 @@ Arrayzing.fn = Arrayzing.prototype =
 
     andSelf: function()
     {
-
+        return this.concat( this.prevObject );
     },
 
     // Execute a callback for every element in the matched set.

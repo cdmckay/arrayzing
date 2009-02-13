@@ -84,21 +84,40 @@ test("Test only().", function()
     // Testing the only method, as well as numbers and strings aliases.
     var fn  = function(){return 2};
     var fn2 = function(){return 3};
-    var testArray = [12, "hi", fn, new Object(), null, undefined, "foo", 99, 5, "bar", true, false];
+    var arr = [12, "hi", fn, new Object(), null, undefined, "foo", 99, 5, "bar", true, false];
 
-    var result = $a(testArray).numbers();
+    var result = $a(arr).numbers();
     equals(result.toString(), "12,99,5", "Filter out by Number")
 
-    result = $a(testArray).strings();
+    result = $a(arr).strings();
     equals(result.toString(), "hi,foo,bar", "Filter out by String");
 
-    result = $a(testArray).only(Function)
+    result = $a(arr).only(Function)
     equals(result[0], fn, "Filter by Function");
 
-    result = $a(testArray).only(Boolean);
+    result = $a(arr).only(Boolean);
     equals(result.toString(), "true,false", "Filter by Boolean");
 
-    result = $a(testArray).only(fn2);
+    result = $a(arr).only(String, Number)
+    equals(result.str(), "12,hi,foo,99,5,bar", "Filter by String or Number");
+
+    result = $a(arr).only(fn2);
     equals(result.toString(), "", "Filter by function that doesn't exist");
 });
 
+test("Test end().", function()
+{
+    var $arr = $a(1, 2, 3);
+
+    equals($arr.add(4, 5, 6).end(), $arr, "Test basic end behaviour");
+    equals($arr.add(4).add(5).end().length, 4, "Test a little bit more complicated stuff");
+    equals($arr.end().end().end().length, 0, "Test calling end repeatedly, even if there are no previous sets");
+
+    // Test with many different functions.
+    equals($arr.clear().end(), $arr, "Make sure clear works with end");
+});
+
+test("Test andSelf().", function()
+{
+    var $arr = $a("str", function() { return 42; }, false, 4);    
+});

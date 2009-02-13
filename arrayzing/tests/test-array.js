@@ -137,3 +137,11 @@ test("Test map().", function()
     equals((function() { var x = false; try { $num.map("foo"); } catch (error) { return true; }}).call(),
         true, "See if an exception is thrown for invalid input");
 });
+
+test("Test clear().", function()
+{
+   var $arr = $a("x", "y", "z");
+
+   equals($arr.clear().length, 0, "Test normal operation");
+   equals($a().clear().length, 0, "Test on empty zing");   
+});
