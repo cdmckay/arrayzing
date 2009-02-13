@@ -8,8 +8,10 @@ test("Test concat().", function()
     var array2 = [4, 5, 6];
     var result1 = $a(array1).concat(array2); // Try concatting a normal array.
     var result2 = $a(array1).concat($a(array2)); // ...and an Arrayzing.
-    equals(result1.toString(), "1,2,3,4,5,6", "Try concat on an array");
+    equals(result1.toString(), "1,2,3,4,5,6", "Try concat on an array");    
+    equals(result1.length, 6, "Verify length of concat on an array");
     equals(result2.toString(), "1,2,3,4,5,6", "Try concat on an Arrayzing");
+    equals(result2.length, 6, "Try concat on an Arrayzing");
 });
 
 test("Test join().", function()

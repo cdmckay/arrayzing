@@ -44,7 +44,7 @@ test("Test compare(), moreThan(), lessThan(), etc. functions.", function()
     var $arr = $a([1, 2, 3], [3], [], [4]);
     var $mixed = $num.concat($str).concat($arr);
 
-    equals($num.lengthOf(12)[0], 12, "Test lengthOf on a number zing");
+    equals($num.equals(12)[0], 12, "Test equals on a number zing");
     equals($num.moreThan(12).join(), "214,12311", "Test moreThan on a number zing");
     equals($num.moreThanEq(12).join(), "214,12,12311", "Test moreThanEq on a number zing");
     equals($num.lessThan(14).join(), "12,0", "Test lessThan on a number zing");
@@ -61,6 +61,12 @@ test("Test compare(), moreThan(), lessThan(), etc. functions.", function()
     equals($arr.moreThanEq(1).length, 3, "Test moreThanEq on an array zing");
     equals($arr.lessThan(3).length, 3, "Test lessThan on an array zing");
     equals($arr.lessThanEq(3).length, 4, "Test lessThanEq on an array zing");
+
+    equals($mixed.lengthOf(3).length, 2, "Test lengthOf on a mixed zing");
+    equals($mixed.moreThan(1).length, 6, "Test moreThan on a mixed zing");
+    equals($mixed.moreThanEq(1).length, 10, "Test moreThanEq on a mixed zing");
+    equals($mixed.lessThan(3).length, 7, "Test lessThan on a mixed zing");
+    equals($mixed.lessThanEq(3).length, 9, "Test lessThanEq on a mixed zing");
 });
 
 test("Test just() function.", function()

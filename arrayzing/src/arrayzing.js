@@ -209,7 +209,14 @@ Arrayzing.fn = Arrayzing.prototype =
    
     concat: function()
     {
-        return this.pushStack( Array.prototype.concat.apply(this, arguments) );
+        var filtered = [];
+        Arrayzing.each(arguments, function()
+        {
+           var val = this instanceof Arrayzing ? this.get() : this ;
+           filtered.push(val);
+        });
+
+        return this.pushStack( Array.prototype.concat.apply(this.get(), filtered) );
     },
 
     join: function()
@@ -321,11 +328,14 @@ Arrayzing.fn = Arrayzing.prototype =
         var ret = [];
 
         this.each(function()
-        {            
-            if ( this.constructor == Number)
+        {
+            //alert(this);
+            if ( this.constructor == Number )
             {
+                //alert("is number");
                 if (closure( num, this ))
                 {
+                    //alert("pushed");
                     ret.push( this );
                 }
             }
@@ -389,7 +399,7 @@ Arrayzing.fn = Arrayzing.prototype =
         );
     },
 
-    lengthOf: function( num )
+    equals: function( num )
     {
         return this.compare( num,
             function( num, size )
@@ -397,6 +407,12 @@ Arrayzing.fn = Arrayzing.prototype =
                 return size == num;
             }
         );
+    },
+
+    lengthOf: function()
+    {
+        // Just alias equals.
+        return this.equals.apply(this, arguments);
     },
 
     filter: function( pattern )
