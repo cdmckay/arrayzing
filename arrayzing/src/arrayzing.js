@@ -111,6 +111,22 @@ Arrayzing.fn = Arrayzing.prototype =
         }
     },
 
+    set: function( index, value )
+    {
+        if ( index == undefined )
+            throw new Error("Set requires an index");      
+
+        if ( value == undefined )
+            throw new Error("Set requires an value");
+        
+        if ( index < 0 ) index += this.length;        
+
+        var ret = this.pushStack( this );
+        ret[index] = value;
+        if (index >= ret.length) ret.length = index + 1;
+        return ret;
+    },
+
     add: function()
     {
         // Just alias push.
@@ -660,7 +676,7 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
-    boolize: function()
+    boolize: function( index )
     {
         var boolize = function( value )
         {
@@ -678,7 +694,13 @@ Arrayzing.fn = Arrayzing.prototype =
             }
         };
 
-        this.map(boolize);
+        if (index == undefined)
+            this.map(boolize);
+        else
+        {
+            this.set(index, boolize(this.get(index)));
+        }
+
     },
 
     intize: function( index )

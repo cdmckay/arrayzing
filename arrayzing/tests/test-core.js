@@ -47,14 +47,20 @@ test("Test the hasKey() function.", function()
         true, "See if an exception is thrown for invalid input");
 });
 
-test("Test get function.", function()
-{
-    var array = [1, 2, 3];
+test("Test get() and set() functions.", function()
+{    
     var $array = $a(1, 2, 3);
     equals($array.get(0), 1, "Should be 1");
     equals($array.get("0"), 1, "Should be 1");
     equals($array.get(-1), 3, "Should be 3");
     equals($array.get()[0], $array.toArray()[0] , "Should be equal");
+    equals($array.get(-1000), undefined, "See if an non-existant negative index is undefined");
+
+    equals($array.set(0, 0).str(), "0,2,3", "Try set using a positive index")
+    equals($array.set(-1, 4).get(-1), 4, "Try set using a negative index");
+    equals($array.set(5, 4).str(), "1,2,3,,,4", "Try set an non-existent positive index");
+    equals($array.set(-1000, 42).str(), "1,2,3", "See if a non-existant negative index does nothing");
+    equals($array.set("0", "bar").str(), "bar,2,3", "Try using a string as an index");
 });
 
 test("Test length and size().", function()
