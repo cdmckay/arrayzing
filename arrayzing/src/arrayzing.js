@@ -30,17 +30,19 @@ window.$a = Arrayzing;
 Arrayzing.fn = Arrayzing.prototype =
 {
     init: function( arguments )
-    {
+    {        
         if (arguments.length == 1)
         {
-            if (arguments[0].constructor == Array)
+            var val = arguments[0];
+            if (val.constructor == Array)
             {
-                return this.setArray( arguments[0] );
+                return this.setArray( val );
             }
-            else if (arguments[0] instanceof Arrayzing)
-            {                
-                return this.setArray( arguments[0].get() );
-            }            
+            // This allows
+            else if (val.constructor != String && val.length != undefined)
+            {               
+                return this.setArray( Array.prototype.slice.apply(val, [0, val.length ] ) );
+            }                   
         }
         
         return this.setArray( arguments );		
@@ -454,31 +456,19 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.pushStack( ret );
     },
 
-    /** Pattern that matches a string that is entirely uppercase. */
-    __uppercased: /^[A-Z\s]*$/,
-
     uppercased: function()
     {
-        return this.filter( this.__uppercased );
+        return this.filter( /^[A-Z\s]*$/ );
     },
-
-    /** Pattern that matches a string that is entirely lowercase. */
-    __lowercased: /^[a-z\s]*$/,
 
     lowercased: function()
     {
-        return this.filter( this.__lowercased );
+        return this.filter( /^[a-z\s]*$/ );
     },
-
-    /**
-     * Pattern that matches a string that has it's first level uppercase,
-     * and the rest lower case.
-     */
-    __capitalized: /^[A-Z][a-z\s]*$/,
 
     capitalized: function()
     {
-        return this.filter( this.__capitalized );
+        return this.filter( /^[A-Z][a-z\s]*$/ );
     },
 	
     reduce: function( initial, closure )
@@ -502,12 +492,38 @@ Arrayzing.fn = Arrayzing.prototype =
 
     sum: function()
     {
-        return this.reduce(0, Arrayzing.__add);
+        return this.reduce(0, function(total, item)
+        {
+            if ( item.constructor == Number )
+            {
+                total += item;
+            }
+            else
+            {
+                var val = parseFloat(item);
+                if ( !isNaN(val) ) total += val;
+            }
+
+            return total;
+        });
     },
 
     product: function()
     {
-        return this.reduce(1, Arrayzing.__multiply);
+        return this.reduce(1, function(total, item)
+        {
+            if ( item.constructor == Number )
+            {
+                total *= item;
+            }
+            else
+            {
+                var val = parseFloat(item);
+                if ( !isNaN(val) ) total *= val;
+            }
+
+            return total;
+        });
     },
 
     min: function()
@@ -644,9 +660,25 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
-    boolize: function( index )
+    boolize: function()
     {
+        var boolize = function( value )
+        {
+            if (value != undefined && value.constructor == Boolean)
+            {
+                return value;
+            }
+            else if (typeof value.toBoolean == 'function')
+            {
+                return value.toBoolean();
+            }
+            else
+            {
+                return !!value;
+            }
+        };
 
+        this.map(boolize);
     },
 
     intize: function( index )
@@ -733,42 +765,6 @@ Arrayzing.prototype.init.prototype = Arrayzing.prototype;
 // (Adapted from jQuery).
 Arrayzing.extend(
 {
-    // Internal sum function.
-    __add: function(total, item)
-    {
-        if ( item.constructor == Number )
-        {
-            total += item;
-        }
-        else
-        {
-            var val = parseFloat(item);
-            if ( !isNaN(val) )
-            {
-                total += val;
-            }
-        }
-
-        return total;
-    },
-
-    __multiply: function(total, item)
-    {
-        if ( item.constructor == Number )
-        {
-            total *= item;
-        }
-        else
-        {
-            var val = parseFloat(item);
-            if ( !isNaN(val) )
-            {
-                total *= val;
-            }
-        }
-
-        return total;
-    },
 
     // args is for internal usage only
     each: function( object, callback, args ) {

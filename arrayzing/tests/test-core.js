@@ -12,6 +12,13 @@ test("Test Arrayzing constructor.", function()
     equals($a(array, 4, 5)[0], array, "Should be the sub-array");
     equals($a().length, 0, "Should equal 0")
 
+    // Test using an Arguments object as a single argument.
+    var arguments = (function() { return arguments; })("x", "y", 1, 2);
+    equals($a(arguments).length, 4, "Test length that results from using Arguments as the argument");
+
+    // Make sure the constructor does not mistake a string for an array-like object.
+    equals($a("string").length, 1, "Make sure constructor does not mistake String for array-like object")
+
     var $array = $a(array);
     var $$array = $a($array);
     equals($array.length, $$array.length, "Should be the same size");
