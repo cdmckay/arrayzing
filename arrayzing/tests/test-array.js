@@ -27,8 +27,13 @@ test("Test pop().", function()
 {    
     var array = [1, 2, "bloo"];
 
+    var a = $a(array);
+
     equals($a().pop(), undefined, "Try popping off an empty array");
-    equals($a(array).pop(), "bloo", "Try popping off a mixed array");
+    equals(a.pop(), "bloo", "Try pop() on a mixed array");
+    equals(a.str(), $a(array).str(), "Make sure the original array was untouched");
+    equals(a.pop$(), "bloo", "Try pop$() on a mixed array");
+    equals(a.str(), "1,2", "Make sure it changed it in place");
     
 });
 
@@ -42,6 +47,10 @@ test("Test push() and add().", function()
     equals($a(array).push(4, 5).slice(3, 5).get().join(), "4,5", "Try pushing multiple values");
     equals($a(array).push([4, 5]).get(3).join(), "4,5", "Try pushing an array on");
     equals($a(array).push($a(4, 5)).get(3).pop().toString(), "5", "Try pushing an Arrayzing on");
+
+    var a = $a(array);
+    a.push$(4);
+    equals(a.str(), "a,b,3,4", "Make sure push$ works in-place");
 
     equals($a().push("hi").add("ho").toString(), $a().add("hi").push("ho").toString(),
             "See if add gives the same answer as push");

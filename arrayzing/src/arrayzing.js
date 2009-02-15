@@ -112,25 +112,37 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     set: function( index, value )
+    {        
+        var ret = this.pushStack( this );
+        this.set$.apply(ret, [ index, value ]);
+        return ret;
+    },
+
+    set$: function ( index, value )
     {
         if ( index == undefined )
-            throw new Error("Set requires an index");      
+            throw new Error("Set requires an index");
 
         if ( value == undefined )
             throw new Error("Set requires an value");
-        
-        if ( index < 0 ) index += this.length;        
 
-        var ret = this.pushStack( this );
-        ret[index] = value;
-        if (index >= ret.length) ret.length = index + 1;
-        return ret;
+        if ( index < 0 ) index += this.length;
+
+        this[index] = value;
+        if (index >= this.length) this.length = index + 1;
+        return this;
     },
 
     add: function()
     {
         // Just alias push.
         return this.push.apply(this, arguments);
+    },
+
+    add$: function()
+    {
+        // Just alias push$.
+        return this.push$.apply(this, arguments);
     },
 
     /**
@@ -237,6 +249,11 @@ Arrayzing.fn = Arrayzing.prototype =
             return this.slice(index, index + 1);
         }
     },
+
+    just$: function( index )
+    {
+
+    },
    
     concat: function()
     {
@@ -255,17 +272,28 @@ Arrayzing.fn = Arrayzing.prototype =
         return Array.prototype.join.apply(this, arguments);
     },
 
-    pop: function()
+    pop$: function()
     {
         // Run Array's pop function.
         return Array.prototype.pop.apply(this, arguments);
     },
 
+    pop: function()
+    {
+        return this.get(-1);
+    },
+
     push: function()
     {     
         var ret = this.pushStack( this );     
-        Array.prototype.push.apply( ret, arguments );
+        this.push$.apply( ret, arguments );
         return ret;
+    },
+
+    push$: function()
+    {
+        Array.prototype.push.apply( this, arguments );
+        return this;
     },
 
     reverse: function()
@@ -721,6 +749,11 @@ Arrayzing.fn = Arrayzing.prototype =
     str: function()
     {
         return this.toString.apply(this, arguments);
+    },
+
+    array: function()
+    {
+        return this.toArray.apply(this, arguments);
     },
 
     toString: function()

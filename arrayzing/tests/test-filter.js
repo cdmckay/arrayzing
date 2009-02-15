@@ -107,11 +107,24 @@ test("Test only().", function()
 
 test("Test end().", function()
 {
-    var $arr = $a(1, 2, 3);
+    var arr = [1, 2, 3];
+    var $arr = $a(arr);
 
     equals($arr.add(4, 5, 6).end(), $arr, "Test basic end behaviour");
     equals($arr.add(4).add(5).end().length, 4, "Test a little bit more complicated stuff");
     equals($arr.end().end().end().length, 0, "Test calling end repeatedly, even if there are no previous sets");
+
+    // Test with array functions.
+
+    // set()
+    $arr = $a(arr);
+    equals($arr.set(0, 5).end(), $arr, "set: Make sure end works with non-mutator");
+    equals($arr.set$(0, 5).end().str(), "", "set$: Make sure end works with mutator");
+
+    // push()/add()
+    $arr = $a(arr);
+    equals($arr.push(4).end(), $arr, "push: Make sure end works with non-mutator");
+    equals($arr.push$(4).end().str(), "", "push$: Make sure end works with mutator");
 
     // Test with many different functions.
     equals($arr.clear().end(), $arr, "Make sure clear works with end");
