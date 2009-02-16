@@ -42,9 +42,7 @@ test("Test the hasKey() function.", function()
     var $arr = $a(1, 2, 3, object, "string");
 
     equals($arr.hasKey(1), true, "See if it has a key it should");
-    equals($arr.hasKey(200), false, "See if it has a key it shouldn't");
-    equals((function() { var x = false; try { $arr.hasKey("foo"); } catch (error) { return true; }}).call(),
-        true, "See if an exception is thrown for invalid input");
+    equals($arr.hasKey(200), false, "See if it has a key it shouldn't");   
 });
 
 test("Test get() and set() functions.", function()

@@ -83,12 +83,7 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     hasKey: function( key )
-    {
-        if (key.constructor != Number)
-        {
-            throw TypeError();
-        }
-
+    {        
         return (typeof(this[key]) != "undefined");
     },
 
@@ -112,10 +107,8 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     set: function( index, value )
-    {        
-        var ret = this.pushStack( this );
-        this.set$.apply(ret, [ index, value ]);
-        return ret;
+    {                
+        return this.set$.apply(this.clone(), arguments);
     },
 
     set$: function ( index, value )
@@ -130,6 +123,7 @@ Arrayzing.fn = Arrayzing.prototype =
 
         this[index] = value;
         if (index >= this.length) this.length = index + 1;
+        
         return this;
     },
 
@@ -175,39 +169,33 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * A function to filter out all objects of a certain type or types.
-     * @param fn function type to check for.
-     * @return an Arrayzing set.
+     * Return a new copy of this 'zing.
+     * @return A new 'zing with all elements.
+     * @type Arrayzing
      */
-    only: function()
+    clone: function()
     {
-        // Keep a reference to the types.
-        var types = arguments;
+        return this.pushStack( this );
+    },
 
-        // Check type.
-        Arrayzing.each(types, function(i, fn)
-        {
-            if (typeof fn != "function")
-                throw new TypeError();            
-        });  
-        
+    /**
+     * A function to filter out all objects of a certain type.
+     * @param fn Function type to look for.
+     * @return A 'zing with only that type.
+     * @type Arrayzing
+     */
+    only: function( fn )
+    {
+        // Check type.       
+        if (typeof fn != "function")
+            throw new TypeError();
+               
         var ret = [];
 
         this.each(function()
-        {
-            var test = false;
-            
-            for (var i = 0; i < types.length; i++)
-            {
-                var fn = types[i];                
-                if (this instanceof fn) 
-                {
-                    test = true;
-                    break;
-                }
-            }
-
-            if (test == true) ret.push(this);
+        {                 
+            if (this instanceof fn)
+                ret.push(this);
         });
 
         return this.pushStack( ret );
@@ -270,6 +258,11 @@ Arrayzing.fn = Arrayzing.prototype =
     join: function()
     {
         return Array.prototype.join.apply(this, arguments);
+    },  
+
+    pop: function()
+    {
+        return this.get(-1);
     },
 
     pop$: function()
@@ -278,29 +271,46 @@ Arrayzing.fn = Arrayzing.prototype =
         return Array.prototype.pop.apply(this, arguments);
     },
 
-    pop: function()
-    {
-        return this.get(-1);
-    },
-
-    push: function()
+    /**
+     * Adds one or more elements to the end of the 'zing and returns
+     * the new array.
+     * @param {Object} element An object to push onto the array.
+     * @return {Arrayzing} A new 'zing with that passed elements pushed on.
+     */
+    push: function( element )
     {     
-        var ret = this.pushStack( this );     
-        this.push$.apply( ret, arguments );
-        return ret;
+        return this.push$.apply( this.clone(), arguments );
     },
 
-    push$: function()
+    /**
+     * Adds one or more elements to the end of the 'zing and returns
+     * the modified array.
+     * @param {Object} element An object to push onto the array.
+     * @return {Arrayzing} The 'zing with the elements pushed on.
+     */
+    push$: function( element )
     {
         Array.prototype.push.apply( this, arguments );
         return this;
     },
 
+    /**
+     * Reverses the order of the elements in the 'zing.
+     * @return {Arrayzing} Returns a new 'zing with reversed elements.
+     */
     reverse: function()
+    {        
+        return this.reverse$.apply( this.clone(), arguments );
+    },
+
+    /**
+     * Reverses the order of the elements in the 'zing.
+     * @return {Arrayzing} Returns the modified 'zing with reversed elements.
+     */
+    reverse$: function()
     {
-        var ret = this.pushStack( this );
-        Array.prototype.reverse.apply( ret, arguments );
-        return ret;
+        Array.prototype.reverse.apply( this, arguments );
+        return this;
     },
 
     shift: function()
@@ -341,15 +351,16 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Take an array of elements and push it onto the stack returning the
-     * new matched element set.
-     * @param elems
-     * @return Arrayzing
+     * Push the current 'zing onto the stack returning the passed elements
+     * as a new 'zing.  The new 'zing will have a reference to the old one.
+     * @param elements The elements.
+     * @return The new 'zing.
+     * @type Arrayzing
      */	
-    pushStack: function( elems )
+    pushStack: function( elements )
     {
         // Build a new jQuery matched element set
-        var ret = Arrayzing( elems );
+        var ret = Arrayzing( elements );
 
         // Add the old object onto the stack (as a reference)
         ret.prevObject = this;
@@ -362,18 +373,18 @@ Arrayzing.fn = Arrayzing.prototype =
     // the specified array of elements (destroying the stack in the process)
     // You should use pushStack() in order to do this, but maintain the stack.
     // (Adapted from jQuery).
-    setArray: function( elems )
+    setArray: function( elements )
     {
         // Resetting the length to 0, then using the native Array push
         // is a super-fast way to populate an object with array-like properties
         this.length = 0;
 
-        Array.prototype.push.apply( this, elems );
+        Array.prototype.push.apply( this, elements );
 		
         return this;
     },
 
-    end: function()
+    undo: function()
     {
         return this.prevObject || Arrayzing( [] );
     },
@@ -517,12 +528,14 @@ Arrayzing.fn = Arrayzing.prototype =
 	
     reduce: function( initial, closure )
     {
+        // The starting "total".
         var total = initial;
 
-        this.each(function()
+        for (var i = 0; i < this.length; i++)
         {
-            total = closure(total, this);
-        });
+            if (this.hasKey(i))
+                total = closure(total, this[i]);
+        }
 
         return total;
     },
@@ -643,26 +656,30 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
-    // Methods that modify the elements directly.
+    // Methods that modify the elements.
 
     map: function( fn /*, context */ )
     {
-        var len = this.length;
-        
+        var ret = this.pushStack( this );
+        this.map$.apply(ret, arguments);
+        return ret;
+    },
+
+    map$: function( fn /*, context */ )
+    {       
         if (typeof fn != "function")
             throw new TypeError();
-
-        var ret = new Array(len);
+        
         var context = arguments[1];
-        for (var i = 0; i < len; i++)
+        for (var i = 0; i < this.length; i++)
         {
             if (this.hasKey(i))
             {
-                ret[i] = fn.call(context, this[i], i, this);
+                this[i] = fn.call(context, this[i], i, this);
             }
         }
 
-        return this.pushStack( ret );
+        return this;
     },
 
     /**
@@ -692,11 +709,8 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Chop off one or more digits/characters/elements from the left side of all
-     * elements in the zing.  The default number of characters chopped is 1.
-     * @param {Number} [n] The number of characters to prechop.
-     * @return The modified 'zing.
-     * @type Arrayzing
+     * Mutator version of prechop.
+     * @see #prechop
      */
     prechop$: function( n )
     {
@@ -706,7 +720,23 @@ Arrayzing.fn = Arrayzing.prototype =
         });
     },
 
+    /**
+     * Chop off one or more digits/characters/elements from the right side of all
+     * elements in the 'zing.  The default number of characters chopped is 1.
+     * @param {Number} [n] The number of characters to chop.
+     * @return A new 'zing.
+     * @type Arrayzing
+     */
     chop: function( n )
+    {
+
+    },
+
+    /**
+     * Mutator version of chop.
+     * @see #prechop
+     */
+    chop$: function( n )
     {
 
     },
@@ -716,7 +746,17 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
+    upper$: function()
+    {
+
+    },
+
     lower: function()
+    {
+
+    },
+
+    lower$: function()
     {
 
     },
@@ -726,63 +766,148 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
+    capitalize$: function()
+    {
+
+    },
+
     replace: function()
     {
 
     },
 
+    replace$: function()
+    {
+
+    },
+
+    /**
+     * Convert one or all elements to Boolean objects.  If the element has a
+     * toBoolean function, it will be called.
+     * @param {Number} [index] The index to convert.
+     * @return A boolized 'zing.
+     * @type Arrayzing
+     */
     boolize: function( index )
     {
-        var boolize = function( value )
-        {
-            if (value != undefined && value.constructor == Boolean)
+        return this.boolize$.apply(this.clone(), arguments);
+    },
+
+    /**
+     * Mutator version of boolize.
+     * @see #boolize
+     */
+    boolize$: function( index )
+    {
+        var fn = function( val )
+        {            
+            if (val == undefined && val == null)
             {
-                return value;
+                return false;
             }
-            else if (typeof value.toBoolean == 'function')
+            else if (val.constructor == Boolean)
             {
-                return value.toBoolean();
+                return val;
+            }
+            else if (typeof val.toBoolean == 'function')
+            {
+                return val.toBoolean();
             }
             else
             {
-                return !!value;
+                return !!val;
             }
         };
 
+        // If no index is specified, run boolize$ on all indicies.
         if (index == undefined)
-            this.map(boolize);
+        {            
+            this.map$(fn);
+        }
+        // If an index is specified, run it on that one.
         else
         {
-            this.set(index, boolize(this.get(index)));
+            this.set$(index, fn(this.get(index)));
         }
 
+        return this;
     },
 
-    intize: function( index )
+    /**
+     * Convert one or all elements to Number objects.  If the element has a
+     * toNumber function, it will be called.
+     * @param {Number} [index] The index to convert.
+     * @return A numberized 'zing.
+     * @type Arrayzing
+     */
+    numberize: function( index )
     {
 
     },
 
+    /**
+     * Mutator version of numberize.
+     * @see #boolize
+     */
+    numberize$: function ( index )
+    {
+
+    },
+
+    /**
+     * Convert one or all elements to String objects.  If the element has a
+     * toString function, it will be called.
+     * @param {Number} [index] The index to convert.
+     * @return A strized 'zing.
+     * @type Arrayzing
+     */
     strize: function( index )
     {
 
     },
 
+    /**
+     * Mutator version of strize.
+     * @see #boolize
+     */
+    strize$: function( index )
+    {
+
+    },
+
+    /**
+     * Alias of toString.
+     * @see #toString
+     */
     str: function()
     {
         return this.toString.apply(this, arguments);
-    },
+    },   
 
-    array: function()
-    {
-        return this.toArray.apply(this, arguments);
-    },
-
+    /**
+     * Convert the 'zing to a human-readable String.
+     * @return The 'zing as String (it rhymes!)
+     * @type String
+     */
     toString: function()
     {
         return Array.prototype.join.apply( this, [ "," ] );
     },
 
+    /**
+     * Alias of toArray.
+     * @see #toArray
+     */
+    array: function()
+    {
+        return this.toArray.apply(this, arguments);
+    },
+
+    /**
+     * Convert the 'zing to an Array.
+     * @return The 'zing as an Array (does not rhyme).
+     * @type Array
+     */
     toArray: function()
     {
         return Array.prototype.slice.apply( this, [ 0, this.length ] );

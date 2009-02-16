@@ -98,36 +98,38 @@ test("Test only().", function()
     result = $a(arr).only(Boolean);
     equals(result.toString(), "true,false", "Filter by Boolean");
 
-    result = $a(arr).only(String, Number)
-    equals(result.str(), "12,hi,foo,99,5,bar", "Filter by String or Number");
-
     result = $a(arr).only(fn2);
     equals(result.toString(), "", "Filter by function that doesn't exist");
 });
 
-test("Test end().", function()
+test("Test undo().", function()
 {
     var arr = [1, 2, 3];
     var $arr = $a(arr);
 
-    equals($arr.add(4, 5, 6).end(), $arr, "Test basic end behaviour");
-    equals($arr.add(4).add(5).end().length, 4, "Test a little bit more complicated stuff");
-    equals($arr.end().end().end().length, 0, "Test calling end repeatedly, even if there are no previous sets");
+    equals($arr.add(4, 5, 6).undo(), $arr, "Test basic undo behaviour");
+    equals($arr.add(4).add(5).undo().length, 4, "Test a little bit more complicated stuff");
+    equals($arr.undo().undo().undo().length, 0, "Test calling end repeatedly, even if there are no previous sets");
 
     // Test with array functions.
 
     // set()
     $arr = $a(arr);
-    equals($arr.set(0, 5).end(), $arr, "set: Make sure end works with non-mutator");
-    equals($arr.set$(0, 5).end().str(), "", "set$: Make sure end works with mutator");
+    equals($arr.set(0, 5).undo(), $arr, "set: Make sure undo works with non-mutator");
+    equals($arr.set$(0, 5).undo().str(), "", "set$: Make sure undo works with mutator");
 
     // push()/add()
     $arr = $a(arr);
-    equals($arr.push(4).end(), $arr, "push: Make sure end works with non-mutator");
-    equals($arr.push$(4).end().str(), "", "push$: Make sure end works with mutator");
+    equals($arr.push(4).undo(), $arr, "push: Make sure undo works with non-mutator");
+    equals($arr.push$(4).undo().str(), "", "push$: Make sure undo works with mutator");
+
+    // reverse()
+    $arr = $a(arr);
+    equals($arr.reverse().undo(), $arr, "reverse: Make sure undo works with non-mutator");
+    equals($arr.reverse$().undo().length, 0, "reverse$: Make sure undo works with mutator");
 
     // Test with many different functions.
-    equals($arr.clear().end(), $arr, "Make sure clear works with end");
+    equals($arr.clear().undo(), $arr, "Make sure clear works with undo");
 });
 
 test("Test andSelf().", function()
