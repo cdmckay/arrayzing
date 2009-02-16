@@ -665,13 +665,40 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.pushStack( ret );
     },
 
-
+    /**
+     * Encloses all elements in the 'zing with left and optionally right
+     * objects.
+     */
     enclose: function( left, right )
     {
 
     },
 
+    enclose$: function( left, right )
+    {
+
+    },
+
+    /**
+     * Chop off one or more digits/characters/elements from the left side of all
+     * elements in the zing.  The default number of characters chopped is 1.
+     * @param {Number} [n] The number of characters to prechop.
+     * @return A new 'zing.
+     * @type Arrayzing
+     */
     prechop: function( n )
+    {
+        
+    },
+
+    /**
+     * Chop off one or more digits/characters/elements from the left side of all
+     * elements in the zing.  The default number of characters chopped is 1.
+     * @param {Number} [n] The number of characters to prechop.
+     * @return The modified 'zing.
+     * @type Arrayzing
+     */
+    prechop$: function( n )
     {
         this.map(function()
         {
@@ -739,11 +766,6 @@ Arrayzing.fn = Arrayzing.prototype =
     strize: function( index )
     {
 
-    },
-
-    as: function( type )
-    {
-        
     },
 
     str: function()
