@@ -511,12 +511,12 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.pushStack( ret );
     },
 
-    uppercased: function()
+    uppered: function()
     {
         return this.filter( /^[A-Z\s]*$/ );
     },
 
-    lowercased: function()
+    lowered: function()
     {
         return this.filter( /^[a-z\s]*$/ );
     },
@@ -605,21 +605,10 @@ Arrayzing.fn = Arrayzing.prototype =
 
     and: function()
     {
-        var bool = true;
-		
-        this.each(function()
+        return this.boolize$().reduce(function(total, item)
         {
-            if ( this.constructor == Boolean )
-            {
-                bool = bool && this;
-            }
-            else
-            {
-                bool = bool && new Boolean(this);
-            }
-        });
-
-        return bool;
+            return total && item;
+        });        
     },
 
     some: function()
@@ -629,21 +618,10 @@ Arrayzing.fn = Arrayzing.prototype =
 
     or: function()
     {
-        var bool = false;
-		
-        this.each(function()
+        return this.boolize$().reduce(function(total, item)
         {
-            if ( this.constructor == Boolean )
-            {
-                bool = bool || this;
-            }
-            else
-            {
-                bool = bool || new Boolean(this);
-            }
+            return total || item;
         });
-
-        return bool;
     },
 
     negate: function()
@@ -651,30 +629,58 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
+    /**
+     * Merges all top-level array-like objects (i.e. objects that have a
+     * length property) into a single array.
+     *
+     * For example, $a([1, 2], [3, 4]).flatten() = $a(1, 2, 3, 4);
+     *
+     * @return A flattened 'zing.
+     * @type Arrayzing
+     */
     flatten: function()
+    {
+
+    },
+
+    /**
+     * Mutator version of flatten.
+     * @see #flatten
+     */
+    flatten$: function()
     {
 
     },
 
     // Methods that modify the elements.
 
+    /**
+     * Creates a new array with the results of calling a provided function on
+     * every element in this array.
+     * @param fn The function to call on each element.
+     * @param [context] The object that the function is called on.
+     * @return A mapped 'zing.
+     * @type Arrayzing
+     */
     map: function( fn /*, context */ )
-    {
-        var ret = this.pushStack( this );
-        this.map$.apply(ret, arguments);
-        return ret;
+    {        
+        return this.map$.apply(this.clone(), arguments);
     },
 
+    /**
+     * Mutator version of map.
+     * @see #map
+     */
     map$: function( fn /*, context */ )
     {       
         if (typeof fn != "function")
             throw new TypeError();
         
-        var context = arguments[1];
+        var context = arguments[1];                
         for (var i = 0; i < this.length; i++)
-        {
+        {            
             if (this.hasKey(i))
-            {
+            {                
                 this[i] = fn.call(context, this[i], i, this);
             }
         }
@@ -692,6 +698,26 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     enclose$: function( left, right )
+    {
+
+    },
+
+    prepend: function( left )
+    {
+
+    },
+
+    prepend$: function( left )
+    {
+
+    },
+
+    append: function( right )
+    {
+
+    },
+
+    append$: function( right )
     {
 
     },
@@ -835,23 +861,54 @@ Arrayzing.fn = Arrayzing.prototype =
 
     /**
      * Convert one or all elements to Number objects.  If the element has a
-     * toNumber function, it will be called.
+     * toNumber function, it will be called.  If the element is true or false,
+     * it will be converted to 1 or 0 (instead of NaN).
      * @param {Number} [index] The index to convert.
      * @return A numberized 'zing.
      * @type Arrayzing
      */
     numberize: function( index )
     {
-
+        return this.numberize$.apply(this.clone(), arguments);
     },
 
     /**
      * Mutator version of numberize.
-     * @see #boolize
+     * @see #numberize
      */
     numberize$: function ( index )
     {
+        var fn = function( val )
+        {
+            if (val != undefined && val != null)
+            {
+                if (val.constructor == Number)
+                {
+                    return val;
+                }                
+                else if (typeof val.toNumber == 'function')
+                {
+                    return val.toNumber();
+                }
+            }
 
+            var n = Number(val);           
+            if (!isNaN(n)) return n;
+            else return parseFloat(val);
+        };
+
+        // If no index is specified, run boolize$ on all indicies.
+        if (index == undefined)
+        {
+            this.map$(fn);
+        }
+        // If an index is specified, run it on that one.
+        else
+        {
+            this.set$(index, fn(this.get(index)));
+        }
+
+        return this;
     },
 
     /**
