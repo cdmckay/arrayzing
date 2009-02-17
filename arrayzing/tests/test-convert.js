@@ -44,8 +44,10 @@ test("Test numberize().", function()
     }
 
     var array = [1, "str", 0, null, "false", "$2", true];
+    var overload = [object1, object2];
     var a = $a(array).numberize(-1);    
     var b = $a(array).numberize();
     equals(a.get(-1), 1, "See if it converts a single element to number correctly");
     equals(b.join(), "1,NaN,0,0,NaN,NaN,1", "See if it converts all elements to numbers correctly");
+    equals($a(overload).numberize().join(), "1,2", "See if the toNumber is detected and used properly");
 });
