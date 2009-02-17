@@ -726,6 +726,9 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
+    /**
+     * Prepend a
+     */
     prepend: function( left )
     {
 
@@ -832,46 +835,30 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Convert one or all elements to Boolean objects.  If the element has a
-     * toBoolean function, it will be called.
+     * Convert one or all elements using a conversion function.
+     * @param {Function} fn The conversion function.
      * @param {Number} [index] The index to convert.
-     * @return A boolized 'zing.
+     * @return The converted 'zing.
      * @type Arrayzing
      */
-    boolize: function( index )
+    convert: function( fn, index )
     {
-        return this.boolize$.apply(this.clone(), arguments);
+        return this.convert$.apply(this.clone(), arguments);
     },
 
     /**
-     * Mutator version of boolize.
-     * @see #boolize
+     * Mutator version of convert.
+     * @see #convert
      */
-    boolize$: function( index )
+    convert$: function( fn, index )
     {
-        var fn = function( val )
-        {            
-            if (val == undefined && val == null)
-            {
-                return false;
-            }
-            else if (val.constructor == Boolean)
-            {
-                return val;
-            }
-            else if (typeof val.toBoolean == 'function')
-            {
-                return val.toBoolean();
-            }
-            else
-            {
-                return !!val;
-            }
-        };
+        // Make sure the fn is a function.
+        if (typeof fn != "function")
+            throw TypeError();
 
         // If no index is specified, run boolize$ on all indicies.
         if (index == undefined)
-        {            
+        {
             this.map$(fn);
         }
         // If an index is specified, run it on that one.
@@ -881,6 +868,27 @@ Arrayzing.fn = Arrayzing.prototype =
         }
 
         return this;
+    },
+
+    /**
+     * Convert one or all elements to Boolean objects.  If the element has a
+     * toBoolean function, it will be called.
+     * @param {Number} [index] The index to convert.
+     * @return A boolized 'zing.
+     * @type Arrayzing
+     */
+    boolize: function( index )
+    {
+        return this.convert(Arrayzing.boolize, index);
+    },
+
+    /**
+     * Mutator version of boolize.
+     * @see #boolize
+     */
+    boolize$: function( index )
+    {
+        return this.convert$(Arrayzing.boolize, index);
     },
 
     /**
@@ -893,7 +901,7 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     numberize: function( index )
     {
-        return this.numberize$.apply(this.clone(), arguments);
+        return this.convert(Arrayzing.numberize, index);
     },
 
     /**
@@ -902,37 +910,7 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     numberize$: function ( index )
     {
-        var fn = function( val )
-        {
-            if (val != undefined && val != null)
-            {
-                if (val.constructor == Number)
-                {
-                    return val;
-                }                
-                else if (typeof val.toNumber == 'function')
-                {
-                    return val.toNumber();
-                }
-            }
-
-            var n = Number(val);           
-            if (!isNaN(n)) return n;
-            else return parseFloat(val);
-        };
-
-        // If no index is specified, run boolize$ on all indicies.
-        if (index == undefined)
-        {
-            this.map$(fn);
-        }
-        // If an index is specified, run it on that one.
-        else
-        {
-            this.set$(index, fn(this.get(index)));
-        }
-
-        return this;
+        return this.convert$(Arrayzing.numberize, index);
     },
 
     /**
@@ -944,7 +922,7 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     strize: function( index )
     {
-        return this.strize$.apply(this.clone(), arguments);
+        return this.convert(Arrayzing.strize, index);
     },
 
     /**
@@ -953,23 +931,7 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     strize$: function( index )
     {
-        var fn = function( val )
-        {            
-            return "" + val;
-        };
-
-        // If no index is specified, run boolize$ on all indicies.
-        if (index == undefined)
-        {
-            this.map$(fn);
-        }
-        // If an index is specified, run it on that one.
-        else
-        {
-            this.set$(index, fn(this.get(index)));
-        }
-
-        return this;
+        return this.convert$(Arrayzing.strize, index);
     },
 
     /**
@@ -1064,6 +1026,71 @@ Arrayzing.prototype.init.prototype = Arrayzing.prototype;
 // (Adapted from jQuery).
 Arrayzing.extend(
 {
+
+    /**
+     * Convert an object to a Boolean object.  If the object has a
+     * toBoolean function, it will be called.
+     * @param {Object} object The object to convert.
+     * @return The converted object.
+     * @type Boolean
+     */
+    boolize: function( object )
+    {
+        if (object == undefined && object == null)
+        {
+            return false;
+        }
+        else if (object.constructor == Boolean)
+        {
+            return object;
+        }
+        else if (typeof object.toBoolean == 'function')
+        {
+            return object.toBoolean();
+        }
+        else
+        {
+            return !!object;
+        }
+    },
+
+    /**
+     * Convert an object to a Number object.  If the object has a
+     * toNumber function, it will be called.
+     * @param {Object} [object] The object to convert.
+     * @return The converted object.
+     * @type Number
+     */
+    numberize: function( object )
+    {
+        if (object != undefined && object != null)
+        {
+            if (object.constructor == Number)
+            {
+                return object;
+            }
+            else if (typeof object.toNumber == 'function')
+            {
+                return object.toNumber();
+            }
+        }
+
+        var n = Number(object);
+        if (!isNaN(n)) return n;
+        else return parseFloat(object);
+    },
+
+    /**
+     * Convert an object to a String object.  If the object has a
+     * toString function, it will be called.
+     * @param {Object} [object] The object to convert.
+     * @return The converted object.
+     * @type String
+     */
+    strize: function( object )
+    {
+        return "" + object;
+    },
 
     // args is for internal usage only
     each: function( object, callback, args ) {
