@@ -29,42 +29,52 @@ window.$a = Arrayzing;
 
 Arrayzing.fn = Arrayzing.prototype =
 {
+    /**
+     * Initialize a new 'zing.
+     */
     init: function( arguments )
     {        
         if (arguments.length == 1)
         {
             var val = arguments[0];
-            if (val.constructor == Array)
-            {
-                return this.setArray( val );
-            }
-            // This allows
-            else if (val.constructor != String && val.length != undefined)
+            
+            // This allows any array-like object to be used as a constructor
+            // for Arrayzing.
+            if (val.constructor != String && val.length != undefined)
             {               
-                return this.setArray( Array.prototype.slice.apply(val, [0, val.length ] ) );
+                return this.setArray( Array.prototype.slice.call(val, 0, val.length) );
             }                   
         }
         
         return this.setArray( arguments );		
     },
 
-    // The current version of Arrayzing being used.
+    /**
+     * The current version of Arrayzing being used.
+     */
     version: "0.1.0",
 
     /**
-     * The number of elements contained in the set.
+     * The number of elements contained in the 'zing.
      */
     length: 0,
 
     /**
      * The number of elements contained in the set.
-     * @return Number
+     * @return The size of the 'zing.
+     * @type Number
      */
     size: function()
     {
         return this.length;
     },
 
+    /**
+     * Determine whether or not a given object is in the 'zing.
+     * @param {Object} object The object we're looking for.
+     * @return True if the object is in the 'zing.
+     * @type {Boolean}
+     */
     has: function( object )
     {
         var ret = false;
@@ -82,11 +92,25 @@ Arrayzing.fn = Arrayzing.prototype =
         return ret;
     },
 
-    hasKey: function( key )
+    /**
+     * Determine whether or not a given key in the 'zing has a value.
+     * @param {Number} index The object we're looking for.
+     * @return True if the key exists is in the 'zing, false otherwise.
+     * @type {Boolean}
+     */
+    hasKey: function( index )
     {        
-        return (typeof(this[key]) != "undefined");
+        return (typeof(this[index]) != "undefined");
     },
 
+    /**
+     * Get the object held at the given index.  You may index from the
+     * left (positive numbers) or right (negative numbers).  For example,
+     * get(0) would be the first element and get(-1) would be the last element.
+     * @param {Number} index The index we're getting.
+     * @return The object held at that index, or undefined for an empty entry.
+     * @type {Object}
+     */
     get: function( index )
     {
         // If there is no index, return the whole array.
