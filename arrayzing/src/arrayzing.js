@@ -727,24 +727,67 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Prepend a
+     * Prepend each element with an object.  Prepend will act slightly
+     * differently depending on the the passed objects type and the target
+     * element.
+     *
+     * For a String object on a String element, the object will be prepended
+     * to the element.
+     *
+     * For any object on a array-like element (i.e. an element that has a length
+     * attribute and is not a String), the object will be added to the left side
+     * of the array-like element.
+     *
+     * For any object on an unknown element object, the element will simply
+     * be skipped.
+     * 
+     * @param {Object} object The object to prepend.
+     * @return The 'zing with each element.
+     * @type Arrayzing    
      */
-    prepend: function( left )
+    prepend: function( object )
     {
 
     },
 
-    prepend$: function( left )
+    /**
+     * Mutator version of prepend.
+     * @see #prepend
+     */
+    prepend$: function( object )
+    {
+        
+    },
+
+    /**
+     * Append each element with an object.  Append will act slightly
+     * differently depending on the the passed objects type and the target
+     * element.
+     *
+     * For a String object on a String element, the object will be appended
+     * to the element.
+     *
+     * For any object on a array-like element (i.e. an element that has a length
+     * attribute and is not a String), the object will be added to the right side
+     * of the array-like element.
+     *
+     * For any object on an unknown element object, the element will simply
+     * be skipped.
+     *
+     * @param {Object} object The object to append.
+     * @return The 'zing with each element.
+     * @type Arrayzing
+     */
+    append: function( object )
     {
 
     },
 
-    append: function( right )
-    {
-
-    },
-
-    append$: function( right )
+    /**
+     * Mutator version of append.
+     * @see #append
+     */
+    append$: function( object )
     {
 
     },
