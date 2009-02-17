@@ -920,7 +920,7 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     strize: function( index )
     {
-
+        return this.strize$.apply(this.clone(), arguments);
     },
 
     /**
@@ -929,7 +929,23 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     strize$: function( index )
     {
+        var fn = function( val )
+        {            
+            return "" + val;
+        };
 
+        // If no index is specified, run boolize$ on all indicies.
+        if (index == undefined)
+        {
+            this.map$(fn);
+        }
+        // If an index is specified, run it on that one.
+        else
+        {
+            this.set$(index, fn(this.get(index)));
+        }
+
+        return this;
     },
 
     /**
