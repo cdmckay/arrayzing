@@ -37,36 +37,36 @@ test("Test filter().", function()
     ok(isNaN(result[0]), "Filter using NaN");
 });
 
-test("Test compare(), moreThan(), lessThan(), etc. functions.", function()
+test("Test compare(), gt(), lt(), etc. functions.", function()
 {
     var $num = $a(214, 12, 12311, 0);
     var $str = $a("a", "b", "ccc", "cookie", "");
     var $arr = $a([1, 2, 3], [3], [], [4]);
     var $mixed = $num.concat($str).concat($arr);
 
-    equals($num.equals(12)[0], 12, "Test equals on a number zing");
-    equals($num.moreThan(12).join(), "214,12311", "Test moreThan on a number zing");
-    equals($num.moreThanEq(12).join(), "214,12,12311", "Test moreThanEq on a number zing");
-    equals($num.lessThan(14).join(), "12,0", "Test lessThan on a number zing");
-    equals($num.lessThanEq(12).join(), "12,0", "Test lessThanEq on a number zing");
+    equals($num.eq(12)[0], 12, "Test equals on a number zing");
+    equals($num.gt(12).join(), "214,12311", "Test gt on a number zing");
+    equals($num.gteq(12).join(), "214,12,12311", "Test gteq on a number zing");
+    equals($num.lt(14).join(), "12,0", "Test lt on a number zing");
+    equals($num.lteq(12).join(), "12,0", "Test lteq on a number zing");
 
     equals($str.lengthOf(3)[0], "ccc", "Test lengthOf on a string zing");
-    equals($str.moreThan(1).join(), "ccc,cookie", "Test moreThan on a string zing");
-    equals($str.moreThanEq(1).join(), "a,b,ccc,cookie", "Test moreThanEq on a string zing");
-    equals($str.lessThan(3).join(), "a,b,", "Test lessThan on a string zing");
-    equals($str.lessThanEq(3).join(), "a,b,ccc,", "Test lessThanEq on a string zing");
+    equals($str.gt(1).join(), "ccc,cookie", "Test gt on a string zing");
+    equals($str.gteq(1).join(), "a,b,ccc,cookie", "Test gteq on a string zing");
+    equals($str.lt(3).join(), "a,b,", "Test lt on a string zing");
+    equals($str.lteq(3).join(), "a,b,ccc,", "Test lteq on a string zing");
 
     equals($arr.lengthOf(3)[0].join(), "1,2,3", "Test lengthOf on an array zing");
-    equals($arr.moreThan(1)[0].join(), "1,2,3", "Test moreThan on an array zing");
-    equals($arr.moreThanEq(1).length, 3, "Test moreThanEq on an array zing");
-    equals($arr.lessThan(3).length, 3, "Test lessThan on an array zing");
-    equals($arr.lessThanEq(3).length, 4, "Test lessThanEq on an array zing");
+    equals($arr.gt(1)[0].join(), "1,2,3", "Test gt on an array zing");
+    equals($arr.gteq(1).length, 3, "Test gteq on an array zing");
+    equals($arr.lt(3).length, 3, "Test lt on an array zing");
+    equals($arr.lteq(3).length, 4, "Test lteq on an array zing");
 
     equals($mixed.lengthOf(3).length, 2, "Test lengthOf on a mixed zing");
-    equals($mixed.moreThan(1).length, 6, "Test moreThan on a mixed zing");
-    equals($mixed.moreThanEq(1).length, 10, "Test moreThanEq on a mixed zing");
-    equals($mixed.lessThan(3).length, 7, "Test lessThan on a mixed zing");
-    equals($mixed.lessThanEq(3).length, 9, "Test lessThanEq on a mixed zing");
+    equals($mixed.gt(1).length, 6, "Test gt on a mixed zing");
+    equals($mixed.gteq(1).length, 10, "Test gteq on a mixed zing");
+    equals($mixed.lt(3).length, 7, "Test lt on a mixed zing");
+    equals($mixed.lteq(3).length, 9, "Test lteq on a mixed zing");
 });
 
 test("Test just() function.", function()
@@ -127,6 +127,10 @@ test("Test undo().", function()
     $arr = $a(arr);
     equals($arr.reverse().undo(), $arr, "reverse: Make sure undo works with non-mutator");
     equals($arr.reverse$().undo().length, 0, "reverse$: Make sure undo works with mutator");
+
+    // concat()
+    $arr = $a(arr);    
+    equals($arr.add(4).concat([5,6]).undo().str(), "1,2,3,4", "concat: Make sure undo works with non-mutator");
 
     // Test with many different functions.
     equals($arr.clear().undo(), $arr, "Make sure clear works with undo");

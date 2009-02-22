@@ -251,6 +251,16 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     just: function( index )
     {
+        return this.just$.apply(this.clone(), arguments);
+    },
+
+    /**
+     * Mutator version of just.
+     * @see #just
+     * @type Arrayzing
+     */
+    just$: function( index )
+    {
         // Slice it out.
         if (index == -1)
         {
@@ -262,21 +272,38 @@ Arrayzing.fn = Arrayzing.prototype =
         }
     },
 
-    just$: function( index )
+    /**
+     * Concatenates the contents of one or more 'zings to the current 'zing.
+     * @param {Arrayzing} zing An arrayzing to concatenate.
+     * @return The result of the concatenation.
+     * @type Arrayzing
+     */
+    concat: function( zing )
     {
-
+        return this.concat$.apply(this.clone(), arguments);
     },
-   
-    concat: function()
+
+    /**
+     * Mutator version of just.
+     * @see #just
+     * @type Arrayzing
+     */
+    concat$: function ( zing )
     {
-        var filtered = [];
+        var ret = [];
         Arrayzing.each(arguments, function()
         {
-           var val = this instanceof Arrayzing ? this.get() : this ;
-           filtered.push(val);
+            // If it's an array, keep it unchanged.
+            if (this.constructor == Array) ret.push(this);
+            else if (this.length != undefined)
+            {
+                ret.push(Arrayzing.prototype.toArray.apply(this));
+            }
         });
 
-        return this.pushStack( Array.prototype.concat.apply(this.get(), filtered) );
+        //alert(this.prevObject);
+
+        return this.setArray(Array.prototype.concat.apply(this.get(), ret));
     },
 
     join: function()
@@ -345,7 +372,12 @@ Arrayzing.fn = Arrayzing.prototype =
 
     slice: function()
     {
-        return this.pushStack( Array.prototype.slice.apply(this, arguments) );
+        return this.slice$.apply( this.clone(), arguments );
+    },
+
+    slice$: function()
+    {        
+        return this.setArray( Array.prototype.slice.apply(this, arguments) );
     },
 
     sort: function()
@@ -357,9 +389,13 @@ Arrayzing.fn = Arrayzing.prototype =
 
     splice: function()
     {
-        var ret = this.pushStack( this );
-        Array.prototype.splice.apply( ret, arguments );
-        return ret;
+        return this.splice$.apply( this.clone(), arguments );
+    },
+
+    splice$: function()
+    {
+        Array.prototype.splice.apply( this, arguments );
+        return this;
     },
 
     unshift: function()
@@ -393,10 +429,18 @@ Arrayzing.fn = Arrayzing.prototype =
         return ret;
     },
 
-    // Force the current matched set of elements to become
-    // the specified array of elements (destroying the stack in the process)
-    // You should use pushStack() in order to do this, but maintain the stack.
-    // (Adapted from jQuery).
+    /**
+     * Force the current 'zing to become the specified array of elements.
+     * The stack is not increased (i.e. it will be the same as it was before
+     * the array was set).
+     * If you want to add to the stack, use pushStack() or .clone().setArray().
+     * (Adapted from jQuery).
+     * @see #pushStack
+     * @see #clone
+     * @param {Array} elements The elements to set the array to.
+     * @return The 'zing with the passed elements as its elements.
+     * @type Arrayzing
+     */
     setArray: function( elements )
     {
         // Resetting the length to 0, then using the native Array push
@@ -463,7 +507,7 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.pushStack( ret );
     },
 
-    moreThan: function( num )
+    gt: function( num )
     {
         return this.compare( num,
             function( num, size )
@@ -473,7 +517,7 @@ Arrayzing.fn = Arrayzing.prototype =
         );
     },
 
-    moreThanEq: function( num )
+    gteq: function( num )
     {
         return this.compare( num,
             function( num, size )
@@ -483,7 +527,7 @@ Arrayzing.fn = Arrayzing.prototype =
         );
     },
 
-    lessThan: function( num )
+    lt: function( num )
     {
         return this.compare( num,
             function( num, size )
@@ -493,7 +537,7 @@ Arrayzing.fn = Arrayzing.prototype =
         );
     },
 
-    lessThanEq: function( num )
+    lteq: function( num )
     {
         return this.compare( num,
             function( num, size )
@@ -503,7 +547,7 @@ Arrayzing.fn = Arrayzing.prototype =
         );
     },
 
-    equals: function( num )
+    eq: function( num )
     {
         return this.compare( num,
             function( num, size )
@@ -516,7 +560,7 @@ Arrayzing.fn = Arrayzing.prototype =
     lengthOf: function()
     {
         // Just alias equals.
-        return this.equals.apply(this, arguments);
+        return this.eq.apply(this, arguments);
     },
 
     filter: function( pattern )
@@ -734,8 +778,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * For a String object on a String element, the object will be prepended
      * to the element.
      *
-     * For any object on a array-like element (i.e. an element that has a length
-     * attribute and is not a String), the object will be added to the left side
+     * For any object on a array-like element, the object will be added to the left side
      * of the array-like element.
      *
      * For any object on an unknown element object, the element will simply
@@ -767,8 +810,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * For a String object on a String element, the object will be appended
      * to the element.
      *
-     * For any object on a array-like element (i.e. an element that has a length
-     * attribute and is not a String), the object will be added to the right side
+     * For any object on a array-like element, the object will be added to the right side
      * of the array-like element.
      *
      * For any object on an unknown element object, the element will simply
@@ -786,6 +828,9 @@ Arrayzing.fn = Arrayzing.prototype =
     /**
      * Mutator version of append.
      * @see #append
+     * @param {Object} object The object to append.
+     * @return The 'zing with each element.
+     * @type Arrayzing
      */
     append$: function( object )
     {
@@ -800,20 +845,24 @@ Arrayzing.fn = Arrayzing.prototype =
      * @type Arrayzing
      */
     prechop: function( n )
-    {
-        
+    {        
     },
 
     /**
      * Mutator version of prechop.
      * @see #prechop
+     * @type Arrayzing
      */
     prechop$: function( n )
     {
-        this.map(function()
+        var fn = function( val, n )
         {
-
-        });
+            // Look for array-like item.
+            if (val.length != undefined)
+            {
+                //return this.slice$
+            }
+        };
     },
 
     /**
@@ -892,6 +941,7 @@ Arrayzing.fn = Arrayzing.prototype =
     /**
      * Mutator version of convert.
      * @see #convert
+     * @type Arrayzing
      */
     convert$: function( fn, index )
     {
@@ -928,6 +978,7 @@ Arrayzing.fn = Arrayzing.prototype =
     /**
      * Mutator version of boolize.
      * @see #boolize
+     * @type Arrayzing
      */
     boolize$: function( index )
     {
@@ -950,6 +1001,7 @@ Arrayzing.fn = Arrayzing.prototype =
     /**
      * Mutator version of numberize.
      * @see #numberize
+     * @type Arrayzing
      */
     numberize$: function ( index )
     {
@@ -971,6 +1023,7 @@ Arrayzing.fn = Arrayzing.prototype =
     /**
      * Mutator version of strize.
      * @see #boolize
+     * @type Arrayzing
      */
     strize$: function( index )
     {
