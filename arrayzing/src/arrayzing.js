@@ -30,7 +30,7 @@ window.$a = Arrayzing;
 Arrayzing.fn = Arrayzing.prototype =
 {
     /**
-     * Initialize a new 'zing.
+     * Initialize a new zing.
      */
     init: function( arguments )
     {        
@@ -55,13 +55,13 @@ Arrayzing.fn = Arrayzing.prototype =
     version: "0.1.0",
 
     /**
-     * The number of elements contained in the 'zing.
+     * The number of elements contained in the zing.
      */
     length: 0,
 
     /**
      * The number of elements contained in the set.
-     * @return The size of the 'zing.
+     * @return The size of the zing.
      * @type Number
      */
     size: function()
@@ -70,9 +70,9 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Determine whether or not a given object is in the 'zing.
+     * Determine whether or not a given object is in the zing.
      * @param {Object} object The object we're looking for.
-     * @return True if the object is in the 'zing.
+     * @return True if the object is in the zing.
      * @type {Boolean}
      */
     has: function( object )
@@ -93,9 +93,9 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Determine whether or not a given key in the 'zing has a value.
+     * Determine whether or not a given key in the zing has a value.
      * @param {Number} index The object we're looking for.
-     * @return True if the key exists is in the 'zing, false otherwise.
+     * @return True if the key exists is in the zing, false otherwise.
      * @type {Boolean}
      */
     hasKey: function( index )
@@ -193,8 +193,8 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Return a new copy of this 'zing.
-     * @return A new 'zing with all elements.
+     * Return a new copy of this zing.
+     * @return A new zing with all elements.
      * @type Arrayzing
      */
     clone: function()
@@ -205,7 +205,7 @@ Arrayzing.fn = Arrayzing.prototype =
     /**
      * A function to filter out all objects of a certain type.
      * @param fn Function type to look for.
-     * @return A 'zing with only that type.
+     * @return A zing with only that type.
      * @type Arrayzing
      */
     only: function( fn )
@@ -273,7 +273,7 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Concatenates the contents of one or more 'zings to the current 'zing.
+     * Concatenates the contents of one or more zings to the current zing.
      * @param {Arrayzing} zing An arrayzing to concatenate.
      * @return The result of the concatenation.
      * @type Arrayzing
@@ -303,19 +303,37 @@ Arrayzing.fn = Arrayzing.prototype =
 
         //alert(this.prevObject);
 
-        return this.setArray(Array.prototype.concat.apply(this.get(), ret));
+        return this.setArray(Array.prototype.concat.apply(this.array(), ret));
     },
 
-    join: function()
+    /**
+     * Puts all the elements of an array into a string. The elements are
+     * separated by a specified delimiter.  If no delimiter is specified, then
+     * a comma is used.
+     * @param {String} [delimiter] Specifies the separator to use.
+     * @return A joined string.
+     * @type String
+     */
+    join: function( delimiter )
     {
         return Array.prototype.join.apply(this, arguments);
     },  
 
+    /**
+     * Returns the last element of the zing.
+     * @return The last element of the zing.
+     * @type Object
+     */
     pop: function()
     {
         return this.get(-1);
     },
 
+    /**
+     * Removes and returns the last element of the zing.
+     * @return The last element of the zing.
+     * @type Object
+     */
     pop$: function()
     {
         // Run Array's pop function.
@@ -323,10 +341,10 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Adds one or more elements to the end of the 'zing and returns
+     * Adds one or more elements to the end of the zing and returns
      * the new array.
      * @param {Object} element An object to push onto the array.
-     * @return {Arrayzing} A new 'zing with that passed elements pushed on.
+     * @return {Arrayzing} A new zing with that passed elements pushed on.
      */
     push: function( element )
     {     
@@ -334,10 +352,10 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Adds one or more elements to the end of the 'zing and returns
+     * Adds one or more elements to the end of the zing and returns
      * the modified array.
      * @param {Object} element An object to push onto the array.
-     * @return {Arrayzing} The 'zing with the elements pushed on.
+     * @return {Arrayzing} The zing with the elements pushed on.
      */
     push$: function( element )
     {
@@ -346,8 +364,8 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Reverses the order of the elements in the 'zing.
-     * @return {Arrayzing} Returns a new 'zing with reversed elements.
+     * Reverses the order of the elements in the zing.
+     * @return {Arrayzing} Returns a new zing with reversed elements.
      */
     reverse: function()
     {        
@@ -355,8 +373,8 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Reverses the order of the elements in the 'zing.
-     * @return {Arrayzing} Returns the modified 'zing with reversed elements.
+     * Reverses the order of the elements in the zing.
+     * @return {Arrayzing} Returns the modified zing with reversed elements.
      */
     reverse$: function()
     {
@@ -364,7 +382,22 @@ Arrayzing.fn = Arrayzing.prototype =
         return this;
     },
 
+    /**
+     * Returns the first element of the zing.
+     * @return The first element of the zing.
+     * @type Object
+     */
     shift: function()
+    {
+        return this.get(0);
+    },
+
+    /**
+     * Removes and returns the first element of the zing.
+     * @return The first element of the zing.
+     * @type Object
+     */
+    shift$: function()
     {
         // Run Array's shift function.
         return Array.prototype.shift.apply(this, arguments);
@@ -382,9 +415,13 @@ Arrayzing.fn = Arrayzing.prototype =
 
     sort: function()
     {
-        var ret = this.pushStack( this );
-        Array.prototype.sort.apply( ret, arguments );
-        return ret;
+        return this.sort$.apply( this.clone(), arguments );
+    },
+
+    sort$: function()
+    {
+        Array.prototype.sort.apply( this, arguments );
+        return this;
     },
 
     splice: function()
@@ -400,9 +437,13 @@ Arrayzing.fn = Arrayzing.prototype =
 
     unshift: function()
     {
-        var ret = this.pushStack( this );
-        Array.prototype.unshift.apply(ret, arguments);
-        return ret;
+        return this.unshift$.apply( this.clone(), arguments );
+    },
+
+    unshift$: function()
+    {
+        Array.prototype.unshift.apply( this, arguments );
+        return this;
     },
 
     clear: function()
@@ -411,10 +452,10 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Push the current 'zing onto the stack returning the passed elements
-     * as a new 'zing.  The new 'zing will have a reference to the old one.
+     * Push the current zing onto the stack returning the passed elements
+     * as a new zing.  The new zing will have a reference to the old one.
      * @param elements The elements.
-     * @return The new 'zing.
+     * @return The new zing.
      * @type Arrayzing
      */	
     pushStack: function( elements )
@@ -430,7 +471,7 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Force the current 'zing to become the specified array of elements.
+     * Force the current zing to become the specified array of elements.
      * The stack is not increased (i.e. it will be the same as it was before
      * the array was set).
      * If you want to add to the stack, use pushStack() or .clone().setArray().
@@ -438,7 +479,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * @see #pushStack
      * @see #clone
      * @param {Array} elements The elements to set the array to.
-     * @return The 'zing with the passed elements as its elements.
+     * @return The zing with the passed elements as its elements.
      * @type Arrayzing
      */
     setArray: function( elements )
@@ -703,7 +744,7 @@ Arrayzing.fn = Arrayzing.prototype =
      *
      * For example, $a([1, 2], [3, 4]).flatten() = $a(1, 2, 3, 4);
      *
-     * @return A flattened 'zing.
+     * @return A flattened zing.
      * @type Arrayzing
      */
     flatten: function()
@@ -727,7 +768,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * every element in this array.
      * @param fn The function to call on each element.
      * @param [context] The object that the function is called on.
-     * @return A mapped 'zing.
+     * @return A mapped zing.
      * @type Arrayzing
      */
     map: function( fn /*, context */ )
@@ -757,7 +798,7 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Encloses all elements in the 'zing with left and optionally right
+     * Encloses all elements in the zing with left and optionally right
      * objects.
      */
     enclose: function( left, right )
@@ -785,7 +826,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * be skipped.
      * 
      * @param {Object} object The object to prepend.
-     * @return The 'zing with each element.
+     * @return The zing with each element.
      * @type Arrayzing    
      */
     prepend: function( object )
@@ -817,7 +858,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * be skipped.
      *
      * @param {Object} object The object to append.
-     * @return The 'zing with each element.
+     * @return The zing with each element.
      * @type Arrayzing
      */
     append: function( object )
@@ -829,7 +870,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * Mutator version of append.
      * @see #append
      * @param {Object} object The object to append.
-     * @return The 'zing with each element.
+     * @return The zing with each element.
      * @type Arrayzing
      */
     append$: function( object )
@@ -838,14 +879,15 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Chop off one or more digits/characters/elements from the left side of all
+     * Chop off one or more characters/elements from the left side of all
      * elements in the zing.  The default number of characters chopped is 1.
      * @param {Number} [n] The number of characters to prechop.
-     * @return A new 'zing.
+     * @return A new zing with prechopped elements.
      * @type Arrayzing
      */
     prechop: function( n )
-    {        
+    {
+        return this.prechop$.apply(this.clone(), arguments);
     },
 
     /**
@@ -855,21 +897,35 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     prechop$: function( n )
     {
-        var fn = function( val, n )
+        // If n is not passed, set it to 1.
+        if (n == undefined) n = 1;
+
+        var splice$ = this.splice$;
+        var fn = function( val )
         {
             // Look for array-like item.
-            if (val.length != undefined)
+            if (val.constructor == String)
             {
-                //return this.slice$
+                return val.substr(n);
+            }
+            else if (val.length != undefined)
+            {
+                return splice$.call(val, 0, n);
+            }
+            else
+            {
+                return val;
             }
         };
+
+        return this.map$(fn);
     },
 
     /**
      * Chop off one or more digits/characters/elements from the right side of all
-     * elements in the 'zing.  The default number of characters chopped is 1.
+     * elements in the zing.  The default number of characters chopped is 1.
      * @param {Number} [n] The number of characters to chop.
-     * @return A new 'zing.
+     * @return A new zing.
      * @type Arrayzing
      */
     chop: function( n )
@@ -930,7 +986,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * Convert one or all elements using a conversion function.
      * @param {Function} fn The conversion function.
      * @param {Number} [index] The index to convert.
-     * @return The converted 'zing.
+     * @return The converted zing.
      * @type Arrayzing
      */
     convert: function( fn, index )
@@ -967,7 +1023,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * Convert one or all elements to Boolean objects.  If the element has a
      * toBoolean function, it will be called.
      * @param {Number} [index] The index to convert.
-     * @return A boolized 'zing.
+     * @return A boolized zing.
      * @type Arrayzing
      */
     boolize: function( index )
@@ -990,7 +1046,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * toNumber function, it will be called.  If the element is true or false,
      * it will be converted to 1 or 0 (instead of NaN).
      * @param {Number} [index] The index to convert.
-     * @return A numberized 'zing.
+     * @return A numberized zing.
      * @type Arrayzing
      */
     numberize: function( index )
@@ -1012,7 +1068,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * Convert one or all elements to String objects.  If the element has a
      * toString function, it will be called.
      * @param {Number} [index] The index to convert.
-     * @return A strized 'zing.
+     * @return A strized zing.
      * @type Arrayzing
      */
     strize: function( index )
@@ -1040,8 +1096,8 @@ Arrayzing.fn = Arrayzing.prototype =
     },   
 
     /**
-     * Convert the 'zing to a human-readable String.
-     * @return The 'zing as String (it rhymes!)
+     * Convert the zing to a human-readable String.
+     * @return The zing as String (it rhymes!)
      * @type String
      */
     toString: function()
@@ -1059,8 +1115,8 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Convert the 'zing to an Array.
-     * @return The 'zing as an Array (does not rhyme).
+     * Convert the zing to an Array.
+     * @return The zing as an Array (does not rhyme).
      * @type Array
      */
     toArray: function()

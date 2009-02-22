@@ -132,6 +132,11 @@ test("Test undo().", function()
     $arr = $a(arr);    
     equals($arr.add(4).concat([5,6]).undo().str(), "1,2,3,4", "concat: Make sure undo works with non-mutator");
 
+    // prechop()
+    $arr = $a("lol", "olo");
+    equals($arr.prechop().prechop().undo().str(), "ol,lo", "prechop: Make sure undo works with non-mutator");
+    equals($arr.add("foo").prechop$().undo().str(), "lol,olo", "prechop: Make sure undo works with mutator");
+
     // Test with many different functions.
     equals($arr.clear().undo(), $arr, "Make sure clear works with undo");
 });
