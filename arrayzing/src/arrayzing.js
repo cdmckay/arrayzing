@@ -972,14 +972,38 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
-    replace: function()
+    /**
+     * Applies the string object's replace method on all strings in the
+     * zing.
+     * @see String#replace
+     * @param {RegExp} regexp The RegExp object that specifies the pattern
+     * to replace.  If it is a string, the string is used as the pattern.
+     * @param {String} replacement A string that specifies the replacment text,
+     * or a function that can be invoked to provide the replacement text.
+     * @return A new zing.
+     * @type Arryzing
+     */
+    replace: function( regexp, replacement )
     {
-
+        return this.replace$.apply( this.clone(), arguments );
     },
 
-    replace$: function()
+    /**
+     * Mutator version of replace.
+     * @see #replace
+     * @type Arrayzing
+     */
+    replace$: function( regexp, replacement )
     {
+        var fn = function(element)
+        {
+            if (element.constructor == String)
+                return element.replace(regexp, replacement);
+            else
+                return element;
+        }
 
+        return this.map$(fn);
     },
 
     /**

@@ -16,3 +16,15 @@ test("Test the prechop() function.", function()
     equals($arr.prechop(2).str(), "22,,ring,,", "Test prechop under normal circumstances, different argument");
     equals($a().prechop().length, 0, "Test it on an empty zing");
 });
+
+test("Test the replace() function.", function()
+{
+    var object = {
+        toString: function()
+        { return "object"; }
+    }
+    var $arr = $a("foo", "bar", 21, object, true);
+
+    equals($arr.replace("foo", "foz").str(), "foz,bar,21,object,true", "Test replace with string literal");
+    equals($arr.replace(/[f|b](\w+)/, "$1").str(), "oo,ar,21,object,true", "Test replace with regex");
+});
