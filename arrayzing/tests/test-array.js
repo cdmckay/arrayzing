@@ -160,9 +160,9 @@ test("Test reduce() family of functions.", function()
     equals($num.sum(), 6, "Test sum under normal circumstances.");
     equals($a().sum(), 0, "Test sum on an empty zing");
     equals($a(1, undefined, function() { return x }, false, "2").sum(), 3, "Test on an array with a bunch of crap");
-    equals($num.product(), 6, "Test product under normal circumstances");
-    equals($a().product(), 1, "Test product on an empty zing");
-    equals($a(1, undefined, function() { return x }, false, "2").product(), 2, "Test on an array with a bunch of crap");
+    //equals($num.product(), 6, "Test product under normal circumstances");
+    //equals($a().product(), 1, "Test product on an empty zing");
+    //equals($a(1, undefined, function() { return x }, false, "2").product(), 2, "Test on an array with a bunch of crap");
 });
 
 test("Test clear().", function()

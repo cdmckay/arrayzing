@@ -167,29 +167,52 @@ Arrayzing.fn = Arrayzing.prototype =
      * Removes the element at the given index, and shifts all the
      * elements over by one to close the gap.
      * @param index The index of the element to remove.
+     * @param len The number of elements to remove.
      * @return Arrayzing set
+     * @type Arrayzing
      */
-    remove: function( index )
+    removeAt: function( index, len )
     {
+        return this.removeAt$.apply( this.clone(), arguments );
+    },
+
+    /**
+     * Mutator version of removeAt.
+     * @see #removeAt     
+     * @type Arrayzing
+     */
+    removeAt$: function( index, len )
+    {
+        // If the length is undefined, use 1.
+        if (len == undefined) len = 1;
+
         // If index is greater than the length, just return this object.
         if (index < -this.length || index >= this.length) return this;
 
         // If the index is negative, convert it to it's positive equivalent.
         if (index < 0) index += this.length;
 
-        // Push the old array onto the stack.
-        var ret = this.pushStack( this );
-
         // Get a slice from just after the index to the end.
-        var elems = ret.slice(index + 1, ret.length).get();
+        this.splice$(index, len);
 
-        // Set the length to the index, so when we push, the elements
-        // will be pushed on top of the old ones.
-        ret.length = index;
-        Array.prototype.push.apply( ret, elems );
+        // Adjust index array if it exists.
+        if (this.indexArray != undefined)
+        {
+            this.indexArray.splice(index, len);
+        }
 
-        // Return the new array.
-        return ret;
+        // Return the modified array.
+        return this;
+    },
+
+    insertAt: function( index, value )
+    {
+
+    },
+
+    insertAt$: function( index, value )
+    {
+
     },
 
     /**
@@ -225,6 +248,11 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.pushStack( ret );
     },
 
+    only$: function( fn )
+    {
+
+    },
+
     /**
      * An alias for only to return elements that are numbers.
      * @return Arrayzing set
@@ -232,6 +260,11 @@ Arrayzing.fn = Arrayzing.prototype =
     numbers: function()
     {
         return this.only(Number);
+    },
+
+    numbers$: function()
+    {
+
     },
 
     /**
@@ -466,6 +499,11 @@ Arrayzing.fn = Arrayzing.prototype =
         // Add the old object onto the stack (as a reference)
         ret.prevObject = this;
 
+        // Create an array on indices.
+        var array = [];
+        for (var i = 0; i < ret.length; i++) array.push(i);
+        ret.indexArray = array;
+        
         // Return the newly-formed element set
         return ret;
     },
@@ -501,6 +539,16 @@ Arrayzing.fn = Arrayzing.prototype =
     andSelf: function()
     {
         return this.concat( this.prevObject );
+    },
+
+    merge: function()
+    {
+
+    },
+
+    merge$: function()
+    {
+        
     },
 
     // Execute a callback for every element in the matched set.
@@ -620,6 +668,24 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.pushStack( ret );
     },
 
+    /**
+     * Removes all null, undefined, NaN, "", [] and {} elements from the zing.
+     * @return The tightened zing.
+     * @type Arrayzing
+     */
+    tighten: function()
+    {
+        var fn = function(total, item)
+        {
+            
+        };
+    },
+
+    tighten$: function()
+    {
+
+    },
+
     uppered: function()
     {
         return this.filter( /^[A-Z\s]*$/ );
@@ -630,10 +696,11 @@ Arrayzing.fn = Arrayzing.prototype =
         return this.filter( /^[a-z\s]*$/ );
     },
 
-    capitalized: function()
-    {
-        return this.filter( /^[A-Z][a-z\s]*$/ );
-    },
+    // Move to Arrayzing.string.js plugin.
+//    capitalized: function()
+//    {
+//        return this.filter( /^[A-Z][a-z\s]*$/ );
+//    },
 	
     reduce: function( initial, closure )
     {
@@ -674,23 +741,24 @@ Arrayzing.fn = Arrayzing.prototype =
         });
     },
 
-    product: function()
-    {
-        return this.reduce(1, function(total, item)
-        {
-            if ( item.constructor == Number )
-            {
-                total *= item;
-            }
-            else
-            {
-                var val = parseFloat(item);
-                if ( !isNaN(val) ) total *= val;
-            }
-
-            return total;
-        });
-    },
+    // Move to Arrayzing.number.js plugin.
+//    product: function()
+//    {
+//        return this.reduce(1, function(total, item)
+//        {
+//            if ( item.constructor == Number )
+//            {
+//                total *= item;
+//            }
+//            else
+//            {
+//                var val = parseFloat(item);
+//                if ( !isNaN(val) ) total *= val;
+//            }
+//
+//            return total;
+//        });
+//    },
 
     min: function()
     {
@@ -962,15 +1030,16 @@ Arrayzing.fn = Arrayzing.prototype =
 
     },
 
-    capitalize: function()
-    {
-
-    },
-
-    capitalize$: function()
-    {
-
-    },
+    // Move to Arrayzing.string.js plugin.
+//    capitalize: function()
+//    {
+//
+//    },
+//
+//    capitalize$: function()
+//    {
+//
+//    },
 
     /**
      * Applies the string object's replace method on all strings in the
@@ -1041,6 +1110,16 @@ Arrayzing.fn = Arrayzing.prototype =
         }
 
         return this;
+    },
+
+    arrayize: function( index )
+    {
+
+    },
+
+    arrayize$: function( index )
+    {
+
     },
 
     /**

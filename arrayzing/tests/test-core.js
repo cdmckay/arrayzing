@@ -69,12 +69,16 @@ test("Test length and size().", function()
    equals($a(array).length, $a(array).size(), "Make sure length and size() are the same");
 });
 
-test("Test remove() function.", function()
+test("Test removeAt() function.", function()
 {
    var $array = $a(1, 2, 3, 4, 5);
-   equals($array.remove(2).get(2), 4, "Try removing an element from the middle (positive)");
-   equals($array.remove(-3).get(2), 4, "Try removing an element from the middle (negative)");
-   equals($array.remove(1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (positive)");
-   equals($array.remove(-1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (negative)");
-   equals($a().remove(0).length, 0, "Try removing index 0 when there are no elements")
+   equals($array.removeAt(2).get(2), 4, "Try removing an element from the middle (positive)");
+   equals($array.removeAt(2, 2).get(2), 5, "Try removing 2 elements from the middle (positive)");
+   equals($array.removeAt(-3).get(2), 4, "Try removing an element from the middle (negative)");
+   equals($array.removeAt(-3, 2).get(2), 5, "Try removing 2 element from the middle (negative)");
+   equals($array.removeAt(1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (positive)");
+   equals($array.removeAt(1000, 2).get().join(), "1,2,3,4,5", "Try removing multiple non existent indices (positive)");
+   equals($array.removeAt(-1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (negative)");
+   equals($a().removeAt(0).length, 0, "Try removing index 0 when there are no elements")
+   equals($a().removeAt(0, 2).length, 0, "Try removing index 0 and 1 when there are no elements")
 });
