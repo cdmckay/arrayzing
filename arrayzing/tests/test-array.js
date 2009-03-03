@@ -57,6 +57,9 @@ test("Test push() and add().", function()
 
     var $array = $a().push("x");
     equals($array.length, 1, "Make sure the length is right");
+
+    // Test merge.
+    equals($a(array).add(4).set$(0, 3).merge().str(), "3,b,3,4", "Test merge");
 });
 
 test("Test reverse.", function()

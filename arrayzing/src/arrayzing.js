@@ -543,12 +543,34 @@ Arrayzing.fn = Arrayzing.prototype =
 
     merge: function()
     {
-
+        return this.merge$.apply( this.clone(), arguments );
     },
 
     merge$: function()
     {
-        
+        // If there is no prev-object to merge to, just
+        // return this.
+        if (this.prevObject == undefined) return this;
+
+        // Get a clone of the previous object.
+        var prev = this.prevObject.clone();
+
+        // Copy in the elements from the current zing
+        // using the indexArray to choose their spots.
+        for (var i = 0; i < this.indexArray.length; i++)
+        {
+            prev[this.indexArray[i]] = this[i];
+        }
+
+        // If there are any remaining elements, concatenate
+        // them to the end of the prev.
+        if (this.length - this.indexArray.length > 0)
+        {
+            prev.concat$(this.slice$(this.indexArray.length));
+        }
+
+        // Make the prev array the new array.
+        return this.setArray( prev.array() );
     },
 
     // Execute a callback for every element in the matched set.
