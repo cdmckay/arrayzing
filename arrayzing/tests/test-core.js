@@ -71,7 +71,8 @@ test("Test length and size().", function()
 
 test("Test removeAt() function.", function()
 {
-   var $array = $a(1, 2, 3, 4, 5);
+   var array = [1, 2, 3, 4, 5];
+   var $array = $a(array);
    equals($array.removeAt(2).get(2), 4, "Try removing an element from the middle (positive)");
    equals($array.removeAt(2, 2).get(2), 5, "Try removing 2 elements from the middle (positive)");
    equals($array.removeAt(-3).get(2), 4, "Try removing an element from the middle (negative)");
@@ -81,4 +82,8 @@ test("Test removeAt() function.", function()
    equals($array.removeAt(-1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (negative)");
    equals($a().removeAt(0).length, 0, "Try removing index 0 when there are no elements")
    equals($a().removeAt(0, 2).length, 0, "Try removing index 0 and 1 when there are no elements")
+
+   // Test merge.
+   equals($a(array).map(function(x) { return x * x; }).removeAt$(1).merge().str(),
+     "1,2,9,16,25", "Test merge()");
 });

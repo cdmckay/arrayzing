@@ -198,7 +198,7 @@ Arrayzing.fn = Arrayzing.prototype =
         // Adjust index array if it exists.
         if (this.indexArray != undefined)
         {
-            this.indexArray.splice(index, len);
+            this.indexArray.splice(index, len);            
         }
 
         // Return the modified array.
@@ -543,30 +543,34 @@ Arrayzing.fn = Arrayzing.prototype =
 
     merge: function()
     {
-        return this.merge$.apply( this.clone(), arguments );
+        return this.merge$.call( this.clone(), this );
     },
 
-    merge$: function()
+    merge$: function( target )
     {
+        // First see if a target was passed, if not,
+        // use the prevObject as the target.
+        if (target == undefined) target = this;
+       
         // If there is no prev-object to merge to, just
         // return this.
-        if (this.prevObject == undefined) return this;
+        if (target.prevObject == undefined) return this;
 
         // Get a clone of the previous object.
-        var prev = this.prevObject.clone();
+        var prev = target.prevObject.clone();       
 
         // Copy in the elements from the current zing
         // using the indexArray to choose their spots.
-        for (var i = 0; i < this.indexArray.length; i++)
+        for (var i = 0; i < target.indexArray.length; i++)
         {
-            prev[this.indexArray[i]] = this[i];
+            prev[target.indexArray[i]] = this[i];
         }
 
         // If there are any remaining elements, concatenate
         // them to the end of the prev.
-        if (this.length - this.indexArray.length > 0)
+        if (this.length - target.indexArray.length > 0)
         {
-            prev.concat$(this.slice$(this.indexArray.length));
+            prev.concat$(this.slice$(target.indexArray.length));
         }
 
         // Make the prev array the new array.
