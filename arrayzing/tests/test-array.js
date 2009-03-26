@@ -167,12 +167,7 @@ test("Test reduce() family of functions.", function()
 
     equals($num.product(), 6, "Test product under normal circumstances");
     equals($a().product(), 1, "Test product on an empty zing");
-    equals($a(1, undefined, function() { return x }, false, "2").product(), 2, "Test on an array with a bunch of crap");
-
-    var $list = $a("a", "", [], [1, 2], undefined, 12, null, NaN);
-
-    equals($list.tighten().length, 3, "Make sure tighten produces the correct array length");
-    equals($list.tighten().str(), "a,1,2,12", "Make sure tighten produces the correct array elements");
+    equals($a(1, undefined, function() { return x }, false, "2").product(), 2, "Test on an array with a bunch of crap");    
 });
 
 test("Test clear().", function()

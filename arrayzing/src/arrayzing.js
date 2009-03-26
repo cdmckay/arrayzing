@@ -535,6 +535,13 @@ Arrayzing.fn = Arrayzing.prototype =
         return this;
     },
 
+    setIndexArray: function( elements )
+    {
+        this.indexArray.length = 0;
+        Array.prototype.push.apply( this.indexArray, elements );
+        return this;
+    },
+
     undo: function()
     {
         return this.prevObject || Arrayzing( [] );
@@ -715,7 +722,8 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     tighten$: function()
     {
-        var fn = function(total, item)
+        var outer = this;
+        var fn = function(total, item, index)
         {
             if (item == null
                 || item == undefined
@@ -727,14 +735,22 @@ Arrayzing.fn = Arrayzing.prototype =
                 return total;
             }
 
-            total.push(item);
+            total.elements.push(item);
+            if (outer.indexArray[index] != undefined)
+            {
+                total.indexArray.push(outer.indexArray[index]);
+            }
+            
             return total;
         };
 
         // Tighten the zing.
-        var ret = this.reduce([], fn);
+        var ret = this.reduce({ elements: [], indexArray: [] }, fn);
 
-        return this.setArray( ret );
+        this.setIndexArray( ret.indexArray );
+        this.setArray( ret.elements );
+
+        return this;
     },
 
     uppered: function()
@@ -755,7 +771,7 @@ Arrayzing.fn = Arrayzing.prototype =
         for (var i = 0; i < this.length; i++)
         {
             if (this.hasKey(i))
-                total = closure(total, this[i]);
+                total = closure(total, this[i], i);
         }
 
         return total;

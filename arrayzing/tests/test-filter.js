@@ -102,6 +102,22 @@ test("Test only().", function()
     equals(result.toString(), "", "Filter by function that doesn't exist");
 });
 
+test("Test tighten().", function()
+{
+    var $list = $a("a", "", [], [1, 2], undefined, 9, null, NaN);
+
+    equals($a().tighten().length, 0, "Try tighten on an empty zing");
+    equals($list.tighten().length, 3, "Make sure tighten produces the correct array length");
+    equals($list.tighten().str(), "a,1,2,9", "Make sure tighten produces the correct array elements");
+
+    equals($list.tighten().undo().length, 8, "Test tighten with undo (non-mutator)");
+    equals($list.add("").tighten$().undo().length, 8, "Test tighten with undo (mutator)");
+
+    var $num = $a(4, 9, "", NaN, 16);
+    equals($num.add(4).tighten$().map$(Math.sqrt).merge().str(), "2,3,,NaN,4,2",
+        "Test tighten() with merge()");
+});
+
 test("Test undo().", function()
 {
     var arr = [1, 2, 3];
@@ -143,5 +159,5 @@ test("Test undo().", function()
 
 test("Test andSelf().", function()
 {
-    var $arr = $a("str", function() { return 42; }, false, 4);    
+    var $arr = $a("str", function() { return 42; }, false, 4);
 });
