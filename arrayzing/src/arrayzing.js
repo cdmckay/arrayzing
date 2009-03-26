@@ -1,6 +1,6 @@
 (function(){
 /*
- * Arrayzing 0.1.0 - jQuery-like Array manipulation
+ * Arrayzing 0.1.0 - Advanced Array manipulation
  *
  * Copyright (c) 2009 Cameron McKay (couchware.ca/blogs/cam)
  * Licensed under the MIT (MIT-LICENSE.txt) license.
@@ -378,6 +378,7 @@ Arrayzing.fn = Arrayzing.prototype =
      * the new array.
      * @param {Object} element An object to push onto the array.
      * @return {Arrayzing} A new zing with that passed elements pushed on.
+     * @type Arrayzing
      */
     push: function( element )
     {     
@@ -388,7 +389,8 @@ Arrayzing.fn = Arrayzing.prototype =
      * Adds one or more elements to the end of the zing and returns
      * the modified array.
      * @param {Object} element An object to push onto the array.
-     * @return {Arrayzing} The zing with the elements pushed on.
+     * @return The zing with the elements pushed on.
+     * @type Arrayzing
      */
     push$: function( element )
     {
@@ -398,7 +400,8 @@ Arrayzing.fn = Arrayzing.prototype =
 
     /**
      * Reverses the order of the elements in the zing.
-     * @return {Arrayzing} Returns a new zing with reversed elements.
+     * @return Returns a new zing with reversed elements.
+     * @type Arrayzing
      */
     reverse: function()
     {        
@@ -407,7 +410,8 @@ Arrayzing.fn = Arrayzing.prototype =
 
     /**
      * Reverses the order of the elements in the zing.
-     * @return {Arrayzing} Returns the modified zing with reversed elements.
+     * @return Returns the modified zing with reversed elements.
+     * @type Arrayzing
      */
     reverse$: function()
     {
@@ -695,21 +699,38 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Removes all null, undefined, NaN, "", [] and {} elements from the zing.
+     * Removes all null, undefined, NaN, "", and [] elements from the zing.
      * @return The tightened zing.
      * @type Arrayzing
      */
     tighten: function()
     {
-        var fn = function(total, item)
-        {
-            
-        };
+       
     },
 
+    /**
+     * Mutator version of tighten.
+     * @see #tighten
+     * @type Arrayzing
+     */
     tighten$: function()
     {
+        var fn = function(total, item)
+        {
+            if (item == null || item == undefined
+                || isNaN(item) || item == "" || item.length == 0)
+            {
+                return total;
+            }
 
+            total.push(item);
+            return total;
+        };
+
+        // Tighten the zing.
+        var ret = this.reduce([], fn);
+
+        return setArray( ret );
     },
 
     uppered: function()
@@ -720,13 +741,7 @@ Arrayzing.fn = Arrayzing.prototype =
     lowered: function()
     {
         return this.filter( /^[a-z\s]*$/ );
-    },
-
-    // Move to Arrayzing.string.js plugin.
-//    capitalized: function()
-//    {
-//        return this.filter( /^[A-Z][a-z\s]*$/ );
-//    },
+    },   
 	
     reduce: function( initial, closure )
     {
@@ -766,25 +781,24 @@ Arrayzing.fn = Arrayzing.prototype =
             return total;
         });
     },
+    
+    product: function()
+    {
+        return this.reduce(1, function(total, item)
+        {
+            if ( item.constructor == Number )
+            {
+                total *= item;
+            }
+            else
+            {
+                var val = parseFloat(item);
+                if ( !isNaN(val) ) total *= val;
+            }
 
-    // Move to Arrayzing.number.js plugin.
-//    product: function()
-//    {
-//        return this.reduce(1, function(total, item)
-//        {
-//            if ( item.constructor == Number )
-//            {
-//                total *= item;
-//            }
-//            else
-//            {
-//                var val = parseFloat(item);
-//                if ( !isNaN(val) ) total *= val;
-//            }
-//
-//            return total;
-//        });
-//    },
+            return total;
+        });
+    },
 
     min: function()
     {
