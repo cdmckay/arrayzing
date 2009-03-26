@@ -160,12 +160,19 @@ test("Test reduce() family of functions.", function()
     equals($num.rreduce(0, fn), 6, "Try some normal operation stuff (rreduce)");
     equals($str.reduce("", fn), "abc", "Try some normal operation stuff");
     equals($str.rreduce("", fn), "cba", "Try some normal operation stuff (rreduce)");
+
     equals($num.sum(), 6, "Test sum under normal circumstances.");
     equals($a().sum(), 0, "Test sum on an empty zing");
     equals($a(1, undefined, function() { return x }, false, "2").sum(), 3, "Test on an array with a bunch of crap");
-    //equals($num.product(), 6, "Test product under normal circumstances");
-    //equals($a().product(), 1, "Test product on an empty zing");
-    //equals($a(1, undefined, function() { return x }, false, "2").product(), 2, "Test on an array with a bunch of crap");
+
+    equals($num.product(), 6, "Test product under normal circumstances");
+    equals($a().product(), 1, "Test product on an empty zing");
+    equals($a(1, undefined, function() { return x }, false, "2").product(), 2, "Test on an array with a bunch of crap");
+
+    var $list = $a("a", "", [], [1, 2], undefined, 12, null, NaN);
+
+    equals($list.tighten().length, 3, "Make sure tighten produces the correct array length");
+    equals($list.tighten().str(), "a,1,2,12", "Make sure tighten produces the correct array elements");
 });
 
 test("Test clear().", function()

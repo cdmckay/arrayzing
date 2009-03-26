@@ -705,7 +705,7 @@ Arrayzing.fn = Arrayzing.prototype =
      */
     tighten: function()
     {
-       
+        return this.tighten$.apply(this.clone(), arguments);
     },
 
     /**
@@ -717,9 +717,13 @@ Arrayzing.fn = Arrayzing.prototype =
     {
         var fn = function(total, item)
         {
-            if (item == null || item == undefined
-                || isNaN(item) || item == "" || item.length == 0)
-            {
+            if (item == null
+                || item == undefined
+                || (typeof item == "number" && isNaN(item))
+                || item == ""
+                || (item.length != undefined && item.length == 0)
+                )
+            {                
                 return total;
             }
 
@@ -730,7 +734,7 @@ Arrayzing.fn = Arrayzing.prototype =
         // Tighten the zing.
         var ret = this.reduce([], fn);
 
-        return setArray( ret );
+        return this.setArray( ret );
     },
 
     uppered: function()
