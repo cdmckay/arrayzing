@@ -32,6 +32,11 @@ test("Test filter().", function()
 
     result = $a(mixedArray).filter(undefined);
     equals(result[0], undefined, "Filter using undefined");
+	
+	fn = function(item) { return item == 12 || item == "foo"; };
+	result = $a(mixedArray).filter(fn);
+	equals(result.length, 2, "Filter using a function, make sure length is right");
+	equals(result.str(), "12,foo", "Filter using a function, make sure elements are right");
 
     result = $a(mixedArray).filter(Number.NaN);
     ok(isNaN(result[0]), "Filter using NaN");

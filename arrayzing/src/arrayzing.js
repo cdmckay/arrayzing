@@ -27,7 +27,7 @@ if ( window.$a )
 // Map the Arrayzing namespace to the $a one.
 window.$a = Arrayzing;
 
-Arrayzing.fn = Arrayzing.prototype =
+Arrayzing.prototype =
 {
     /**
      * Initialize a new zing.
@@ -696,6 +696,7 @@ Arrayzing.fn = Arrayzing.prototype =
         this.each(function()
         {
             if ( (pattern != null && pattern.constructor == RegExp && pattern.test(this))
+				|| (pattern != null && typeof pattern == "function" && pattern(this))
                 || (pattern == this) )
             {
                 ret.push( this );
@@ -824,14 +825,80 @@ Arrayzing.fn = Arrayzing.prototype =
         });
     },
 
+	/**
+	 * Returns the minimum value in the zing.  The value
+	 * used is the numeric value for a Number, or the 
+	 * length property if it exists.  If the object is 
+	 * neither a Number nor a length property, it is
+	 * ignored.  If dfferent objects evaluate to the same
+	 * minimum length, the first value found will be returned.
+	 * @see #max
+	 * @return The object with the lowest value or undefined.
+	 * @type Object
+	 */
     min: function()
     {
-
+		var fn = function(min, next)
+		{
+			var val;
+			if (typeof next == "number") 
+			{
+				val = next;
+			}
+			else if (next != null && next.length != undefined) 
+			{
+				val = next.length;
+			}	
+			else
+			{
+				return min;
+			}
+							
+			if (max == undefined || val < max)
+			{
+				return val;
+			}
+		}				
+		
+		return this.reduce(undefined, fn);
     },
 
+	/**
+	 * Returns the maximum value in the zing.  The value
+	 * used is the numeric value for a Number, or the 
+	 * length property if it exists.  If the object is 
+	 * neither a Number nor a length property, it is
+	 * ignored.  If dfferent objects evaluate to the same
+	 * maximum length, the first value found will be returned.
+	 * @see #min
+	 * @return The object with the lowest value or undefined.
+	 * @type Object
+	 */
     max: function()
     {
-
+		var fn = function(max, next)
+		{
+			var val;
+			if (typeof next == "number") 
+			{
+				val = next;
+			}
+			else if (next != null && next.length != undefined) 
+			{
+				val = next.length;
+			}	
+			else
+			{
+				return max;
+			}
+							
+			if (max == undefined || val > max)
+			{
+				return val;
+			}
+		}				
+		
+		return this.reduce(undefined, fn);
     },
 
     index: function()
@@ -1292,7 +1359,9 @@ Arrayzing.fn = Arrayzing.prototype =
     }
 };
 	
-// (Adapted from jQuery).
+// Map the fn namespace to the prototype.
+Arrayzing.fn = Arrayzing.prototype;	
+	
 Arrayzing.extend = Arrayzing.fn.extend = function()
 {
     // Copy reference to target object.
