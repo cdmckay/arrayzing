@@ -706,7 +706,11 @@ Arrayzing.fn = Arrayzing.prototype =
     },
 
     /**
-     * Removes all null, undefined, NaN, "", and [] elements from the zing.
+     * Removes all null, undefined, NaN, "", and [] elements from the zing
+     * and pulls them tight.  Equivalent to calling removeAt() at each of those
+     * indices.
+     *
+     * @see #removeAt
      * @return The tightened zing.
      * @type Arrayzing
      */
