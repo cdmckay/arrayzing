@@ -55,19 +55,19 @@ test("Test compare(), gt(), lt(), etc. functions.", function()
     equals($num.lt(14).join(), "12,0", "Test lt on a number zing");
     equals($num.lteq(12).join(), "12,0", "Test lteq on a number zing");
 
-    equals($str.lengthOf(3)[0], "ccc", "Test lengthOf on a string zing");
+    equals($str.hasLength(3)[0], "ccc", "Test hasLength on a string zing");
     equals($str.gt(1).join(), "ccc,cookie", "Test gt on a string zing");
     equals($str.gteq(1).join(), "a,b,ccc,cookie", "Test gteq on a string zing");
     equals($str.lt(3).join(), "a,b,", "Test lt on a string zing");
     equals($str.lteq(3).join(), "a,b,ccc,", "Test lteq on a string zing");
 
-    equals($arr.lengthOf(3)[0].join(), "1,2,3", "Test lengthOf on an array zing");
+    equals($arr.hasLength(3)[0].join(), "1,2,3", "Test hasLength on an array zing");
     equals($arr.gt(1)[0].join(), "1,2,3", "Test gt on an array zing");
     equals($arr.gteq(1).length, 3, "Test gteq on an array zing");
     equals($arr.lt(3).length, 3, "Test lt on an array zing");
     equals($arr.lteq(3).length, 4, "Test lteq on an array zing");
 
-    equals($mixed.lengthOf(3).length, 2, "Test lengthOf on a mixed zing");
+    equals($mixed.hasLength(3).length, 2, "Test lengthOf on a mixed zing");
     equals($mixed.gt(1).length, 6, "Test gt on a mixed zing");
     equals($mixed.gteq(1).length, 10, "Test gteq on a mixed zing");
     equals($mixed.lt(3).length, 7, "Test lt on a mixed zing");

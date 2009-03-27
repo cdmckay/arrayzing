@@ -73,7 +73,7 @@ Arrayzing.prototype =
      * Determine whether or not a given object is in the zing.
      * @param {Object} object The object we're looking for.
      * @return True if the object is in the zing.
-     * @type {Boolean}
+     * @type Boolean
      */
     has: function( object )
     {
@@ -205,14 +205,43 @@ Arrayzing.prototype =
         return this;
     },
 
+	/**
+     * Inserts the value at the given index, and shifts all the
+     * elements to the right of the index by one to make room.
+     * @param index The index to insert the element at.
+     * @param value The value to insert.
+     * @return The zing with the new value inserted into it.
+     * @type Arrayzing
+     */
     insertAt: function( index, value )
     {
-
+		return this.insertAt$.apply( this.clone(), arguments );
     },
 
+	/**
+     * Mutator version of insertAt.
+     * @see #insertAt     
+     * @type Arrayzing
+     */
     insertAt$: function( index, value )
-    {
+    {		
+        // If index is greater than the length, just return this object.
+        if (index < -this.length || index >= this.length) return this;
 
+        // If the index is negative, convert it to it's positive equivalent.
+        if (index < 0) index += this.length;
+
+        // Splice it in.
+        this.splice$(index, 0, value);
+
+        // Adjust index array if it exists.
+        if (this.indexArray != undefined)
+        {
+            this.indexArray.splice(index, 0, undefined);            
+        }
+
+        // Return the modified array.
+        return this;
     },
 
     /**
@@ -683,7 +712,7 @@ Arrayzing.prototype =
         );
     },
 
-    lengthOf: function()
+    hasLength: function()
     {
         // Just alias equals.
         return this.eq.apply(this, arguments);
@@ -901,7 +930,7 @@ Arrayzing.prototype =
 		return this.reduce(undefined, fn);
     },
 
-    index: function()
+    indexOf: function()
     {
 
     },    
@@ -1159,18 +1188,7 @@ Arrayzing.prototype =
     lower$: function()
     {
 
-    },
-
-    // Move to Arrayzing.string.js plugin.
-//    capitalize: function()
-//    {
-//
-//    },
-//
-//    capitalize$: function()
-//    {
-//
-//    },
+    },    
 
     /**
      * Applies the string object's replace method on all strings in the
