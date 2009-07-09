@@ -33,12 +33,12 @@ test("Test filter().", function()
     result = $a(mixedArray).filter(undefined);
     equals(result[0], undefined, "Filter using undefined");
 	
-	fn = function(item) { return item == 12 || item == "foo"; };
-	result = $a(mixedArray).filter(fn);
-	equals(result.length, 2, "Filter using a function, make sure length is right");
-	equals(result.str(), "12,foo", "Filter using a function, make sure elements are right");
+    var fn = function(item) { return item == 12 || item == "foo"; };
+    result = $a(mixedArray).filter(fn);
+    equals(result.length, 2, "Filter using a function, make sure length is right");
+    equals(result.str(), "12,foo", "Filter using a function, make sure elements are right");
 
-    result = $a(mixedArray).filter(Number.NaN);
+    result = $a(mixedArray).filter(isNaN);
     ok(isNaN(result[0]), "Filter using NaN");
 });
 
@@ -55,19 +55,19 @@ test("Test compare(), gt(), lt(), etc. functions.", function()
     equals($num.lt(14).join(), "12,0", "Test lt on a number zing");
     equals($num.lteq(12).join(), "12,0", "Test lteq on a number zing");
 
-    equals($str.hasLength(3)[0], "ccc", "Test hasLength on a string zing");
+    equals($str.ofLength(3)[0], "ccc", "Test ofLength on a string zing");
     equals($str.gt(1).join(), "ccc,cookie", "Test gt on a string zing");
     equals($str.gteq(1).join(), "a,b,ccc,cookie", "Test gteq on a string zing");
     equals($str.lt(3).join(), "a,b,", "Test lt on a string zing");
     equals($str.lteq(3).join(), "a,b,ccc,", "Test lteq on a string zing");
 
-    equals($arr.hasLength(3)[0].join(), "1,2,3", "Test hasLength on an array zing");
+    equals($arr.ofLength(3)[0].join(), "1,2,3", "Test ofLength on an array zing");
     equals($arr.gt(1)[0].join(), "1,2,3", "Test gt on an array zing");
     equals($arr.gteq(1).length, 3, "Test gteq on an array zing");
     equals($arr.lt(3).length, 3, "Test lt on an array zing");
     equals($arr.lteq(3).length, 4, "Test lteq on an array zing");
 
-    equals($mixed.hasLength(3).length, 2, "Test lengthOf on a mixed zing");
+    equals($mixed.ofLength(3).length, 2, "Test ofLength on a mixed zing");
     equals($mixed.gt(1).length, 6, "Test gt on a mixed zing");
     equals($mixed.gteq(1).length, 10, "Test gteq on a mixed zing");
     equals($mixed.lt(3).length, 7, "Test lt on a mixed zing");
@@ -80,8 +80,10 @@ test("Test just() function.", function()
 
     equals($zing.just(0), 1, "Try reducing to an element (positive)");
     equals($zing.just(-1), 3, "Try reducing to an element (negative)");
-    equals($zing.just(0).length, 1, "Make sure length is right");
+    equals($zing.just(0).length, 1, "Make sure length is right!");
     equals($zing.just(1000).length, 0, "Try reducing to an non-existant element");
+    equals($zing.just([0, 1]).str(), "1,2", "Try reducing to the first two elements");
+    equals($zing.just([0, 2]).str(), "1,3", "Try reducing to the first and third elements");
 });
 
 test("Test only().", function()
@@ -91,20 +93,24 @@ test("Test only().", function()
     var fn2 = function(){return 3};
     var arr = [12, "hi", fn, new Object(), null, undefined, "foo", 99, 5, "bar", true, false];
 
-    var result = $a(arr).numbers();
-    equals(result.toString(), "12,99,5", "Filter out by Number")
+    var result1 = $a(arr).numbers();
+    var result2 = $a(arr).numbers$();
+    equals(result1.toString(), "12,99,5", "Filter out by Number")
+    equals(result2.toString(), "12,99,5", "Filter out by Number (mutator)")
 
-    result = $a(arr).strings();
-    equals(result.toString(), "hi,foo,bar", "Filter out by String");
+    result1 = $a(arr).strings();
+    result2 = $a(arr).strings$();
+    equals(result1.toString(), "hi,foo,bar", "Filter out by String");
+    equals(result2.toString(), "hi,foo,bar", "Filter out by String (mutator)");
 
-    result = $a(arr).only(Function)
-    equals(result[0], fn, "Filter by Function");
+    result1 = $a(arr).only(Function)
+    equals(result1[0], fn, "Filter by Function");
 
-    result = $a(arr).only(Boolean);
-    equals(result.toString(), "true,false", "Filter by Boolean");
+    result1 = $a(arr).only(Boolean);
+    equals(result1.toString(), "true,false", "Filter by Boolean");
 
-    result = $a(arr).only(fn2);
-    equals(result.toString(), "", "Filter by function that doesn't exist");
+    result1 = $a(arr).only(fn2);
+    equals(result1.toString(), "", "Filter by function that doesn't exist");
 });
 
 test("Test tighten().", function()

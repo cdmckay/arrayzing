@@ -177,3 +177,13 @@ test("Test clear().", function()
    equals($arr.clear().length, 0, "Test normal operation");
    equals($a().clear().length, 0, "Test on empty zing");   
 });
+
+
+test("Test indicesOf().", function()
+{
+    var array = [1, 2, 3, 4, 5, 6];
+
+    equals($a(array).indicesOf(1), 0, "Test indicesOf in simple case");
+    equals($a(array).indicesOf(function(i) { return i == 2; }), 1, "Test indicesOf with a function");
+    equals($a(array).indicesOf(function(i) { return i % 2 == 0; }), "1,3,5", "Test indicesOf with a function that returns multiple");
+});

@@ -76,3 +76,9 @@ test("Test strize().", function()
     equals(b.join(), "1,str,0,null,false,$2,true", "See if it converts all elements to strings correctly");
     equals($a(overload).strize().join(), "object1,object2", "See if the toString is detected and used properly")
 });
+
+test("Test arrayize().", function()
+{
+
+
+});

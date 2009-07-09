@@ -77,13 +77,25 @@ test("Test removeAt() function.", function()
    equals($array.removeAt(2, 2).get(2), 5, "Try removing 2 elements from the middle (positive)");
    equals($array.removeAt(-3).get(2), 4, "Try removing an element from the middle (negative)");
    equals($array.removeAt(-3, 2).get(2), 5, "Try removing 2 element from the middle (negative)");
-   equals($array.removeAt(1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (positive)");
-   equals($array.removeAt(1000, 2).get().join(), "1,2,3,4,5", "Try removing multiple non existent indices (positive)");
-   equals($array.removeAt(-1000).get().join(), "1,2,3,4,5", "Try removing a non existent index (negative)");
-   equals($a().removeAt(0).length, 0, "Try removing index 0 when there are no elements")
-   equals($a().removeAt(0, 2).length, 0, "Try removing index 0 and 1 when there are no elements")
+   equals($array.removeAt(1000).str(), "1,2,3,4,5", "Try removing a non existent index (positive)");
+   equals($array.removeAt(1000, 2).str(), "1,2,3,4,5", "Try removing multiple non existent indices (positive)");
+   equals($array.removeAt(-1000).str(), "1,2,3,4,5", "Try removing a non existent index (negative)");
+   equals($a().removeAt(0).length, 0, "Try removing index 0 when there are no elements");
+   equals($a().removeAt(0, 2).length, 0, "Try removing index 0 and 1 when there are no elements");
 
    // Test merge.
    equals($a(array).map(function(x) { return x * x; }).removeAt$(1).merge().str(),
      "1,2,9,16,25", "Test merge()");
+});
+
+test("Test insertAt() function.", function()
+{
+   var array = [1, 2, 3, 4, 5];
+   var $array = $a(array);
+   equals($array.insertAt(1, 1.5).str(), "1,1.5,2,3,4,5", "Try inserting element in middle (positive)");
+   equals($array.insertAt(1, 1.3, 1.7).str(), "1,1.3,1.7,2,3,4,5", "Try inserting 2 elements in middle (positive)");
+   equals($array.insertAt(-1, 4.5).str(), "1,2,3,4,4.5,5", "Try inserting element in middle (negative)");
+   equals($array.insertAt(-1, 4.3, 4.7).str(), "1,2,3,4,4.3,4.7,5", "Try inserting 2 elements in middle (negative)");
+   equals($array.insertAt(1000, 6).str(), "1,2,3,4,5,6", "Try inserting at non-existent index (positive)");
+   equals($array.insertAt(1000, 6, 7).str(), "1,2,3,4,5,6,7", "Try inserting 2 elements at non-existent index (positive)");
 });

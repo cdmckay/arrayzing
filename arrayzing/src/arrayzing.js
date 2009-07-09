@@ -42,11 +42,11 @@ Arrayzing.prototype =
             // for Arrayzing.
             if (val.constructor != String && val.length != undefined)
             {               
-                return this.setArray( Array.prototype.slice.call(val, 0, val.length) );
+                return this._setArray( Array.prototype.slice.call(val, 0, val.length) );
             }                   
         }
         
-        return this.setArray( arguments );		
+        return this._setArray( arguments );
     },
 
     /**
@@ -109,7 +109,7 @@ Arrayzing.prototype =
      * get(0) would be the first element and get(-1) would be the last element.
      * @param {Number} index The index we're getting.
      * @return The object held at that index, or undefined for an empty entry.
-     * @type {Object}
+     * @type Object
      */
     get: function( index )
     {
@@ -130,11 +130,24 @@ Arrayzing.prototype =
         }
     },
 
+    /**
+     * Set the value at the given index.  Index values may be
+     * positive (start from 0) or negative (start from the end of the string).
+     * @param {Number} index The index to set.
+     * @param {Object} value The value to set.
+     * @return The zing.
+     * @type Arrayzing
+     */
     set: function( index, value )
     {                
         return this.set$.apply(this.clone(), arguments);
     },
 
+    /**
+     * The mutator version of set.
+     * @see #set
+     * @type Arrayzing
+     */
     set$: function ( index, value )
     {
         if ( index == undefined )
@@ -151,12 +164,22 @@ Arrayzing.prototype =
         return this;
     },
 
+    /**
+     * An alias for push.
+     * @see #push
+     * @type Arrayzing
+     */
     add: function()
     {
         // Just alias push.
         return this.push.apply(this, arguments);
     },
 
+    /**
+     * An alias for push$.
+     * @see #push$
+     * @type Arrayzing
+     */
     add$: function()
     {
         // Just alias push$.
@@ -196,9 +219,9 @@ Arrayzing.prototype =
         this.splice$(index, len);
 
         // Adjust index array if it exists.
-        if (this.indexArray != undefined)
+        if (this._indices != undefined)
         {
-            this.indexArray.splice(index, len);            
+            this._indices.splice(index, len);
         }
 
         // Return the modified array.
@@ -208,36 +231,41 @@ Arrayzing.prototype =
 	/**
      * Inserts the value at the given index, and shifts all the
      * elements to the right of the index by one to make room.
-     * @param index The index to insert the element at.
-     * @param value The value to insert.
+     * @param {Number} index The index to insert the element at.
+     * @param {Object} values ... The values to insert (may be one or more).
      * @return The zing with the new value inserted into it.
      * @type Arrayzing
      */
-    insertAt: function( index, value )
+    insertAt: function( index, values )
     {
-		return this.insertAt$.apply( this.clone(), arguments );
+        return this.insertAt$.apply( this.clone(), arguments );
     },
 
-	/**
+    /**
      * Mutator version of insertAt.
      * @see #insertAt     
      * @type Arrayzing
      */
-    insertAt$: function( index, value )
+    insertAt$: function( index, values )
     {		
         // If index is greater than the length, just return this object.
-        if (index < -this.length || index >= this.length) return this;
+        if (index < -this.length) return this;
 
         // If the index is negative, convert it to it's positive equivalent.
         if (index < 0) index += this.length;
 
+		// The elements to insert.
+		var elements = Array.prototype.slice.call(arguments, 1);
+
         // Splice it in.
-        this.splice$(index, 0, value);
+        this.splice$.apply(this, [index, 0].concat(elements));
 
         // Adjust index array if it exists.
-        if (this.indexArray != undefined)
-        {
-            this.indexArray.splice(index, 0, undefined);            
+        if (this._indices != undefined)
+        {			
+            this._indices.splice(index, 0,
+		(function() { var a = []; a.length = elements.length; return a; })()
+            );
         }
 
         // Return the modified array.
@@ -251,7 +279,7 @@ Arrayzing.prototype =
      */
     clone: function()
     {
-        return this.pushStack( this );
+        return this._pushStack( this );
     },
 
     /**
@@ -262,24 +290,29 @@ Arrayzing.prototype =
      */
     only: function( fn )
     {
-        // Check type.       
+        return this.only$.apply( this.clone(), arguments );
+    },
+
+    /**
+     * Mutator version of only.
+     * @see #only
+     * @type Arrayzing
+     */
+    only$: function( fn )
+    {
+        // Check type.
         if (typeof fn != "function")
             throw new TypeError();
-               
+
         var ret = [];
 
         this.each(function()
-        {                 
+        {
             if (this instanceof fn)
                 ret.push(this);
         });
 
-        return this.pushStack( ret );
-    },
-
-    only$: function( fn )
-    {
-
+        return this._setArray( ret );
     },
 
     /**
@@ -291,9 +324,15 @@ Arrayzing.prototype =
         return this.only(Number);
     },
 
+    /**
+     * Mutator version of numbers.
+     * @see #numbers
+     * @see #only
+     * @type Arrayzing
+     */
     numbers$: function()
     {
-
+        return this.only$(Number);
     },
 
     /**
@@ -303,6 +342,17 @@ Arrayzing.prototype =
     strings: function()
     {
         return this.only(String);
+    },
+
+     /**
+     * Mutator version of strings.
+     * @see #strings
+     * @see #only
+     * @type Arrayzing
+     */
+    strings$: function()
+    {
+        return this.only$(String);
     },
 
     /**
@@ -321,16 +371,31 @@ Arrayzing.prototype =
      * @see #just
      * @type Arrayzing
      */
-    just$: function( index )
+    just$: function( indices )
     {
-        // Slice it out.
-        if (index == -1)
+        if ( Arrayzing.isArray(indices) )
         {
-            return this.slice(index);
+            var table = [];
+            Arrayzing.each(indices, function()
+            {
+                table[this] = true;
+            });
+
+            var filterfn = function(item, index)
+            {
+                return table[index] === true;
+            };
+
+            return this.filter$( filterfn );
         }
         else
         {
-            return this.slice(index, index + 1);
+            // Only one index, so rename.
+            var index = indices;
+
+            // Slice it out.
+            if (index == -1) return this.slice(index);            
+            else return this.slice(index, index + 1);            
         }
     },
 
@@ -365,7 +430,7 @@ Arrayzing.prototype =
 
         //alert(this.prevObject);
 
-        return this.setArray(Array.prototype.concat.apply(this.array(), ret));
+        return this._setArray(Array.prototype.concat.apply(this.array(), ret));
     },
 
     /**
@@ -476,7 +541,7 @@ Arrayzing.prototype =
 
     slice$: function()
     {        
-        return this.setArray( Array.prototype.slice.apply(this, arguments) );
+        return this._setArray( Array.prototype.slice.apply(this, arguments) );
     },
 
     sort: function()
@@ -512,9 +577,24 @@ Arrayzing.prototype =
         return this;
     },
 
+    /**
+     * Clear the contents of the zing.
+     * @return An empty zing.
+     * @type Arrayzing
+     */
     clear: function()
     {
-        return this.pushStack( [] );
+        return this.clear$.apply( this.clone(), arguments );
+    },
+
+    /**
+     * Mutator version of clear.
+     * @see #clear
+     * @type Arrayzing
+     */
+    clear$: function()
+    {
+        return this._setArray( [] );
     },
 
     /**
@@ -524,7 +604,7 @@ Arrayzing.prototype =
      * @return The new zing.
      * @type Arrayzing
      */	
-    pushStack: function( elements )
+    _pushStack: function( elements )
     {
         // Build a new jQuery matched element set
         var ret = Arrayzing( elements );
@@ -535,7 +615,7 @@ Arrayzing.prototype =
         // Create an array on indices.
         var array = [];
         for (var i = 0; i < ret.length; i++) array.push(i);
-        ret.indexArray = array;
+        ret._indices = array;
         
         // Return the newly-formed element set
         return ret;
@@ -553,7 +633,7 @@ Arrayzing.prototype =
      * @return The zing with the passed elements as its elements.
      * @type Arrayzing
      */
-    setArray: function( elements )
+    _setArray: function( elements )
     {
         // Resetting the length to 0, then using the native Array push
         // is a super-fast way to populate an object with array-like properties
@@ -564,10 +644,16 @@ Arrayzing.prototype =
         return this;
     },
 
-    setIndexArray: function( elements )
+    /** 
+     * This is used internally by setIndices to track changes for the 
+     * merge functions.
+     */
+    _indices: [],
+
+    _setIndices: function( elements )
     {
-        this.indexArray.length = 0;
-        Array.prototype.push.apply( this.indexArray, elements );
+        this._indices.length = 0;
+        Array.prototype.push.apply( this._indices, elements );
         return this;
     },
 
@@ -600,21 +686,21 @@ Arrayzing.prototype =
         var prev = target.prevObject.clone();       
 
         // Copy in the elements from the current zing
-        // using the indexArray to choose their spots.
-        for (var i = 0; i < target.indexArray.length; i++)
+        // using the indices to choose their spots.
+        for (var i = 0; i < target._indices.length; i++)
         {
-            prev[target.indexArray[i]] = this[i];
+            prev[target._indices[i]] = this[i];
         }
 
         // If there are any remaining elements, concatenate
         // them to the end of the prev.
-        if (this.length - target.indexArray.length > 0)
+        if (this.length - target._indices.length > 0)
         {
-            prev.concat$(this.slice$(target.indexArray.length));
+            prev.concat$(this.slice$(target._indices.length));
         }
 
         // Make the prev array the new array.
-        return this.setArray( prev.array() );
+        return this._setArray( prev.array() );
     },
 
     // Execute a callback for every element in the matched set.
@@ -626,50 +712,36 @@ Arrayzing.prototype =
         return Arrayzing.each( this, callback, args );
     },
 
-    compare: function( num, closure )
+    compare: function( num, fn )
     {
-        var ret = [];
+        return this.compare$.apply( this.clone(), arguments );
+    },
 
-        this.each(function()
+    compare$: function( num, comparer )
+    {
+        var fn = function(size)
         {
-            //alert(this);
-            if ( this.constructor == Number )
-            {
-                //alert("is number");
-                if (closure( num, this ))
-                {
-                    //alert("pushed");
-                    ret.push( this );
-                }
-            }
-            else if ( typeof this.length != "undefined" )
-            {
-                if (closure( num, this.length ))
-                {
-                    ret.push( this );
-                }
-            }
-            else
-            {                
-                var val = parseFloat(this);
-                if ( !isNaN(val) && closure( num, val ) )
-                {
-                    ret.push( this );
-                }
-            }
-        });
+            if (size == undefined) return false;
+            return comparer(num, size);
+        };
 
-        return this.pushStack( ret );
+        var matchIndices = this.quantize().indicesOf(fn);
+        return this.just$(matchIndices);
     },
 
     gt: function( num )
     {
-        return this.compare( num,
-            function( num, size )
-            {
-                return size > num;
-            }
-        );
+        return this.gt$.apply( this.clone(), arguments );
+    },
+
+    gt$: function( num )
+    {
+        var gt = function( num, size )
+        {
+            return size > num;
+        };
+
+        return this.compare$( num, gt );       
     },
 
     gteq: function( num )
@@ -712,7 +784,7 @@ Arrayzing.prototype =
         );
     },
 
-    hasLength: function()
+    ofLength: function()
     {
         // Just alias equals.
         return this.eq.apply(this, arguments);
@@ -720,25 +792,60 @@ Arrayzing.prototype =
 
     filter: function( pattern )
     {
-        var ret = [];
-		       
-        this.each(function()
-        {
-            if ( (pattern != null && pattern.constructor == RegExp && pattern.test(this))
-				|| (pattern != null && typeof pattern == "function" && pattern(this))
-                || (pattern == this) )
-            {
-                ret.push( this );
-            }
-        });
+        return this.filter$.apply(this.clone(), arguments);
+    },
 
-        return this.pushStack( ret );
+    filter$: function( pattern )
+    {
+        var outer = this;
+
+        var keep = [];
+        var indices = [];
+
+        var matchesRegExp = function(pattern, item)
+        {
+            return pattern != null && pattern.constructor == RegExp
+                && item != null && item != undefined
+                && pattern.test(item);
+        };
+
+        var matchesFunction = function(pattern, item, index)
+        {
+            return pattern != null && typeof pattern == "function"
+                    && pattern(item, index);
+        };
+
+        this.each(function(index, item)
+        {
+            if (matchesRegExp(pattern, item) 
+                || matchesFunction(pattern, item, index)
+                || (pattern == item) )
+            {                
+                keep.push( item );
+
+                if ( outer._indices[index] != undefined )
+                    indices.push( outer._indices[index] );
+            }          
+        });
+       
+        this._setIndices( indices );
+        this._setArray( keep );
+
+        return this;
+    },
+
+    indicesOf: function( pattern )
+    {
+        return this.filter(pattern)._indices;
     },
 
     /**
      * Removes all null, undefined, NaN, "", and [] elements from the zing
      * and pulls them tight.  Equivalent to calling removeAt() at each of those
      * indices.
+     *
+     * This function will also test for a length property and remove the element
+     * if that property is 0.
      *
      * @see #removeAt
      * @return The tightened zing.
@@ -756,46 +863,69 @@ Arrayzing.prototype =
      */
     tighten$: function()
     {
-        var outer = this;
-        var fn = function(total, item, index)
+        var fn = function(item)
         {
             if (item == null
                 || item == undefined
                 || (typeof item == "number" && isNaN(item))
                 || item == ""
-                || (item.length != undefined && item.length == 0)
-                )
+                || (item.length != undefined && item.length == 0))
             {                
-                return total;
+                return false;
             }
 
-            total.elements.push(item);
-            if (outer.indexArray[index] != undefined)
-            {
-                total.indexArray.push(outer.indexArray[index]);
-            }
-            
-            return total;
+            return true;
         };
 
         // Tighten the zing.
-        var ret = this.reduce({ elements: [], indexArray: [] }, fn);
-
-        this.setIndexArray( ret.indexArray );
-        this.setArray( ret.elements );
-
-        return this;
+        return this.filter$(fn);
     },
 
-    uppered: function()
+    /**
+     * Remove all strings that are not uppercased.
+     * Implicitly calls strize.
+     * @see #areLower
+     * @see #strize
+     * @return The zing with all non-uppercased strings removed.
+     * @type Arrayzing
+     */
+    areUpper: function()
     {
-        return this.filter( /^[A-Z\s]*$/ );
+        return this.areUpper$.apply( this.clone(), arguments );
     },
 
-    lowered: function()
+    /**
+     * Mutator version of areUpper.
+     * @see #areUpper
+     * @type Arrayzing
+     */
+    areUpper$: function()
     {
-        return this.filter( /^[a-z\s]*$/ );
-    },   
+        return this.strize$().filter$( /^[A-Z\s]*$/ );
+    },
+
+    /**
+     * Remove all strings that are not lowercased.
+     * Implicitly calls strize.
+     * @see #areUpper
+     * @see #strize
+     * @return The zing with all non-lowercased strings removed.
+     * @type Arrayzing
+     */
+    areLower: function()
+    {
+        return this.areLower$.apply( this.clone(), arguments );
+    },
+
+    /**
+     * Mutator version of areLower.
+     * @see #areLower
+     * @type Arrayzing
+     */
+    areLower$: function()
+    {
+        return this.strize$().filter$( /^[a-z\s]*$/ );
+    },
 	
     reduce: function( initial, closure )
     {
@@ -854,98 +984,108 @@ Arrayzing.prototype =
         });
     },
 
-	/**
-	 * Returns the minimum value in the zing.  The value
-	 * used is the numeric value for a Number, or the 
-	 * length property if it exists.  If the object is 
-	 * neither a Number nor a length property, it is
-	 * ignored.  If dfferent objects evaluate to the same
-	 * minimum length, the first value found will be returned.
-	 * @see #max
-	 * @return The object with the lowest value or undefined.
-	 * @type Object
-	 */
+    /**
+     * Returns the minimum value in the zing.  The value
+     * used is the numeric value for a Number, or the
+     * length property if it exists.  If the object is
+     * neither a Number nor has a length property, it is
+     * ignored.  If dfferent objects evaluate to the same
+     * minimum length, the first value found will be returned.
+     * @see #max
+     * @return The object with the lowest value or undefined.
+     * @type Object
+     */
     min: function()
     {
-		var fn = function(min, next)
-		{
-			var val;
-			if (typeof next == "number") 
-			{
-				val = next;
-			}
-			else if (next != null && next.length != undefined) 
-			{
-				val = next.length;
-			}	
-			else
-			{
-				return min;
-			}
-							
-			if (max == undefined || val < max)
-			{
-				return val;
-			}
-		}				
-		
-		return this.reduce(undefined, fn);
+        var fn = function(min, val)
+        {
+            var ret;
+            if (typeof next == "number")
+            {
+                ret = val;
+            }
+            else if (val != null && val.length != undefined)
+            {
+                ret = val.length;
+            }
+            else
+            {
+                return min;
+            }
+
+            if (min == undefined || ret < min)
+            {
+                return ret;
+            }
+            else
+            {
+                return min;
+            }
+        }
+
+        return this.reduce(undefined, fn);
     },
 
-	/**
-	 * Returns the maximum value in the zing.  The value
-	 * used is the numeric value for a Number, or the 
-	 * length property if it exists.  If the object is 
-	 * neither a Number nor a length property, it is
-	 * ignored.  If dfferent objects evaluate to the same
-	 * maximum length, the first value found will be returned.
-	 * @see #min
-	 * @return The object with the lowest value or undefined.
-	 * @type Object
-	 */
+    /**
+     * Returns the maximum value in the zing.  The value
+     * used is the numeric value for a Number, or the
+     * length property if it exists.  If the object is
+     * neither a Number nor a length property, it is
+     * ignored.  If dfferent objects evaluate to the same
+     * maximum length, the first value found will be returned.
+     * @see #min
+     * @return The object with the lowest value or undefined.
+     * @type Object
+     */
     max: function()
     {
-		var fn = function(max, next)
-		{
-			var val;
-			if (typeof next == "number") 
-			{
-				val = next;
-			}
-			else if (next != null && next.length != undefined) 
-			{
-				val = next.length;
-			}	
-			else
-			{
-				return max;
-			}
-							
-			if (max == undefined || val > max)
-			{
-				return val;
-			}
-		}				
-		
-		return this.reduce(undefined, fn);
+        var fn = function(max, next)
+        {
+            var val;
+            if (typeof next == "number")
+            {
+                val = next;
+            }
+            else if (next != null && next.length != undefined)
+            {
+                val = next.length;
+            }
+            else
+            {
+                return max;
+            }
+
+            if (max == undefined || val > max)
+            {
+                return val;
+            }
+            else
+            {
+                return max;
+            }
+        }
+
+        return this.reduce(undefined, fn);
     },
-
-    indexOf: function()
-    {
-
-    },    
 
     every: function()
     {
 
     },
 
-    and: function()
+    and: function( val )
     {
-        return this.boolize$().reduce(function(total, item)
+        if (val == undefined)
         {
-            return total && item;
-        });        
+            return this.boolize$().reduce(function(total, item)
+            {
+                return total && item;
+            });
+        }
+        else
+        {
+            
+        }
     },
 
     some: function()
@@ -983,6 +1123,7 @@ Arrayzing.prototype =
     /**
      * Mutator version of flatten.
      * @see #flatten
+     * @type Arrayzing
      */
     flatten$: function()
     {
@@ -1036,7 +1177,7 @@ Arrayzing.prototype =
 
     enclose$: function( left, right )
     {
-
+        return this.prepend$(left).append$(right);
     },
 
     /**
@@ -1047,8 +1188,8 @@ Arrayzing.prototype =
      * For a String object on a String element, the object will be prepended
      * to the element.
      *
-     * For any object on a array-like element, the object will be added to the left side
-     * of the array-like element.
+     * For any object on a array-like element, the object will be added to the
+     * left side of the array-like element.
      *
      * For any object on an unknown element object, the element will simply
      * be skipped.
@@ -1132,7 +1273,7 @@ Arrayzing.prototype =
         var fn = function( val )
         {
             // Look for array-like item.
-            if (val.constructor == String)
+            if (Arrayzing.isString(val))
             {
                 return val.substr(n);
             }
@@ -1170,24 +1311,40 @@ Arrayzing.prototype =
 
     },
 
-    upper: function()
+    toUpper: function()
     {
 
     },
 
-    upper$: function()
+    toUpper$: function()
+    {
+        var fn = function(item)
+        {
+            if (item && item.toUpperCase)
+                return item.toUpperCase();
+
+            return item;
+        };
+
+        return this.map$(fn);
+    },
+
+    toLower: function()
     {
 
     },
 
-    lower: function()
+    toLower$: function()
     {
+        var fn = function(item)
+        {
+            if (item && item.toLowerCase)
+                return item.toLowerCase();
 
-    },
+            return item;
+        };
 
-    lower$: function()
-    {
-
+        return this.map$(fn);
     },    
 
     /**
@@ -1261,14 +1418,53 @@ Arrayzing.prototype =
         return this;
     },
 
-    arrayize: function( index )
+    /**
+     * Converts all elements in the array to a Number quantity.
+     * Quantize will leave any Number untouched, will convert any object with
+     * a length property (i.e. a String) to it's length, and any other object
+     * will be parsed.  If the function cannot determine a quantity for
+     * the object, undefined will be returned.
+     * @param {Number} [index] The index to convert.
+     * @return The quantized zing.
+     * @type Arrayzing
+     */
+    quantize: function( index )
     {
-
+        return this.convert(Arrayzing.quantize, index);
     },
 
+    /**
+     * Mutator version of quantize.
+     * @see #quantize
+     * @type Arrayzing
+     */
+    quantize$: function( index )
+    {
+        return this.convert$(Arrayzing.quantize, index);
+    },
+
+    /**
+     * Turns all elements into Arrays.  If the element is already
+     * an Array, it is untouched.  All other objects are enclosed
+     * as single elements in an array.  If the element has a toArray
+     * function, it will be called.
+     * @param {Number} [index] The index to convert.
+     * @return An arrayized zing.
+     * @type Arrayzing
+     */
+    arrayize: function( index )
+    {
+        return this.convert(Arrayzing.arrayize, index);
+    },
+
+    /**
+     * Mutator version of arrayize.
+     * @see #arrayize
+     * @type Arrayzing
+     */
     arrayize$: function( index )
     {
-
+        return this.convert$(Arrayzing.arrayize, index);
     },
 
     /**
@@ -1432,6 +1628,72 @@ Arrayzing.prototype.init.prototype = Arrayzing.prototype;
 // (Adapted from jQuery).
 Arrayzing.extend(
 {
+    isArray: function( object )
+    {
+        if ( object && object.constructor == Array )
+        {
+            return true;
+        }
+            
+        return false;
+    },
+
+    isArraylike: function( object )
+    {
+        if ( object && (Arrayzing.isArray(object) || object.length != undefined) )
+        {
+            return true;
+        }
+
+        return false;
+    },
+
+    isFunction: function( object )
+    {
+        return (typeof object == "function");
+    },
+
+    isString: function( object )
+    {
+        return (typeof object == "string") || object.constructor == String;
+    },
+
+    quantize: function( object )
+    {
+        if ( object.constructor == Number )
+        {
+            return object;
+        }
+        else if ( typeof object.length != "undefined" )
+        {
+            return object.length;
+        }
+
+        var floatVal = parseFloat(object);
+        if ( !isNaN(floatVal) ) return floatVal;
+
+        return undefined;
+    },
+
+    arrayize: function( object )
+    {
+        if (object == undefined)
+        {
+            return undefined;
+        }
+        else if (object.constructor == Array)
+        {
+            return object;
+        }
+        else if (typeof object.toArray == 'function')
+        {
+            return object.toArray();
+        }
+        else
+        {
+            return [ object ];
+        }
+    },
 
     /**
      * Convert an object to a Boolean object.  If the object has a
@@ -1442,7 +1704,7 @@ Arrayzing.extend(
      */
     boolize: function( object )
     {
-        if (object == undefined && object == null)
+        if (object == undefined || object == null)
         {
             return false;
         }
@@ -1496,6 +1758,22 @@ Arrayzing.extend(
     strize: function( object )
     {
         return "" + object;
+    },
+	
+    /**
+     * Create a new Arrayzing with the given
+     * size, populated wth the givevn value.
+     * @param {Number} size
+     * @param {Object} value
+     */
+    fill: function( size, value )
+    {
+            var zing = Arrayzing();
+            for (var i = 0; i < size; i++)
+            {
+                    zing.add(value);
+            }
+            return zing;
     },
 
     // args is for internal usage only
