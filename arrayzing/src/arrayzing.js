@@ -373,7 +373,7 @@ Arrayzing.prototype =
      */
     just$: function( indices )
     {
-        if ( Arrayzing.isArray(indices) )
+        if ( Arrayzing.isArrayLike(indices) )
         {
             var table = [];
             Arrayzing.each(indices, function()
@@ -754,6 +754,11 @@ Arrayzing.prototype =
         );
     },
 
+    gteq$: function( num )
+    {
+
+    },    
+
     lt: function( num )
     {
         return this.compare( num,
@@ -762,6 +767,11 @@ Arrayzing.prototype =
                 return size < num;
             }
         );
+    },
+
+    lt$: function( num )
+    {
+
     },
 
     lteq: function( num )
@@ -774,6 +784,11 @@ Arrayzing.prototype =
         );
     },
 
+    lteq$: function( num )
+    {
+
+    },
+
     eq: function( num )
     {
         return this.compare( num,
@@ -784,10 +799,20 @@ Arrayzing.prototype =
         );
     },
 
-    ofLength: function()
+    eq$: function( num )
+    {
+
+    },
+
+    ofLength: function( length )
     {
         // Just alias equals.
         return this.eq.apply(this, arguments);
+    },
+
+    ofLength$: function( length )
+    {
+
     },
 
     filter: function( pattern )
@@ -811,7 +836,7 @@ Arrayzing.prototype =
 
         var matchesFunction = function(pattern, item, index)
         {
-            return pattern != null && typeof pattern == "function"
+            return pattern != null && Arrayzing.isFunction(pattern)
                     && pattern(item, index);
         };
 
@@ -834,9 +859,32 @@ Arrayzing.prototype =
         return this;
     },
 
+    /**
+     * Returns the indices of all elements that match the
+     * given pattern.  The pattern can be any pattern that
+     * is valid for the filter function.
+     * 
+     * @see #filter
+     * @return A zing of numbers corresponding to the indices that matched.
+     * @type Arrayzing
+     */
     indicesOf: function( pattern )
     {
-        return this.filter(pattern)._indices;
+      return this.indicesOf$.apply( this.clone(), arguments );
+    },
+
+    /**
+     * Mutator version of indicesOf.
+     * @see #indicesOf
+     * @type Arrayzing
+     */
+    indicesOf$: function( pattern )
+    {
+        var filtered = this.filter$(pattern);
+        return filtered.map$(function(item, index)
+        {
+            return filtered._indices[index];
+        });
     },
 
     /**
@@ -882,10 +930,9 @@ Arrayzing.prototype =
     },
 
     /**
-     * Remove all strings that are not uppercased.
-     * Implicitly calls strize.
+     * Remove all strings that are not uppercased.     
+     *
      * @see #areLower
-     * @see #strize
      * @return The zing with all non-uppercased strings removed.
      * @type Arrayzing
      */
@@ -900,15 +947,14 @@ Arrayzing.prototype =
      * @type Arrayzing
      */
     areUpper$: function()
-    {
-        return this.strize$().filter$( /^[A-Z\s]*$/ );
+    {        
+        return this.strings$().filter$( /^[A-Z\s]*$/ );
     },
 
     /**
      * Remove all strings that are not lowercased.
-     * Implicitly calls strize.
-     * @see #areUpper
-     * @see #strize
+     *
+     * @see #areUpper     
      * @return The zing with all non-lowercased strings removed.
      * @type Arrayzing
      */
@@ -924,7 +970,7 @@ Arrayzing.prototype =
      */
     areLower$: function()
     {
-        return this.strize$().filter$( /^[a-z\s]*$/ );
+        return this.strings$().filter$( /^[a-z\s]*$/ );
     },
 	
     reduce: function( initial, closure )
@@ -1073,35 +1119,7 @@ Arrayzing.prototype =
 
     },
 
-    and: function( val )
-    {
-        if (val == undefined)
-        {
-            return this.boolize$().reduce(function(total, item)
-            {
-                return total && item;
-            });
-        }
-        else
-        {
-            
-        }
-    },
-
     some: function()
-    {
-
-    },
-
-    or: function()
-    {
-        return this.boolize$().reduce(function(total, item)
-        {
-            return total || item;
-        });
-    },
-
-    negate: function()
     {
 
     },
@@ -1638,9 +1656,22 @@ Arrayzing.extend(
         return false;
     },
 
-    isArraylike: function( object )
+    isArrayzing: function( object )
     {
-        if ( object && (Arrayzing.isArray(object) || object.length != undefined) )
+        if ( object && object.constructor == Arrayzing )
+        {
+            return true;
+        }
+
+        return false;
+    },
+
+    isArrayLike: function( object )
+    {
+        if ( object &&
+            (Arrayzing.isArray(object)
+            || Arrayzing.isArrayzing(object)
+            || object.length != undefined) )
         {
             return true;
         }
