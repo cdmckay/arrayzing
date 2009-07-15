@@ -27,6 +27,9 @@ if ( window.$a )
 // Map the Arrayzing namespace to the $a one.
 window.$a = Arrayzing;
 
+// Map the Arrayzing namespace internally to __.
+var __ = Arrayzing;
+
 Arrayzing.prototype =
 {
     /**
@@ -40,7 +43,7 @@ Arrayzing.prototype =
             
             // This allows any array-like object to be used as a constructor
             // for Arrayzing.
-            if (val.constructor != String && val.length != undefined)
+            if ( __.isArrayLike(val) )
             {               
                 return this._setArray( Array.prototype.slice.call(val, 0, val.length) );
             }                   
@@ -373,10 +376,10 @@ Arrayzing.prototype =
      */
     just$: function( indices )
     {
-        if ( Arrayzing.isArrayLike(indices) )
+        if ( __.isArrayLike(indices) )
         {
             var table = [];
-            Arrayzing.each(indices, function()
+            __.each(indices, function()
             {
                 table[this] = true;
             });
@@ -401,6 +404,7 @@ Arrayzing.prototype =
 
     /**
      * Concatenates the contents of one or more zings to the current zing.
+     *
      * @param {Arrayzing} zing An arrayzing to concatenate.
      * @return The result of the concatenation.
      * @type Arrayzing
@@ -411,18 +415,19 @@ Arrayzing.prototype =
     },
 
     /**
-     * Mutator version of just.
-     * @see #just
+     * Mutator version of concat.
+     *
+     * @see #concat
      * @type Arrayzing
      */
     concat$: function ( zing )
     {
         var ret = [];
-        Arrayzing.each(arguments, function()
+        __.each(arguments, function()
         {
             // If it's an array, keep it unchanged.
-            if (this.constructor == Array) ret.push(this);
-            else if (this.length != undefined)
+            if ( __.isArray(this) ) ret.push(this);
+            else if ( __.isArrayLike(this) )
             {
                 ret.push(Arrayzing.prototype.toArray.apply(this));
             }
@@ -437,6 +442,7 @@ Arrayzing.prototype =
      * Puts all the elements of an array into a string. The elements are
      * separated by a specified delimiter.  If no delimiter is specified, then
      * a comma is used.
+     * 
      * @param {String} [delimiter] Specifies the separator to use.
      * @return A joined string.
      * @type String
@@ -709,7 +715,7 @@ Arrayzing.prototype =
     // (Adapted from jQuery).
     each: function( callback, args )
     {
-        return Arrayzing.each( this, callback, args );
+        return __.each( this, callback, args );
     },
 
     compare: function( num, fn )
@@ -829,14 +835,14 @@ Arrayzing.prototype =
 
         var matchesRegExp = function(pattern, item)
         {
-            return pattern != null && pattern.constructor == RegExp
+            return pattern != null && __.isRegExp(pattern)
                 && item != null && item != undefined
                 && pattern.test(item);
         };
 
         var matchesFunction = function(pattern, item, index)
         {
-            return pattern != null && Arrayzing.isFunction(pattern)
+            return pattern != null && __.isFunction(pattern)
                     && pattern(item, index);
         };
 
@@ -998,7 +1004,7 @@ Arrayzing.prototype =
     {
         return this.reduce(0, function(total, item)
         {
-            if ( item.constructor == Number )
+            if ( __.isNumber(item) )
             {
                 total += item;
             }
@@ -1016,7 +1022,7 @@ Arrayzing.prototype =
     {
         return this.reduce(1, function(total, item)
         {
-            if ( item.constructor == Number )
+            if ( __.isNumber(item) )
             {
                 total *= item;
             }
@@ -1291,7 +1297,7 @@ Arrayzing.prototype =
         var fn = function( val )
         {
             // Look for array-like item.
-            if (Arrayzing.isString(val))
+            if (__.isString(val))
             {
                 return val.substr(n);
             }
@@ -1390,7 +1396,7 @@ Arrayzing.prototype =
     {
         var fn = function(element)
         {
-            if (element.constructor == String)
+            if ( __.isString(element) )
                 return element.replace(regexp, replacement);
             else
                 return element;
@@ -1448,7 +1454,7 @@ Arrayzing.prototype =
      */
     quantize: function( index )
     {
-        return this.convert(Arrayzing.quantize, index);
+        return this.convert( __.quantize, index );
     },
 
     /**
@@ -1458,7 +1464,7 @@ Arrayzing.prototype =
      */
     quantize$: function( index )
     {
-        return this.convert$(Arrayzing.quantize, index);
+        return this.convert$( __.quantize, index );
     },
 
     /**
@@ -1472,7 +1478,7 @@ Arrayzing.prototype =
      */
     arrayize: function( index )
     {
-        return this.convert(Arrayzing.arrayize, index);
+        return this.convert( __.arrayize, index );
     },
 
     /**
@@ -1482,7 +1488,7 @@ Arrayzing.prototype =
      */
     arrayize$: function( index )
     {
-        return this.convert$(Arrayzing.arrayize, index);
+        return this.convert$( __.arrayize, index );
     },
 
     /**
@@ -1494,7 +1500,7 @@ Arrayzing.prototype =
      */
     boolize: function( index )
     {
-        return this.convert(Arrayzing.boolize, index);
+        return this.convert( __.boolize, index );
     },
 
     /**
@@ -1504,7 +1510,7 @@ Arrayzing.prototype =
      */
     boolize$: function( index )
     {
-        return this.convert$(Arrayzing.boolize, index);
+        return this.convert$( __.boolize, index );
     },
 
     /**
@@ -1517,7 +1523,7 @@ Arrayzing.prototype =
      */
     numberize: function( index )
     {
-        return this.convert(Arrayzing.numberize, index);
+        return this.convert( __.numberize, index );
     },
 
     /**
@@ -1527,7 +1533,7 @@ Arrayzing.prototype =
      */
     numberize$: function ( index )
     {
-        return this.convert$(Arrayzing.numberize, index);
+        return this.convert$( __.numberize, index );
     },
 
     /**
@@ -1539,7 +1545,7 @@ Arrayzing.prototype =
      */
     strize: function( index )
     {
-        return this.convert(Arrayzing.strize, index);
+        return this.convert( __.strize, index );
     },
 
     /**
@@ -1549,7 +1555,7 @@ Arrayzing.prototype =
      */
     strize$: function( index )
     {
-        return this.convert$(Arrayzing.strize, index);
+        return this.convert$( __.strize, index );
     },
 
     /**
@@ -1646,31 +1652,26 @@ Arrayzing.prototype.init.prototype = Arrayzing.prototype;
 // (Adapted from jQuery).
 Arrayzing.extend(
 {
+    is: function( type, object )
+    {
+        return ( object && object.constructor == type );
+    },
+
     isArray: function( object )
     {
-        if ( object && object.constructor == Array )
-        {
-            return true;
-        }
-            
-        return false;
+        return __.is(Array, object);
     },
 
     isArrayzing: function( object )
     {
-        if ( object && object.constructor == Arrayzing )
-        {
-            return true;
-        }
-
-        return false;
+        return __.is(Arrayzing, object);
     },
 
     isArrayLike: function( object )
     {
-        if ( object &&
-            (Arrayzing.isArray(object)
-            || Arrayzing.isArrayzing(object)
+        if ( object && !__.isString(object) &&
+            (  __.isArray(object)
+            || __.isArrayzing(object)
             || object.length != undefined) )
         {
             return true;
@@ -1679,23 +1680,38 @@ Arrayzing.extend(
         return false;
     },
 
+    isBoolean: function( object )
+    {
+        return __.is(Boolean, object);
+    },
+
     isFunction: function( object )
     {
         return (typeof object == "function");
     },
 
+    isNumber: function( object )
+    {
+        return __.is( Number, object );
+    },
+
+    isRegExp: function( object )
+    {
+        return __.is( RegExp, object );
+    },
+
     isString: function( object )
     {
-        return (typeof object == "string") || object.constructor == String;
+        return (typeof object == "string") || __.is( String, object );
     },
 
     quantize: function( object )
     {
-        if ( object.constructor == Number )
+        if ( __.isNumber(object) )
         {
             return object;
         }
-        else if ( typeof object.length != "undefined" )
+        else if ( __.isArrayLike(object) || __.isString(object) )
         {
             return object.length;
         }
@@ -1708,15 +1724,15 @@ Arrayzing.extend(
 
     arrayize: function( object )
     {
-        if (object == undefined)
+        if (object == undefined || object == null)
         {
             return undefined;
         }
-        else if (object.constructor == Array)
+        else if ( __.isArray(object) )
         {
             return object;
         }
-        else if (typeof object.toArray == 'function')
+        else if ( __.isFunction(object.toArray) )
         {
             return object.toArray();
         }
@@ -1739,11 +1755,11 @@ Arrayzing.extend(
         {
             return false;
         }
-        else if (object.constructor == Boolean)
+        else if ( __.isBoolean(object) )
         {
             return object;
         }
-        else if (typeof object.toBoolean == 'function')
+        else if ( __.isFunction(object.toBoolean) )
         {
             return object.toBoolean();
         }
@@ -1756,22 +1772,24 @@ Arrayzing.extend(
     /**
      * Convert an object to a Number object.  If the object has a
      * toNumber function, it will be called.
+     *
      * @param {Object} [object] The object to convert.
      * @return The converted object.
      * @type Number
      */
     numberize: function( object )
     {
-        if (object != undefined && object != null)
+        if (object == undefined || object == null)
         {
-            if (object.constructor == Number)
-            {
-                return object;
-            }
-            else if (typeof object.toNumber == 'function')
-            {
-                return object.toNumber();
-            }
+            return 0;
+        }
+        else if ( __.isNumber(object) )
+        {
+            return object;
+        }
+        else if ( __.isFunction(object.toNumber) )
+        {
+            return object.toNumber();
         }
 
         var n = Number(object);
@@ -1782,6 +1800,7 @@ Arrayzing.extend(
     /**
      * Convert an object to a String object.  If the object has a
      * toString function, it will be called.
+     * 
      * @param {Object} [object] The object to convert.
      * @return The converted object.
      * @type String
@@ -1794,6 +1813,7 @@ Arrayzing.extend(
     /**
      * Create a new Arrayzing with the given
      * size, populated wth the givevn value.
+     * 
      * @param {Number} size
      * @param {Object} value
      */
