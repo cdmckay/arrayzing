@@ -978,22 +978,50 @@ Arrayzing.prototype =
     {
         return this.strings$().filter$( /^[a-z\s]*$/ );
     },
-	
+
+    /**
+     * Apply a function against an accumulator and each value
+     * of the array (from left-to-right) as to reduce it to a
+     * single value.
+     *
+     * The format of the closure is:
+     * function(accumalator, element, index)
+     *
+     * @see #rreduce
+     * @param {Object} initial The initial value of the accumulator
+     * @param {Function} closure The closure applied against each value
+     * @return The final value of the accumulator
+     * @type Object
+     */
     reduce: function( initial, closure )
     {
         // The starting "total".
-        var total = initial;
+        var accumulator = initial;
 
         for (var i = 0; i < this.length; i++)
         {
             if (this.hasKey(i))
-                total = closure(total, this[i], i);
+                accumulator = closure.call(this[i], accumulator, this[i], i);
         }
 
-        return total;
+        return accumulator;
     },
 
-    rreduce: function()
+    /**
+     * Apply a function against an accumulator and each value
+     * of the array (from right-to-left) as to reduce it to a
+     * single value.
+     *
+     * The format of the closure is:
+     * function(accumalator, element, index)
+     *
+     * @see #reduce
+     * @param {Object} initial The initial value of the accumulator
+     * @param {Function} closure The closure applied against each value
+     * @return The final value of the accumulator
+     * @type Object
+     */
+    rreduce: function( initial, closure )
     {
         // Reverse and reduce.
         var reversed = this.reverse();
@@ -1120,14 +1148,40 @@ Arrayzing.prototype =
         return this.reduce(undefined, fn);
     },
 
-    every: function()
+    /**
+     * Used to determine if the given predicate closure is valid
+     * (i.e. returns true for all items in this zing).
+     *
+     * @param {Function} closure The closure predicate used for matching
+     * @return True if all elements return true for the closure
+     * @type Boolean
+     */
+    every: function( closure )
     {
+        var fn = function( accumlator, element )
+        {
+            return accumlator && closure(element);
+        };
 
+        return this.reduce(fn);
     },
 
-    some: function()
+    /**
+     * Iterates over the contents of an object or collection,
+     * and checks whether a predicate is valid for at least one element.
+     *
+     * @param {Function} closure The closure predicate used for matching
+     * @return True if any elements returns true for the closure
+     * @type Boolean
+     */
+    any: function( closure )
     {
+        var fn = function( accumlator, element )
+        {
+            return accumlator || closure(element);
+        };
 
+        return this.reduce(fn);
     },
 
     /**
