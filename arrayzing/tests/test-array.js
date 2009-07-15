@@ -152,6 +152,7 @@ test("Test map().", function()
 
 test("Test reduce() family of functions.", function()
 {
+    var message;
     var $num = $a(1, 2, 3);
     var $str = $a("a", "b", "c");
     var fn = function(total, element) { return total + element };
@@ -174,10 +175,36 @@ test("Test reduce() family of functions.", function()
     // Every
     equals($num.every(function(e) { return e > 0; }), true, "Test every when result should be true");
     equals($num.every(function(e) { return e > 1; }), false, "Test every when result should be false");
+    equals($a().every(function(e) { return e > 1; }), true, "Test every on empty zing");
+
+    try
+    {
+        message = "Make sure every throws TypeError for non-function argument";
+        $a().every(true);
+        ok(false, message);
+    }
+    catch (error)
+    {
+        if (error instanceof TypeError) ok(true, message);
+        else ok(false, message);
+    }
 
     // Any
     equals($num.any(function(e) { return e > 0; }), true, "Test any when result should be true");
     equals($num.any(function(e) { return e < 1; }), false, "Test any when result should be false");
+    equals($num.any(function(e) { return e < 1; }), false, "Test any on empty zing");
+
+    try
+    {
+        message = "Make sure any throws TypeError for non-function argument";
+        $a().every(true);
+        ok(false, message);
+    }
+    catch (error)
+    {
+        if (error instanceof TypeError) ok(true, message);
+        else ok(false, message);
+    }
 });
 
 test("Test clear().", function()

@@ -1158,6 +1158,9 @@ Arrayzing.prototype =
      */
     every: function( closure )
     {
+        // Make sure the first argument is a Function.
+        if (!__.isFunction(closure)) throw new TypeError();
+
         var fn = function( accumlator, element )
         {
             return accumlator && closure(element);
@@ -1176,6 +1179,9 @@ Arrayzing.prototype =
      */
     any: function( closure )
     {
+        // Make sure the first argument is a Function.
+        if (!__.isFunction(closure)) throw new TypeError();
+
         var fn = function( accumlator, element )
         {
             return accumlator || closure(element);
