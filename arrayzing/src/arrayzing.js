@@ -1163,7 +1163,7 @@ Arrayzing.prototype =
             return accumlator && closure(element);
         };
 
-        return this.reduce(fn);
+        return this.reduce(true, fn);
     },
 
     /**
@@ -1181,7 +1181,7 @@ Arrayzing.prototype =
             return accumlator || closure(element);
         };
 
-        return this.reduce(fn);
+        return this.reduce(false, fn);
     },
 
     /**

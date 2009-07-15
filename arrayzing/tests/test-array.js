@@ -161,13 +161,23 @@ test("Test reduce() family of functions.", function()
     equals($str.reduce("", fn), "abc", "Try some normal operation stuff");
     equals($str.rreduce("", fn), "cba", "Try some normal operation stuff (rreduce)");
 
+    // Sum
     equals($num.sum(), 6, "Test sum under normal circumstances.");
     equals($a().sum(), 0, "Test sum on an empty zing");
     equals($a(1, undefined, function() { return x }, false, "2").sum(), 3, "Test on an array with a bunch of crap");
 
+    // Product
     equals($num.product(), 6, "Test product under normal circumstances");
     equals($a().product(), 1, "Test product on an empty zing");
-    equals($a(1, undefined, function() { return x }, false, "2").product(), 2, "Test on an array with a bunch of crap");    
+    equals($a(1, undefined, function() { return x }, false, "2").product(), 2, "Test on an array with a bunch of crap");
+
+    // Every
+    equals($num.every(function(e) { return e > 0; }), true, "Test every when result should be true");
+    equals($num.every(function(e) { return e > 1; }), false, "Test every when result should be false");
+
+    // Any
+    equals($num.any(function(e) { return e > 0; }), true, "Test any when result should be true");
+    equals($num.any(function(e) { return e < 1; }), false, "Test any when result should be false");
 });
 
 test("Test clear().", function()
