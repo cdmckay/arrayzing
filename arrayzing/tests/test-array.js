@@ -224,3 +224,11 @@ test("Test indicesOf().", function()
     equals($a(array).indicesOf(function(i) { return i == 2; }), 1, "Test indicesOf with a function");
     equals($a(array).indicesOf(function(i) { return i % 2 == 0; }), "1,3,5", "Test indicesOf with a function that returns multiple");
 });
+
+test("Test flatten().", function()
+{
+    var array = [[1, 2], [3, [4]]];
+
+    equals($a(array).flatten$().length, 4, "Test flatten in simple case (length)");
+    equals($a(array).flatten$().slice$(0).str(), "1,2,3,4", "Test flatten in simple case (elements)");
+});

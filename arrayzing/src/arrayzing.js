@@ -1191,27 +1191,49 @@ Arrayzing.prototype =
     },
 
     /**
-     * Merges all top-level array-like objects (i.e. objects that have a
-     * length property) into a single array.
+     * Returns an Arrayzing that is a one-dimensional flattening of
+     * this Arrayzing (recursively).
      *
-     * For example, $a([1, 2], [3, 4]).flatten() = $a(1, 2, 3, 4);
+     * That is, for every element that is an Array or Arrayzing,
+     * extract its elements into the new Arrayzing.
+     *
+     * For example,
+     * $a([1, 2], [3, [4]]).flatten() == $a(1, 2, 3, 4)
+     *
+     * This transformation is not mergeable.
      *
      * @return A flattened zing.
      * @type Arrayzing
      */
     flatten: function()
     {
-
+        return this.flatten$.apply( this.clone(), arguments );
     },
 
     /**
      * Mutator version of flatten.
+     *
      * @see #flatten
      * @type Arrayzing
      */
     flatten$: function()
-    {
+    {        
+        var fn = function(accumulator, item)
+        {
+            if ( __.isArray(item) || __.isArrayzing(item) )
+                accumulator = accumulator.concat( __(item).flatten$().array() );
+            else
+                accumulator.push(item);
 
+            return accumulator;
+        };
+
+        // The new, flattened array.
+        var flattened = this.reduce([], fn);
+        this._setArray(flattened);
+        this._setIndices([]);
+
+        return this;
     },
 
     // Methods that modify the elements.
@@ -1747,12 +1769,14 @@ Arrayzing.extend(
 
     isFunction: function( object )
     {
-        return (typeof object == "function");
+        return (typeof object == "function")
+            || __.is( Function, object );
     },
 
     isNumber: function( object )
     {
-        return __.is( Number, object );
+        return (typeof object == "number")
+            || __.is( Number, object );
     },
 
     isRegExp: function( object )
@@ -1762,7 +1786,8 @@ Arrayzing.extend(
 
     isString: function( object )
     {
-        return (typeof object == "string") || __.is( String, object );
+        return (typeof object == "string")
+            || __.is( String, object );
     },
 
     quantize: function( object )
