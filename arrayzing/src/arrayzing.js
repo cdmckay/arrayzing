@@ -585,6 +585,7 @@ Arrayzing.prototype =
 
     /**
      * Clear the contents of the zing.
+     *
      * @return An empty zing.
      * @type Arrayzing
      */
@@ -595,6 +596,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of clear.
+     *
      * @see #clear
      * @type Arrayzing
      */
@@ -606,10 +608,12 @@ Arrayzing.prototype =
     /**
      * Push the current zing onto the stack returning the passed elements
      * as a new zing.  The new zing will have a reference to the old one.
+     *
      * @param elements The elements.
      * @return The new zing.
      * @type Arrayzing
-     */	
+     */
+    // Adapted from jQuery 1.2.
     _pushStack: function( elements )
     {
         // Build a new jQuery matched element set
@@ -632,13 +636,14 @@ Arrayzing.prototype =
      * The stack is not increased (i.e. it will be the same as it was before
      * the array was set).
      * If you want to add to the stack, use pushStack() or .clone().setArray().
-     * (Adapted from jQuery).
+     *
      * @see #pushStack
      * @see #clone
      * @param {Array} elements The elements to set the array to.
      * @return The zing with the passed elements as its elements.
      * @type Arrayzing
      */
+    // Adapted from jQuery 1.2.
     _setArray: function( elements )
     {
         // Resetting the length to 0, then using the native Array push
@@ -702,7 +707,7 @@ Arrayzing.prototype =
         // them to the end of the prev.
         if (this.length - target._indices.length > 0)
         {
-            prev.concat$(this.slice$(target._indices.length));
+            prev.concat$( this.slice$(target._indices.length) );
         }
 
         // Make the prev array the new array.
@@ -718,17 +723,37 @@ Arrayzing.prototype =
         return __.each( this, callback, args );
     },
 
-    compare: function( num, fn )
+    /**
+     * Applies the comparer function to each element in the zing, keeping
+     * only those elements for which the comparer returns true.
+     * This method implicity applies the quantize function.
+     *
+     * The format of the comparer is:
+     * comparer(number, size)
+     * where number is the passed in number
+     * and size is the elements quantized size.
+     *
+     * @see #quantize
+     * @param {Number} number
+     * @param {Function} comparer
+     */
+    compare: function( number, comparer )
     {
         return this.compare$.apply( this.clone(), arguments );
     },
 
-    compare$: function( num, comparer )
+    /**
+     * Mutator version of compare.
+     *
+     * @see #compare
+     * @type Arrayzing
+     */
+    compare$: function( number, comparer )
     {
         var fn = function(size)
         {
             if (size == undefined) return false;
-            return comparer(num, size);
+            return comparer(number, size);
         };
 
         var matchIndices = this.quantize().indicesOf(fn);
@@ -752,62 +777,62 @@ Arrayzing.prototype =
 
     gteq: function( num )
     {
-        return this.compare( num,
-            function( num, size )
-            {
-                return size >= num;
-            }
-        );
+        return this.gteq$.apply( this.clone(), arguments );
     },
 
     gteq$: function( num )
     {
+        var gteq = function( num, size )
+        {
+            return size >= num;
+        };
 
+        return this.compare$( num, gteq );
     },    
 
     lt: function( num )
     {
-        return this.compare( num,
-            function( num, size )
-            {
-                return size < num;
-            }
-        );
+        return this.lt$.apply( this.clone(), arguments );
     },
 
     lt$: function( num )
     {
+        var lt = function( num, size )
+        {
+            return size < num;
+        };
 
+        return this.compare$( num, lt );
     },
 
     lteq: function( num )
     {
-        return this.compare( num,
-            function( num, size )
-            {
-                return size <= num;
-            }
-        );
+        return this.lteq$.apply( this.clone(), arguments );
     },
 
     lteq$: function( num )
     {
+        var lteq = function( num, size )
+        {
+            return size <= num;
+        };
 
+        return this.compare$( num, lteq );
     },
 
     eq: function( num )
     {
-        return this.compare( num,
-            function( num, size )
-            {
-                return size == num;
-            }
-        );
+        return this.eq$.apply( this.clone(), arguments );
     },
 
     eq$: function( num )
     {
+        var eq = function( num, size )
+        {
+            return size == num;
+        };
 
+        return this.compare$( num, eq );
     },
 
     ofLength: function( length )
@@ -818,7 +843,8 @@ Arrayzing.prototype =
 
     ofLength$: function( length )
     {
-
+        // Just alias equals.
+        return this.eq$.apply(this, arguments);
     },
 
     filter: function( pattern )
@@ -1897,19 +1923,19 @@ Arrayzing.extend(
 	
     /**
      * Create a new Arrayzing with the given
-     * size, populated wth the givevn value.
+     * size, populated wth the given value.
      * 
      * @param {Number} size
      * @param {Object} value
      */
     fill: function( size, value )
     {
-            var zing = Arrayzing();
-            for (var i = 0; i < size; i++)
-            {
-                    zing.add(value);
-            }
-            return zing;
+        var zing = __();
+        
+        for (var i = 0; i < size; i++)        
+            zing.add(value);
+        
+        return zing;
     },
 
     // args is for internal usage only
