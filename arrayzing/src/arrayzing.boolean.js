@@ -1,4 +1,4 @@
-(function($a){
+(function(_){
 /*
  * Arrayzing Boolean Plugin
  *

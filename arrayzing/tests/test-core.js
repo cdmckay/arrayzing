@@ -24,16 +24,16 @@ test("Test Arrayzing constructor.", function()
     equals($array.length, $$array.length, "Should be the same size");
 });
 
-test("Test the has() function.", function()
+test("Test the contains() function.", function()
 {
     var object = new Object();
     var $arr = _(1, 2, 3, object, "string");
 
-    equals($arr.has(1), true, "See if it contains a number it should");
-    equals($arr.has("string"), true, "See if it contains a string it should");
-    equals($arr.has(object), true, "See if it contains an object it should")
-    equals($arr.has("anything"), false, "See if it contains something it shouldn't");
-    equals(_().has("anything"), false, "See if an empty array contains something it shouldn't");
+    equals($arr.contains(1), true, "See if it contains a number it should");
+    equals($arr.contains("string"), true, "See if it contains a string it should");
+    equals($arr.contains(object), true, "See if it contains an object it should")
+    equals($arr.contains("anything"), false, "See if it contains something it shouldn't");
+    equals(_().contains("anything"), false, "See if an empty array contains something it shouldn't");
 });
 
 test("Test the hasKey() function.", function()

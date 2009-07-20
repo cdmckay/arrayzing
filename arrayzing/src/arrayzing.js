@@ -66,29 +66,10 @@ Arrayzing.prototype =
     {
         return this.length;
     },
-
-    /**
-     * Determine whether or not a given object is in the zing.
-     *
-     * @param {Object} object The object we're looking for.
-     * @return True if the object is in the zing.
-     * @type Boolean
-     */
-    has: function( object )
+    
+    contains: function( pattern )
     {
-        var ret = false;
-        this.each(function()
-        {
-            if (this == object)
-            {
-                ret = true;
-                return false;
-            }
-
-            return true;
-        });
-
-        return ret;
+        return this.filter(pattern).length > 0;
     },
 
     /**
@@ -874,7 +855,7 @@ Arrayzing.prototype =
         return this.filter$.apply(this.clone(), arguments);
     },
 
-    filter$: function( pattern )
+    filter$: function( pattern, not )
     {
         var outer = this;
 
@@ -896,21 +877,33 @@ Arrayzing.prototype =
 
         this.each(function(index, item)
         {
-            if (matchesRegExp(pattern, item) 
-                || matchesFunction(pattern, item, index)
-                || (pattern == item) )
+            var matches = matchesRegExp(pattern, item)
+                    || matchesFunction(pattern, item, index)
+                    || (pattern == item);
+
+            if ((matches && !not) || (!matches && not))
             {                
                 keep.push( item );
 
                 if ( outer._indices[index] != undefined )
                     indices.push( outer._indices[index] );
-            }          
+            }           
         });
        
         this._setIndices( indices );
         this._setArray( keep );
 
         return this;
+    },
+
+    not: function( pattern )
+    {
+        return this.filter.call( this.clone(), pattern, true );
+    },
+
+    not$: function( pattern )
+    {
+        return this.filter$.call( this.clone(), pattern, true );
     },
 
     /**
