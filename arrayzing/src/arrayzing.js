@@ -7,10 +7,7 @@
  */
 
 // Map over Arrayzing in case of overwrite.
-if ( window.Arrayzing )
-{
-    var _Arrayzing = window.Arrayzing;
-}
+if ( window.Arrayzing ) var $Arrayzing = window.Arrayzing;
 
 var Arrayzing = window.Arrayzing = function()
 {
@@ -18,17 +15,14 @@ var Arrayzing = window.Arrayzing = function()
     return new Arrayzing.prototype.init( arguments );
 };
 
-// Map over the $a in case of overwrite.
-if ( window.$a )
-{
-    var _$a = window.$a;
-}
+// Map over the _ in case of overwrite.
+if ( window._ ) var $_ = window._;
 
-// Map the Arrayzing namespace to the $a one.
-window.$a = Arrayzing;
+// Map the Arrayzing namespace to the _ one.
+window._ = Arrayzing;
 
-// Map the Arrayzing namespace internally to __.
-var __ = Arrayzing;
+// Map the Arrayzing namespace internally to _.
+var _ = Arrayzing;
 
 Arrayzing.prototype =
 {
@@ -43,7 +37,7 @@ Arrayzing.prototype =
             
             // This allows any array-like object to be used as a constructor
             // for Arrayzing.
-            if ( __.isArrayLike(val) )
+            if ( _.isArrayLike(val) )
             {               
                 return this._setArray( Array.prototype.slice.call(val, 0, val.length) );
             }                   
@@ -64,6 +58,7 @@ Arrayzing.prototype =
 
     /**
      * The number of elements contained in the set.
+     * 
      * @return The size of the zing.
      * @type Number
      */
@@ -74,6 +69,7 @@ Arrayzing.prototype =
 
     /**
      * Determine whether or not a given object is in the zing.
+     *
      * @param {Object} object The object we're looking for.
      * @return True if the object is in the zing.
      * @type Boolean
@@ -97,6 +93,7 @@ Arrayzing.prototype =
 
     /**
      * Determine whether or not a given key in the zing has a value.
+     *
      * @param {Number} index The object we're looking for.
      * @return True if the key exists is in the zing, false otherwise.
      * @type {Boolean}
@@ -110,6 +107,7 @@ Arrayzing.prototype =
      * Get the object held at the given index.  You may index from the
      * left (positive numbers) or right (negative numbers).  For example,
      * get(0) would be the first element and get(-1) would be the last element.
+     *
      * @param {Number} index The index we're getting.
      * @return The object held at that index, or undefined for an empty entry.
      * @type Object
@@ -136,6 +134,7 @@ Arrayzing.prototype =
     /**
      * Set the value at the given index.  Index values may be
      * positive (start from 0) or negative (start from the end of the string).
+     *
      * @param {Number} index The index to set.
      * @param {Object} value The value to set.
      * @return The zing.
@@ -148,6 +147,7 @@ Arrayzing.prototype =
 
     /**
      * The mutator version of set.
+     *
      * @see #set
      * @type Arrayzing
      */
@@ -169,6 +169,7 @@ Arrayzing.prototype =
 
     /**
      * An alias for push.
+     *
      * @see #push
      * @type Arrayzing
      */
@@ -180,6 +181,7 @@ Arrayzing.prototype =
 
     /**
      * An alias for push$.
+     *
      * @see #push$
      * @type Arrayzing
      */
@@ -192,6 +194,7 @@ Arrayzing.prototype =
     /**
      * Removes the element at the given index, and shifts all the
      * elements over by one to close the gap.
+     *
      * @param index The index of the element to remove.
      * @param len The number of elements to remove.
      * @return Arrayzing set
@@ -204,6 +207,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of removeAt.
+     *
      * @see #removeAt     
      * @type Arrayzing
      */
@@ -234,6 +238,7 @@ Arrayzing.prototype =
 	/**
      * Inserts the value at the given index, and shifts all the
      * elements to the right of the index by one to make room.
+     *
      * @param {Number} index The index to insert the element at.
      * @param {Object} values ... The values to insert (may be one or more).
      * @return The zing with the new value inserted into it.
@@ -246,6 +251,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of insertAt.
+     *
      * @see #insertAt     
      * @type Arrayzing
      */
@@ -277,6 +283,7 @@ Arrayzing.prototype =
 
     /**
      * Return a new copy of this zing.
+     *
      * @return A new zing with all elements.
      * @type Arrayzing
      */
@@ -287,6 +294,7 @@ Arrayzing.prototype =
 
     /**
      * A function to filter out all objects of a certain type.
+     *
      * @param fn Function type to look for.
      * @return A zing with only that type.
      * @type Arrayzing
@@ -298,6 +306,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of only.
+     *
      * @see #only
      * @type Arrayzing
      */
@@ -329,6 +338,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of numbers.
+     *
      * @see #numbers
      * @see #only
      * @type Arrayzing
@@ -340,6 +350,7 @@ Arrayzing.prototype =
 
     /**
      * An alias for only to return elements that are strings.
+     *
      * @return Arrayzing set
      */
     strings: function()
@@ -349,6 +360,7 @@ Arrayzing.prototype =
 
      /**
      * Mutator version of strings.
+     *
      * @see #strings
      * @see #only
      * @type Arrayzing
@@ -361,6 +373,7 @@ Arrayzing.prototype =
     /**
      * Reduces the array to the value at the given index,
      * reducing the array to 1 element.
+     *
      * @param index The index that will become sole element in the array.
      * @return Arrayzing set
      */
@@ -371,15 +384,16 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of just.
+     *
      * @see #just
      * @type Arrayzing
      */
     just$: function( indices )
     {
-        if ( __.isArrayLike(indices) )
+        if ( _.isArrayLike(indices) )
         {
             var table = [];
-            __.each(indices, function()
+            _.each(indices, function()
             {
                 table[this] = true;
             });
@@ -423,11 +437,11 @@ Arrayzing.prototype =
     concat$: function ( zing )
     {
         var ret = [];
-        __.each(arguments, function()
+        _.each(arguments, function()
         {
             // If it's an array, keep it unchanged.
-            if ( __.isArray(this) ) ret.push(this);
-            else if ( __.isArrayLike(this) )
+            if ( _.isArray(this) ) ret.push(this);
+            else if ( _.isArrayLike(this) )
             {
                 ret.push(Arrayzing.prototype.toArray.apply(this));
             }
@@ -454,6 +468,7 @@ Arrayzing.prototype =
 
     /**
      * Returns the last element of the zing.
+     *
      * @return The last element of the zing.
      * @type Object
      */
@@ -464,6 +479,7 @@ Arrayzing.prototype =
 
     /**
      * Removes and returns the last element of the zing.
+     *
      * @return The last element of the zing.
      * @type Object
      */
@@ -476,6 +492,7 @@ Arrayzing.prototype =
     /**
      * Adds one or more elements to the end of the zing and returns
      * the new array.
+     *
      * @param {Object} element An object to push onto the array.
      * @return {Arrayzing} A new zing with that passed elements pushed on.
      * @type Arrayzing
@@ -488,6 +505,7 @@ Arrayzing.prototype =
     /**
      * Adds one or more elements to the end of the zing and returns
      * the modified array.
+     *
      * @param {Object} element An object to push onto the array.
      * @return The zing with the elements pushed on.
      * @type Arrayzing
@@ -500,6 +518,7 @@ Arrayzing.prototype =
 
     /**
      * Reverses the order of the elements in the zing.
+     *
      * @return Returns a new zing with reversed elements.
      * @type Arrayzing
      */
@@ -510,6 +529,7 @@ Arrayzing.prototype =
 
     /**
      * Reverses the order of the elements in the zing.
+     *
      * @return Returns the modified zing with reversed elements.
      * @type Arrayzing
      */
@@ -521,6 +541,7 @@ Arrayzing.prototype =
 
     /**
      * Returns the first element of the zing.
+     *
      * @return The first element of the zing.
      * @type Object
      */
@@ -531,6 +552,7 @@ Arrayzing.prototype =
 
     /**
      * Removes and returns the first element of the zing.
+     *
      * @return The first element of the zing.
      * @type Object
      */
@@ -720,7 +742,7 @@ Arrayzing.prototype =
     // (Adapted from jQuery).
     each: function( callback, args )
     {
-        return __.each( this, callback, args );
+        return _.each( this, callback, args );
     },
 
     /**
@@ -861,14 +883,14 @@ Arrayzing.prototype =
 
         var matchesRegExp = function(pattern, item)
         {
-            return pattern != null && __.isRegExp(pattern)
+            return pattern != null && _.isRegExp(pattern)
                 && item != null && item != undefined
                 && pattern.test(item);
         };
 
         var matchesFunction = function(pattern, item, index)
         {
-            return pattern != null && __.isFunction(pattern)
+            return pattern != null && _.isFunction(pattern)
                     && pattern(item, index);
         };
 
@@ -975,6 +997,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of areUpper.
+     *
      * @see #areUpper
      * @type Arrayzing
      */
@@ -1058,7 +1081,7 @@ Arrayzing.prototype =
     {
         return this.reduce(0, function(total, item)
         {
-            if ( __.isNumber(item) )
+            if ( _.isNumber(item) )
             {
                 total += item;
             }
@@ -1076,7 +1099,7 @@ Arrayzing.prototype =
     {
         return this.reduce(1, function(total, item)
         {
-            if ( __.isNumber(item) )
+            if ( _.isNumber(item) )
             {
                 total *= item;
             }
@@ -1097,6 +1120,7 @@ Arrayzing.prototype =
      * neither a Number nor has a length property, it is
      * ignored.  If dfferent objects evaluate to the same
      * minimum length, the first value found will be returned.
+     *
      * @see #max
      * @return The object with the lowest value or undefined.
      * @type Object
@@ -1139,6 +1163,7 @@ Arrayzing.prototype =
      * neither a Number nor a length property, it is
      * ignored.  If dfferent objects evaluate to the same
      * maximum length, the first value found will be returned.
+     *
      * @see #min
      * @return The object with the lowest value or undefined.
      * @type Object
@@ -1185,7 +1210,7 @@ Arrayzing.prototype =
     every: function( closure )
     {
         // Make sure the first argument is a Function.
-        if (!__.isFunction(closure)) throw new TypeError();
+        if (!_.isFunction(closure)) throw new TypeError();
 
         var fn = function( accumlator, element )
         {
@@ -1206,7 +1231,7 @@ Arrayzing.prototype =
     any: function( closure )
     {
         // Make sure the first argument is a Function.
-        if (!__.isFunction(closure)) throw new TypeError();
+        if (!_.isFunction(closure)) throw new TypeError();
 
         var fn = function( accumlator, element )
         {
@@ -1224,7 +1249,7 @@ Arrayzing.prototype =
      * extract its elements into the new Arrayzing.
      *
      * For example,
-     * $a([1, 2], [3, [4]]).flatten() == $a(1, 2, 3, 4)
+     * _([1, 2], [3, [4]]).flatten() == _(1, 2, 3, 4)
      *
      * This transformation is not mergeable.
      *
@@ -1246,8 +1271,8 @@ Arrayzing.prototype =
     {        
         var fn = function(accumulator, item)
         {
-            if ( __.isArray(item) || __.isArrayzing(item) )
-                accumulator = accumulator.concat( __(item).flatten$().array() );
+            if ( _.isArray(item) || _.isArrayzing(item) )
+                accumulator = accumulator.concat( _(item).flatten$().array() );
             else
                 accumulator.push(item);
 
@@ -1267,6 +1292,7 @@ Arrayzing.prototype =
     /**
      * Creates a new array with the results of calling a provided function on
      * every element in this array.
+     *
      * @param fn The function to call on each element.
      * @param [context] The object that the function is called on.
      * @return A mapped zing.
@@ -1279,6 +1305,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of map.
+     *
      * @see #map
      */
     map$: function( fn /*, context */ )
@@ -1304,7 +1331,7 @@ Arrayzing.prototype =
      */
     enclose: function( left, right )
     {
-
+        return this.enclose$.apply( this.clone(), arguments );
     },
 
     enclose$: function( left, right )
@@ -1337,6 +1364,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of prepend.
+     * 
      * @see #prepend
      */
     prepend$: function( object )
@@ -1369,6 +1397,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of append.
+     * 
      * @see #append
      * @param {Object} object The object to append.
      * @return The zing with each element.
@@ -1382,6 +1411,7 @@ Arrayzing.prototype =
     /**
      * Chop off one or more characters/elements from the left side of all
      * elements in the zing.  The default number of characters chopped is 1.
+     * 
      * @param {Number} [n] The number of characters to prechop.
      * @return A new zing with prechopped elements.
      * @type Arrayzing
@@ -1393,6 +1423,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of prechop.
+     *
      * @see #prechop
      * @type Arrayzing
      */
@@ -1405,7 +1436,7 @@ Arrayzing.prototype =
         var fn = function( val )
         {
             // Look for array-like item.
-            if (__.isString(val))
+            if (_.isString(val))
             {
                 return val.substr(n);
             }
@@ -1425,6 +1456,7 @@ Arrayzing.prototype =
     /**
      * Chop off one or more digits/characters/elements from the right side of all
      * elements in the zing.  The default number of characters chopped is 1.
+     *
      * @param {Number} [n] The number of characters to chop.
      * @return A new zing.
      * @type Arrayzing
@@ -1445,7 +1477,7 @@ Arrayzing.prototype =
 
     toUpper: function()
     {
-
+        return this.toUpper$.apply( this.clone(), arguments );
     },
 
     toUpper$: function()
@@ -1463,7 +1495,7 @@ Arrayzing.prototype =
 
     toLower: function()
     {
-
+        return this.toLower$.apply( this.clone(), arguments );
     },
 
     toLower$: function()
@@ -1482,6 +1514,7 @@ Arrayzing.prototype =
     /**
      * Applies the string object's replace method on all strings in the
      * zing.
+     * 
      * @see String#replace
      * @param {RegExp} regexp The RegExp object that specifies the pattern
      * to replace.  If it is a string, the string is used as the pattern.
@@ -1497,6 +1530,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of replace.
+     *
      * @see #replace
      * @type Arrayzing
      */
@@ -1504,7 +1538,7 @@ Arrayzing.prototype =
     {
         var fn = function(element)
         {
-            if ( __.isString(element) )
+            if ( _.isString(element) )
                 return element.replace(regexp, replacement);
             else
                 return element;
@@ -1515,6 +1549,7 @@ Arrayzing.prototype =
 
     /**
      * Convert one or all elements using a conversion function.
+     * 
      * @param {Function} fn The conversion function.
      * @param {Number} [index] The index to convert.
      * @return The converted zing.
@@ -1527,6 +1562,7 @@ Arrayzing.prototype =
 
     /**
      * Mutator version of convert.
+     *
      * @see #convert
      * @type Arrayzing
      */
@@ -1556,23 +1592,25 @@ Arrayzing.prototype =
      * a length property (i.e. a String) to it's length, and any other object
      * will be parsed.  If the function cannot determine a quantity for
      * the object, undefined will be returned.
+     *
      * @param {Number} [index] The index to convert.
      * @return The quantized zing.
      * @type Arrayzing
      */
     quantize: function( index )
     {
-        return this.convert( __.quantize, index );
+        return this.convert( _.quantize, index );
     },
 
     /**
      * Mutator version of quantize.
+     *
      * @see #quantize
      * @type Arrayzing
      */
     quantize$: function( index )
     {
-        return this.convert$( __.quantize, index );
+        return this.convert$( _.quantize, index );
     },
 
     /**
@@ -1580,94 +1618,103 @@ Arrayzing.prototype =
      * an Array, it is untouched.  All other objects are enclosed
      * as single elements in an array.  If the element has a toArray
      * function, it will be called.
+     *
      * @param {Number} [index] The index to convert.
      * @return An arrayized zing.
      * @type Arrayzing
      */
     arrayize: function( index )
     {
-        return this.convert( __.arrayize, index );
+        return this.convert( _.arrayize, index );
     },
 
     /**
      * Mutator version of arrayize.
+     *
      * @see #arrayize
      * @type Arrayzing
      */
     arrayize$: function( index )
     {
-        return this.convert$( __.arrayize, index );
+        return this.convert$( _.arrayize, index );
     },
 
     /**
      * Convert one or all elements to Boolean objects.  If the element has a
      * toBoolean function, it will be called.
+     *
      * @param {Number} [index] The index to convert.
      * @return A boolized zing.
      * @type Arrayzing
      */
     boolize: function( index )
     {
-        return this.convert( __.boolize, index );
+        return this.convert( _.boolize, index );
     },
 
     /**
      * Mutator version of boolize.
+     *
      * @see #boolize
      * @type Arrayzing
      */
     boolize$: function( index )
     {
-        return this.convert$( __.boolize, index );
+        return this.convert$( _.boolize, index );
     },
 
     /**
      * Convert one or all elements to Number objects.  If the element has a
      * toNumber function, it will be called.  If the element is true or false,
      * it will be converted to 1 or 0 (instead of NaN).
+     *
      * @param {Number} [index] The index to convert.
      * @return A numberized zing.
      * @type Arrayzing
      */
     numberize: function( index )
     {
-        return this.convert( __.numberize, index );
+        return this.convert( _.numberize, index );
     },
 
     /**
      * Mutator version of numberize.
+     *
      * @see #numberize
      * @type Arrayzing
      */
     numberize$: function ( index )
     {
-        return this.convert$( __.numberize, index );
+        return this.convert$( _.numberize, index );
     },
 
     /**
      * Convert one or all elements to String objects.  If the element has a
      * toString function, it will be called.
+     *
      * @param {Number} [index] The index to convert.
      * @return A strized zing.
      * @type Arrayzing
      */
     strize: function( index )
     {
-        return this.convert( __.strize, index );
+        return this.convert( _.strize, index );
     },
 
     /**
      * Mutator version of strize.
+     *
      * @see #boolize
      * @type Arrayzing
      */
     strize$: function( index )
     {
-        return this.convert$( __.strize, index );
+        return this.convert$( _.strize, index );
     },
 
     /**
      * Alias of toString.
+     *
      * @see #toString
      */
     str: function()
@@ -1677,6 +1724,7 @@ Arrayzing.prototype =
 
     /**
      * Convert the zing to a human-readable String.
+     *
      * @return The zing as String (it rhymes!)
      * @type String
      */
@@ -1687,6 +1735,7 @@ Arrayzing.prototype =
 
     /**
      * Alias of toArray.
+     *
      * @see #toArray
      */
     array: function()
@@ -1696,6 +1745,7 @@ Arrayzing.prototype =
 
     /**
      * Convert the zing to an Array.
+     * 
      * @return The zing as an Array (does not rhyme).
      * @type Array
      */
@@ -1767,19 +1817,19 @@ Arrayzing.extend(
 
     isArray: function( object )
     {
-        return __.is(Array, object);
+        return _.is(Array, object);
     },
 
     isArrayzing: function( object )
     {
-        return __.is(Arrayzing, object);
+        return _.is(Arrayzing, object);
     },
 
     isArrayLike: function( object )
     {
-        if ( object && !__.isString(object) &&
-            (  __.isArray(object)
-            || __.isArrayzing(object)
+        if ( object && !_.isString(object) &&
+            (  _.isArray(object)
+            || _.isArrayzing(object)
             || object.length != undefined) )
         {
             return true;
@@ -1790,39 +1840,39 @@ Arrayzing.extend(
 
     isBoolean: function( object )
     {
-        return __.is(Boolean, object);
+        return _.is(Boolean, object);
     },
 
     isFunction: function( object )
     {
         return (typeof object == "function")
-            || __.is( Function, object );
+            || _.is( Function, object );
     },
 
     isNumber: function( object )
     {
         return (typeof object == "number")
-            || __.is( Number, object );
+            || _.is( Number, object );
     },
 
     isRegExp: function( object )
     {
-        return __.is( RegExp, object );
+        return _.is( RegExp, object );
     },
 
     isString: function( object )
     {
         return (typeof object == "string")
-            || __.is( String, object );
+            || _.is( String, object );
     },
 
     quantize: function( object )
     {
-        if ( __.isNumber(object) )
+        if ( _.isNumber(object) )
         {
             return object;
         }
-        else if ( __.isArrayLike(object) || __.isString(object) )
+        else if ( _.isArrayLike(object) || _.isString(object) )
         {
             return object.length;
         }
@@ -1839,11 +1889,11 @@ Arrayzing.extend(
         {
             return undefined;
         }
-        else if ( __.isArray(object) )
+        else if ( _.isArray(object) )
         {
             return object;
         }
-        else if ( __.isFunction(object.toArray) )
+        else if ( _.isFunction(object.toArray) )
         {
             return object.toArray();
         }
@@ -1856,6 +1906,7 @@ Arrayzing.extend(
     /**
      * Convert an object to a Boolean object.  If the object has a
      * toBoolean function, it will be called.
+     * 
      * @param {Object} object The object to convert.
      * @return The converted object.
      * @type Boolean
@@ -1866,11 +1917,11 @@ Arrayzing.extend(
         {
             return false;
         }
-        else if ( __.isBoolean(object) )
+        else if ( _.isBoolean(object) )
         {
             return object;
         }
-        else if ( __.isFunction(object.toBoolean) )
+        else if ( _.isFunction(object.toBoolean) )
         {
             return object.toBoolean();
         }
@@ -1894,11 +1945,11 @@ Arrayzing.extend(
         {
             return 0;
         }
-        else if ( __.isNumber(object) )
+        else if ( _.isNumber(object) )
         {
             return object;
         }
-        else if ( __.isFunction(object.toNumber) )
+        else if ( _.isFunction(object.toNumber) )
         {
             return object.toNumber();
         }
@@ -1930,7 +1981,7 @@ Arrayzing.extend(
      */
     fill: function( size, value )
     {
-        var zing = __();
+        var zing = _();
         
         for (var i = 0; i < size; i++)        
             zing.add(value);

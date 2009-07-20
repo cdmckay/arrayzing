@@ -10,11 +10,11 @@ test("Test the prechop() function.", function()
     object.length = 2;
     object.toString = function() { return Array.prototype.join.call(this); }
 
-    var $arr = $a(22, object, "string", [1, 2], $a(3, 4));
+    var $arr = _(22, object, "string", [1, 2], _(3, 4));
 
     equals($arr.prechop().str(), "22,ho,tring,2,4", "Test prechop under normal circumstances, default arguments");
     equals($arr.prechop(2).str(), "22,,ring,,", "Test prechop under normal circumstances, different argument");
-    equals($a().prechop().length, 0, "Test it on an empty zing");
+    equals(_().prechop().length, 0, "Test it on an empty zing");
 });
 
 test("Test the replace() function.", function()
@@ -23,7 +23,7 @@ test("Test the replace() function.", function()
         toString: function()
         { return "object"; }
     }
-    var $arr = $a("foo", "bar", 21, object, true);
+    var $arr = _("foo", "bar", 21, object, true);
 
     equals($arr.replace("foo", "foz").str(), "foz,bar,21,object,true", "Test replace with string literal");
     equals($arr.replace(/[f|b](\w+)/, "$1").str(), "oo,ar,21,object,true", "Test replace with regex");
