@@ -24,6 +24,12 @@ test("Test Arrayzing constructor.", function()
     equals($array.length, $$array.length, "Should be the same size");
 });
 
+test("Test equals() function.", function()
+{
+    ok( _(1,2,3).equals( _(1,2,3) ), "Should be the same"  );
+    ok( _(1,2, _(3, 4)).equals(_(1,2, _(3, 4))), "Should be the same (nested)" );
+});
+
 test("Test the contains() function.", function()
 {
     var object = new Object();

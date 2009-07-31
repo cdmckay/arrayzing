@@ -30,7 +30,9 @@ Arrayzing.prototype =
      * Initialize a new zing.
      */
     init: function( arguments )
-    {        
+    {
+        this.constructor = Arrayzing;
+
         if (arguments.length == 1)
         {
             var val = arguments[0];
@@ -65,6 +67,50 @@ Arrayzing.prototype =
     size: function()
     {
         return this.length;
+    },
+
+    /**
+     * Checks if one zing is equal to another by checking if each
+     * element is equal.  This method can handle Array equality.
+     *
+     * Equals checks equality by first checking if the element defines
+     * an equals() method, and barring that, tries to use the == operator.
+     *
+     * @param {Arrayzing} that The zing to check for equality.
+     * @return True if equal, false otherwise.
+     */
+    equals: function( that )
+    {
+        if ( !_.isArrayzing(that) ) return false;
+
+        var equals = function( that )
+        {
+            for ( var i = 0; i < this.length; i++ )
+            {
+                if ( this[i] == that[i] )
+                    continue;
+                else if ( _.isFunction( this[i].equals )
+                        && this[i].equals(that[i]) )
+                    continue;
+
+                return false;
+            }
+
+            return true;
+        };
+
+        // This will temporarily add an equals method to the
+        // Array "class" (but only if it's not defined already).
+        if ( !_.isFunction( Array.prototype.equals ) )        
+            Array.prototype.equals = equals;
+
+        var areEqual = equals.call( this, that );
+
+        // Remove our equals method if we added it.
+        if ( Array.prototype.equals == equals )
+            Array.prototype.equals = undefined;
+
+        return areEqual;
     },
     
     contains: function( pattern )
@@ -896,12 +942,12 @@ Arrayzing.prototype =
         return this;
     },
 
-    not: function( pattern )
+    remove: function( pattern )
     {
         return this.filter.call( this.clone(), pattern, true );
     },
 
-    not$: function( pattern )
+    remove$: function( pattern )
     {
         return this.filter$.call( this.clone(), pattern, true );
     },
@@ -1329,7 +1375,7 @@ Arrayzing.prototype =
 
     enclose$: function( left, right )
     {
-        return this.prepend$(left).append$(right);
+        return this.prefix$(left).postfix$(right);
     },
 
     /**
@@ -1350,19 +1396,36 @@ Arrayzing.prototype =
      * @return The zing with each element.
      * @type Arrayzing    
      */
-    prepend: function( object )
+    prefix: function( object )
     {
-
+        return this.prefix$.apply( this.clone(), arguments );
     },
 
     /**
      * Mutator version of prepend.
      * 
-     * @see #prepend
+     * @see #prefix
      */
-    prepend$: function( object )
+    prefix$: function( object )
     {
-        
+        var fn = function( element )
+        {
+            if ( _.isString(element) && _.isString(object) )
+                return object + element;
+
+            if ( _.isArrayzing(element) )
+                return element.insertAt(0, object);
+
+            if ( _.isArrayLike(element) )
+            {
+                Array.prototype.unshift.call(element, object);
+                return element;
+            }
+
+            return element;
+        };
+
+        return this.map$(fn);
     },
 
     /**
@@ -1383,7 +1446,7 @@ Arrayzing.prototype =
      * @return The zing with each element.
      * @type Arrayzing
      */
-    append: function( object )
+    postfix: function( object )
     {
 
     },
@@ -1396,7 +1459,7 @@ Arrayzing.prototype =
      * @return The zing with each element.
      * @type Arrayzing
      */
-    append$: function( object )
+    postfix$: function( object )
     {
 
     },
@@ -1424,18 +1487,17 @@ Arrayzing.prototype =
     {
         // If n is not passed, set it to 1.
         if (n == undefined) n = 1;
-
-        var splice$ = this.splice$;
+        
         var fn = function( val )
         {
             // Look for array-like item.
-            if (_.isString(val))
+            if ( _.isString(val) )
             {
                 return val.substr(n);
             }
-            else if (val.length != undefined)
+            else if ( _.isArrayLike(val) )
             {
-                return splice$.call(val, 0, n);
+                return Array.prototype.slice.call(val, n);
             }
             else
             {
@@ -1456,16 +1518,37 @@ Arrayzing.prototype =
      */
     chop: function( n )
     {
-
+        return this.chop$.apply(this.clone(), arguments);
     },
 
     /**
      * Mutator version of chop.
      * @see #prechop
+     * @type Arrayzing
      */
     chop$: function( n )
     {
+        // If n is not passed, set it to 1.
+        if (n == undefined) n = 1;
 
+        var fn = function( val )
+        {
+            // Look for array-like item.
+            if ( _.isString(val) )
+            {
+                return val.substr(0, val.length - n);
+            }
+            else if ( _.isArrayLike(val) )
+            {
+                return Array.prototype.slice.call(val, 0, val.length - n);
+            }
+            else
+            {
+                return val;
+            }
+        };
+
+        return this.map$(fn);
     },
 
     toUpper: function()
@@ -1577,7 +1660,7 @@ Arrayzing.prototype =
         }
 
         return this;
-    },
+    },   
 
     /**
      * Converts all elements in the array to a Number quantity.
@@ -1730,6 +1813,7 @@ Arrayzing.prototype =
      * Alias of toArray.
      *
      * @see #toArray
+     * @type Array
      */
     array: function()
     {
@@ -1802,7 +1886,7 @@ Arrayzing.prototype.init.prototype = Arrayzing.prototype;
 
 // (Adapted from jQuery).
 Arrayzing.extend(
-{
+{    
     is: function( type, object )
     {
         return ( object && object.constructor == type );

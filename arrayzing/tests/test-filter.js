@@ -42,19 +42,19 @@ test("Test filter().", function()
     ok(isNaN(result[0]), "Filter using NaN");
 });
 
-test("Test not().", function()
+test("Test remove().", function()
 {
     var numArray = [1, 2, 3, 4, 5];
     var result;
 
-    result = _(numArray).not(/1/);
-    equals(result.str(), "2,3,4,5", "Try not-filtering using a simple RegExp");
+    result = _(numArray).remove(/1/);
+    equals(result.str(), "2,3,4,5", "Try removing using a simple RegExp");
 
-    result = _(numArray).not("1");
-    equals(result.str(), "2,3,4,5", "Try not-filtering using a string");
+    result = _(numArray).remove("1");
+    equals(result.str(), "2,3,4,5", "Try removing using a string");
 
-    result = _(numArray).not(1);
-    equals(result.str(), "2,3,4,5", "Try not-filtering using a number");
+    result = _(numArray).remove(1);
+    equals(result.str(), "2,3,4,5", "Try removing using a number");
 
     // An array of mixed values.
     var object = new Object();
@@ -62,22 +62,22 @@ test("Test not().", function()
     var mixedArray = [12, "foo", object, /regexp/, function() { return 2 },
         Number.NaN, [3, "baz"], null, undefined];
 
-    result = _(mixedArray).not(object);
-    ok(!result.contains(object), "Not-filter using a random object");
+    result = _(mixedArray).remove(object);
+    ok(!result.contains(object), "Remove using a random object");
 
-    result = _(mixedArray).not(null);
-    ok(!result.contains(null), "Not-filter using null");
+    result = _(mixedArray).remove(null);
+    ok(!result.contains(null), "Remove using null");
 
-    result = _(mixedArray).not(undefined);
-    ok(!result.contains(undefined), "Not-filter using undefined");
+    result = _(mixedArray).remove(undefined);
+    ok(!result.contains(undefined), "Remove using undefined");
 
     var fn = function(item) { return item == 12 || item == "foo"; };
-    result = _(mixedArray).not(fn);
+    result = _(mixedArray).remove(fn);
     ok(!result.contains(12) || result.contains("foo"),
-        "Not-filter using a function, make sure length is right");
+        "Remove using a function, make sure length is right");
 
-    result = _(mixedArray).not(isNaN);
-    ok(!result.contains(isNaN), "Not-filter using NaN");
+    result = _(mixedArray).remove(isNaN);
+    ok(!result.contains(isNaN), "Remove using NaN");
 });
 
 test("Test compare(), gt(), lt(), etc. functions.", function()
