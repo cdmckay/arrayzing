@@ -37,9 +37,9 @@ Arrayzing.prototype =
         {
             var val = arguments[0];
             
-            // This allows any array-like object to be used as a constructor
+            // This allows any iterable object to be used as a constructor
             // for Arrayzing.
-            if ( _.isArrayLike(val) )
+            if ( _.isIterable(val) )
             {               
                 return this._setArray( Array.prototype.slice.call(val, 0, val.length) );
             }                   
@@ -263,7 +263,7 @@ Arrayzing.prototype =
         return this;
     },
 
-	/**
+    /**
      * Inserts the value at the given index, and shifts all the
      * elements to the right of the index by one to make room.
      *
@@ -418,7 +418,7 @@ Arrayzing.prototype =
      */
     just$: function( indices )
     {
-        if ( _.isArrayLike(indices) )
+        if ( _.isIterable(indices) )
         {
             var table = [];
             _.each(indices, function()
@@ -471,7 +471,7 @@ Arrayzing.prototype =
             // If it's an array, keep it unchanged.
             if ( _.isArrayzing(this) ) ret.push(this.array());
             else if ( _.isArray(this) ) ret.push(this);
-            else if ( _.isArrayLike(this) )
+            else if ( _.isIterable(this) )
             {
                 ret.push(Arrayzing.prototype.array.apply(this));
             }
@@ -615,7 +615,7 @@ Arrayzing.prototype =
     _setArray: function( elements )
     {
         // Resetting the length to 0, then using the native Array push
-        // is a super-fast way to populate an object with array-like properties
+        // is a super-fast way to populate an object that is iterable.
         this.length = 0;
 
         Array.prototype.push.apply( this, elements );
@@ -864,6 +864,16 @@ Arrayzing.prototype =
     remove$: function( pattern )
     {
         return this.filter$.call( this.clone(), pattern, true );
+    },
+
+    removeAll: function( iterable )
+    {
+        this.remove.apply(this, iterable)
+    },
+
+    removeAll$: function( iterable )
+    {
+        this.remove$.apply(this, iterable)
     },
 
     /**
@@ -1300,8 +1310,8 @@ Arrayzing.prototype =
      * For a String object on a String element, the object will be prepended
      * to the element.
      *
-     * For any object on a array-like element, the object will be added to the
-     * left side of the array-like element.
+     * For any object on a iterable element, the object will be added to the
+     * left side of the iterable element.
      *
      * For any object on an unknown element object, the element will simply
      * be skipped.
@@ -1330,7 +1340,7 @@ Arrayzing.prototype =
             if ( _.isArrayzing(element) )
                 return element.insertAt(0, object);
 
-            if ( _.isArrayLike(element) )
+            if ( _.isIterable(element) )
             {
                 Array.prototype.unshift.call(element, object);
                 return element;
@@ -1350,8 +1360,8 @@ Arrayzing.prototype =
      * For a String object on a String element, the object will be appended
      * to the element.
      *
-     * For any object on a array-like element, the object will be added to the right side
-     * of the array-like element.
+     * For any object on a iterable element, the object will be added to the right side
+     * of the iterable element.
      *
      * For any object on an unknown element object, the element will simply
      * be skipped.
@@ -1383,7 +1393,7 @@ Arrayzing.prototype =
             if ( _.isArrayzing(element) )
                 return element.add(object);
 
-            if ( _.isArrayLike(element) )
+            if ( _.isIterable(element) )
             {
                 Array.prototype.push.call(element, object);
                 return element;
@@ -1421,12 +1431,12 @@ Arrayzing.prototype =
         
         var fn = function( val )
         {
-            // Look for array-like item.
+            // Look for iterable item.
             if ( _.isString(val) )
             {
                 return val.substr(n);
             }
-            else if ( _.isArrayLike(val) )
+            else if ( _.isIterable(val) )
             {
                 return Array.prototype.slice.call(val, n);
             }
@@ -1464,12 +1474,12 @@ Arrayzing.prototype =
 
         var fn = function( val )
         {
-            // Look for array-like item.
+            // Look for iterable item.
             if ( _.isString(val) )
             {
                 return val.substr(0, val.length - n);
             }
-            else if ( _.isArrayLike(val) )
+            else if ( _.isIterable(val) )
             {
                 return Array.prototype.slice.call(val, 0, val.length - n);
             }
@@ -1833,7 +1843,7 @@ Arrayzing.extend(
         return _.is(Arrayzing, object);
     },
 
-    isArrayLike: function( object )
+    isIterable: function( object )
     {
         if ( object && !_.isString(object) &&
             (  _.isArray(object)
@@ -1880,7 +1890,7 @@ Arrayzing.extend(
         {
             return object;
         }
-        else if ( _.isArrayLike(object) || _.isString(object) )
+        else if ( _.isIterable(object) || _.isString(object) )
         {
             return object.length;
         }
