@@ -85,7 +85,7 @@ test("Test compare(), gt(), lt(), etc. functions.", function()
     var $num = _(214, 12, 12311, 0);
     var $str = _("a", "b", "ccc", "cookie", "");
     var $arr = _([1, 2, 3], [3], [], [4]);
-    var $mixed = $num.concat($str).concat($arr);
+    var $mixed = $num.addAll($str).addAll($arr);
 
     equals($num.eq(12)[0], 12, "Test equals on a number zing");
     equals($num.gt(12).join(), "214,12311", "Test gt on a number zing");
@@ -183,19 +183,19 @@ test("Test undo().", function()
     equals($arr.set(0, 5).undo(), $arr, "set: Make sure undo works with non-mutator");
     equals($arr.set$(0, 5).undo().str(), "", "set$: Make sure undo works with mutator");
 
-    // push()/add()
+    // add()
     $arr = _(arr);
-    equals($arr.push(4).undo(), $arr, "push: Make sure undo works with non-mutator");
-    equals($arr.push$(4).undo().str(), "", "push$: Make sure undo works with mutator");
+    equals($arr.add(4).undo(), $arr, "add: Make sure undo works with non-mutator");
+    equals($arr.add$(4).undo().str(), "", "add$: Make sure undo works with mutator");
 
     // reverse()
     $arr = _(arr);
     equals($arr.reverse().undo(), $arr, "reverse: Make sure undo works with non-mutator");
     equals($arr.reverse$().undo().length, 0, "reverse$: Make sure undo works with mutator");
 
-    // concat()
+    // addAll()
     $arr = _(arr);
-    equals($arr.add(4).concat([5,6]).undo().str(), "1,2,3,4", "concat: Make sure undo works with non-mutator");
+    equals($arr.add(4).addAll([5,6]).undo().str(), "1,2,3,4", "addAll: Make sure undo works with non-mutator");
 
     // prechop()
     $arr = _("lol", "olo");

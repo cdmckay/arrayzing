@@ -2,18 +2,6 @@
 
 module("array");
 
-test("Test concat().", function()
-{
-    var array1 = [1, 2, 3];
-    var array2 = [4, 5, 6];
-    var result1 = _(array1).concat(array2); // Try concatting a normal array.
-    var result2 = _(array1).concat(_(array2)); // ...and an Arrayzing.
-    equals(result1.toString(), "1,2,3,4,5,6", "Try concat on an array");    
-    equals(result1.length, 6, "Verify length of concat on an array");
-    equals(result2.toString(), "1,2,3,4,5,6", "Try concat on an Arrayzing");
-    equals(result2.length, 6, "Try concat on an Arrayzing");
-});
-
 test("Test join().", function()
 {
     var array = [1, 2, "bloo"];
@@ -23,46 +11,49 @@ test("Test join().", function()
     equals(result2, "1;2;bloo", "Try joining with semi-colon argument");   
 });
 
-test("Test pop().", function()
-{    
-    var array = [1, 2, "bloo"];
-
-    var a = _(array);
-
-    equals(_().pop(), undefined, "Try popping off an empty array");
-    equals(a.pop(), "bloo", "Try pop() on a mixed array");
-    equals(a.str(), _(array).str(), "Make sure the original array was untouched");
-    equals(a.pop$(), "bloo", "Try pop$() on a mixed array");
-    equals(a.str(), "1,2", "Make sure it changed it in place");
-    
-});
-
-test("Test push() and add().", function()
+test("Test add().", function()
 {
-    // Test push. 
+    // Test add.
     var array = ["a", "b", 3];
 
-    equals(_().push(4).get(0), 4, "Try pushing into an empty array");
-    equals(_(array).push(4).join(), "a,b,3,4", "Try pushing into a mixed array");
-    equals(_(array).push(4, 5).slice(3, 5).get().join(), "4,5", "Try pushing multiple values");
-    equals(_(array).push([4, 5]).get(3).join(), "4,5", "Try pushing an array on");
-    equals(_(array).push(_(4, 5)).get(3).pop().toString(), "5", "Try pushing an Arrayzing on");
+    equals(_().add(4).get(0), 4, "Try adding into an empty array");
+    equals(_(array).add(4).join(), "a,b,3,4", "Try adding into a mixed array");
+    equals(_(array).add(4, 5).slice(3, 5).get().join(), "4,5", "Try adding multiple values");
+    equals(_(array).add([4, 5]).get(3).join(), "4,5", "Try adding an array on");
+    equals(_(array).add(_(4, 5)).get(3).get(-1), "5", "Try adding an Arrayzing on");
 
     var a = _(array);
-    a.push$(4);
-    equals(a.str(), "a,b,3,4", "Make sure push$ works in-place");
+    a.add$(4);
+    equals(a.str(), "a,b,3,4", "Make sure add$ works in-place");
 
-    equals(_().push("hi").add("ho").toString(), _().add("hi").push("ho").toString(),
-            "See if add gives the same answer as push");
+    equals(_().add("hi").add("ho").toString(), _().add("hi").add("ho").toString(),
+            "See if add gives the same answer as add");
 
-    var $array = _().push("x");
+    var $array = _().add("x");
     equals($array.length, 1, "Make sure the length is right");
+
+    // Test with no arguments.
+    //ok( _(1,4,9).map(Math.sqrt).addAll().equals( _(1,2,3,1,4,9) ),
+    //        "Try addAll with no arguments (i.e. append last step)" );
 
     // Test merge.
     equals(_(array).add(4).set$(0, 3).merge().str(), "3,b,3,4", "Test merge");
 });
 
-test("Test reverse.", function()
+test("Test addAll().", function()
+{
+    var array1 = [1, 2, 3];
+    var array2 = [4, 5, 6];
+    var result1 = _(array1).addAll(array2); // Try concatting a normal array.
+    var result2 = _(array1).addAll(_(array2)); // ...and an Arrayzing.
+    equals(result1.toString(), "1,2,3,4,5,6", "Try concat on an array");
+    equals(result1.length, 6, "Verify length of concat on an array");
+    equals(result2.toString(), "1,2,3,4,5,6", "Try concat on an Arrayzing");
+    equals(result2.length, 6, "Try concat on an Arrayzing");
+});
+
+
+test("Test reverse().", function()
 {
     var array = [1, 2, 3];
     var $array = _(array);
@@ -70,16 +61,6 @@ test("Test reverse.", function()
     equals(_().reverse().length, _().length, "Try reversing an empty array");
     equals($array.reverse().length, $array.length, "Make sure the length doesn't change");
     equals($array.reverse().get(0), $array.get(-1), "Make sure it works right on a normal array");
-});
-
-test("Test shift().", function()
-{
-    var array = ["a", "b", 3];
-    var $array = _(array);
-
-    equals($array.shift(), "a", "Try shifting a normal array");
-    equals($array.shift().length, 1, "Make sure length is right");
-    equals(_().shift(), undefined, "Try shifting an empty array");
 });
 
 test("Test slice().", function()
@@ -125,15 +106,6 @@ test("Test splice().", function()
     equals($array.splice(0, 1, _(4, 5, 6)).get().join(), "4,5,6,2,3", "Try splicing in some numbers using an Arrayzing");
     equals($array.splice(0, 4, 4, 5, 6).get().join(), "4,5,6", "Try splicing the whole array");
     equals($array.splice(0, 0, 4, 5, 6).get().join(), "4,5,6,1,2,3", "Try using splice to unshift");
-});
-
-test("Test unshift().", function()
-{   
-    var array = ["a", "b", 3];
-
-    equals(_().unshift(4).get(-1), 4, "Test unshifting a blank array");
-    equals(_(array).unshift(4).join(), "4,a,b,3", "Test unshifting a non-blank array");
-    equals(_().push("x").length, 1, "Make sure unshift sets the right length");
 });
 
 test("Test map().", function()

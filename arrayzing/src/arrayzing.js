@@ -85,6 +85,8 @@ Arrayzing.prototype =
 
         var equals = function( that )
         {
+            if (this.length != that.length) return false;
+
             for ( var i = 0; i < this.length; i++ )
             {
                 if ( this[i] == that[i] )
@@ -195,27 +197,26 @@ Arrayzing.prototype =
     },
 
     /**
-     * An alias for push.
+     * Adds an element to the end of the zing.
      *
-     * @see #push
      * @type Arrayzing
      */
     add: function()
     {
         // Just alias push.
-        return this.push.apply(this, arguments);
+        return this.add$.apply( this.clone(), arguments );
     },
 
     /**
-     * An alias for push$.
+     * Mutator version of add.
      *
-     * @see #push$
+     * @see #add
      * @type Arrayzing
      */
     add$: function()
     {
-        // Just alias push$.
-        return this.push$.apply(this, arguments);
+        Array.prototype.push.apply( this, arguments );
+        return this;
     },
 
     /**
@@ -450,27 +451,29 @@ Arrayzing.prototype =
      * @return The result of the concatenation.
      * @type Arrayzing
      */
-    concat: function( zing )
+    addAll: function( zing )
     {
-        return this.concat$.apply(this.clone(), arguments);
+        return this.addAll$.apply(this.clone(), arguments);
     },
 
     /**
-     * Mutator version of concat.
+     * Mutator version of addAll.
      *
-     * @see #concat
+     * @see #addAll
      * @type Arrayzing
      */
-    concat$: function ( zing )
+    addAll$: function ( zing )
     {
-        var ret = [];
+        var ret = [];       
+                
         _.each(arguments, function()
         {
             // If it's an array, keep it unchanged.
-            if ( _.isArray(this) ) ret.push(this);
+            if ( _.isArrayzing(this) ) ret.push(this.array());
+            else if ( _.isArray(this) ) ret.push(this);
             else if ( _.isArrayLike(this) )
             {
-                ret.push(Arrayzing.prototype.toArray.apply(this));
+                ret.push(Arrayzing.prototype.array.apply(this));
             }
         });
 
@@ -491,57 +494,7 @@ Arrayzing.prototype =
     join: function( delimiter )
     {
         return Array.prototype.join.apply(this, arguments);
-    },  
-
-    /**
-     * Returns the last element of the zing.
-     *
-     * @return The last element of the zing.
-     * @type Object
-     */
-    pop: function()
-    {
-        return this.get(-1);
-    },
-
-    /**
-     * Removes and returns the last element of the zing.
-     *
-     * @return The last element of the zing.
-     * @type Object
-     */
-    pop$: function()
-    {
-        // Run Array's pop function.
-        return Array.prototype.pop.apply(this, arguments);
-    },
-
-    /**
-     * Adds one or more elements to the end of the zing and returns
-     * the new array.
-     *
-     * @param {Object} element An object to push onto the array.
-     * @return {Arrayzing} A new zing with that passed elements pushed on.
-     * @type Arrayzing
-     */
-    push: function( element )
-    {     
-        return this.push$.apply( this.clone(), arguments );
-    },
-
-    /**
-     * Adds one or more elements to the end of the zing and returns
-     * the modified array.
-     *
-     * @param {Object} element An object to push onto the array.
-     * @return The zing with the elements pushed on.
-     * @type Arrayzing
-     */
-    push$: function( element )
-    {
-        Array.prototype.push.apply( this, arguments );
-        return this;
-    },
+    },    
 
     /**
      * Reverses the order of the elements in the zing.
@@ -564,30 +517,7 @@ Arrayzing.prototype =
     {
         Array.prototype.reverse.apply( this, arguments );
         return this;
-    },
-
-    /**
-     * Returns the first element of the zing.
-     *
-     * @return The first element of the zing.
-     * @type Object
-     */
-    shift: function()
-    {
-        return this.get(0);
-    },
-
-    /**
-     * Removes and returns the first element of the zing.
-     *
-     * @return The first element of the zing.
-     * @type Object
-     */
-    shift$: function()
-    {
-        // Run Array's shift function.
-        return Array.prototype.shift.apply(this, arguments);
-    },
+    },   
 
     slice: function()
     {
@@ -619,18 +549,7 @@ Arrayzing.prototype =
     {
         Array.prototype.splice.apply( this, arguments );
         return this;
-    },
-
-    unshift: function()
-    {
-        return this.unshift$.apply( this.clone(), arguments );
-    },
-
-    unshift$: function()
-    {
-        Array.prototype.unshift.apply( this, arguments );
-        return this;
-    },
+    }, 
 
     /**
      * Clear the contents of the zing.
@@ -720,12 +639,7 @@ Arrayzing.prototype =
     undo: function()
     {
         return this.prevObject || Arrayzing( [] );
-    },
-
-    andSelf: function()
-    {
-        return this.concat( this.prevObject );
-    },
+    },  
 
     merge: function()
     {
@@ -756,7 +670,7 @@ Arrayzing.prototype =
         // them to the end of the prev.
         if (this.length - target._indices.length > 0)
         {
-            prev.concat$( this.slice$(target._indices.length) );
+            prev.addAll$( this.slice$(target._indices.length) );
         }
 
         // Make the prev array the new array.
@@ -1461,7 +1375,24 @@ Arrayzing.prototype =
      */
     postfix$: function( object )
     {
+        var fn = function( element )
+        {
+            if ( _.isString(element) && _.isString(object) )
+                return element + object;
 
+            if ( _.isArrayzing(element) )
+                return element.add(object);
+
+            if ( _.isArrayLike(element) )
+            {
+                Array.prototype.push.call(element, object);
+                return element;
+            }
+
+            return element;
+        };
+
+        return this.map$(fn);
     },
 
     /**
